@@ -83,7 +83,7 @@ public class MappingProcessor implements Processor {
 			return injector.getInstance(beanClass);
 		}
 		catch (Exception e) {
-			Object instance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {beanClass}, new InvocationHandler() {
+			Object instance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { beanClass }, new InvocationHandler() {
 
 				@Override
 				public Object invoke(Object o, Method method, Object[] os) throws Throwable {

@@ -7,6 +7,7 @@ import com.google.inject.multibindings.Multibinder;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import jsa.routes.EndpointBrigde;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.camel.RoutesBuilder;
@@ -20,18 +21,18 @@ import org.apache.camel.RoutesBuilder;
 @NoArgsConstructor
 public class APIRouterModule<Ifc> extends AbstractModule {
 
-	protected Class<Ifc> ifc;
+	protected Class<Ifc> apiInterface;
 
 	protected List<Class<RoutesBuilder>> routesClasses = new LinkedList<>();
 
 	protected List<RoutesBuilder> routesInstances = new LinkedList<>();
 
-	public APIRouterModule(Class<Ifc> ifc) {
-		this.ifc = ifc;
+	public APIRouterModule(Class<Ifc> apiInterface) {
+		this.apiInterface = apiInterface;
 	}
 
-	public APIRouterModule(Class<Ifc> ifc, RoutesBuilder... rbs) {
-		this.ifc = ifc;
+	public APIRouterModule(Class<Ifc> apiInterface, RoutesBuilder... rbs) {
+		this.apiInterface = apiInterface;
 		routesInstances.addAll(Arrays.asList(rbs));
 	}
 
@@ -46,12 +47,12 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 	}
 
 	public APIRouterModule<Ifc> exposeRest(Class<?> restResource) {
-		addRoute(new RestRouterBuilder(ifc, restResource));
+		addRoute(new RestRouterBuilder(apiInterface, restResource));
 		return this;
 	}
 
 	public APIRouterModule<Ifc> exposeSoap() {
-		addRoute(new CXFRouterBuilder(ifc));
+		addRoute(new CXFRouterBuilder(apiInterface));
 		return this;
 	}
 
@@ -65,5 +66,6 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 			requestInjection(rb);
 			uriBinder.addBinding().toInstance(rb);
 		}
+//		bind(apiInterface).annotatedWith(EndpointBrigde.class).
 	}
 }

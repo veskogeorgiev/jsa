@@ -19,6 +19,15 @@
 		<cxf.version>2.7.7</cxf.version>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.12.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- JSA -->
@@ -93,21 +102,15 @@
 			<dependency>
 				<groupId>org.apache.bval</groupId>
 				<artifactId>bval-core</artifactId>
-				<version>${bval.version}}</version>
+				<version>${bval.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.bval</groupId>
 				<artifactId>bval-guice</artifactId>
-				<version>${bval.version}}</version>
+				<version>${bval.version}</version>
 			</dependency>
 
 			<!-- Other -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.12.2</version>
-				<scope>provided</scope>
-			</dependency>
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-jaxrs</artifactId>
@@ -117,11 +120,6 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>15.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.json</groupId>
-				<artifactId>json</artifactId>
-				<version>20131018</version>
 			</dependency>
 
 			<!-- Servlet -->
@@ -157,7 +155,6 @@
 				<version>1.2</version>
 				<scope>test</scope>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 

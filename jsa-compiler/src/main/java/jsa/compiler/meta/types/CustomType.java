@@ -1,5 +1,6 @@
 package jsa.compiler.meta.types;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,13 +10,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = "javaType", callSuper = false)
 public class CustomType extends Type {
 
 	private Class<?> javaType;
 	private String name;
-
-	@Override
-	public int hashCode() {
-		return javaType.hashCode();
-	}
 }
