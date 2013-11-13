@@ -17,7 +17,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import jsa.compiler.meta.refl.AnnotatedParameter;
 import jsa.compiler.meta.refl.ReflectionUtils;
-import org.apache.camel.Consume;
 
 /**
  *
@@ -79,7 +78,7 @@ public class RestMethodMeta {
 	}
 
 	public boolean isJSONEndcoded() {
-		if (method.isAnnotationPresent(Consume.class)) {
+		if (method.isAnnotationPresent(Consumes.class)) {
 			for (String mediaType : method.getAnnotation(Consumes.class).value()) {
 				if (MediaType.APPLICATION_JSON.equals(mediaType)) {
 					return true;

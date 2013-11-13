@@ -4,13 +4,12 @@ import com.google.inject.Injector;
 import jsa.dto.HasAttachments;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import jsa.routes.EndpointBridgeProxy;
 import lombok.AllArgsConstructor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.springframework.cglib.proxy.InvocationHandler;
-import org.springframework.cglib.proxy.Proxy;
 
 /**
  * 
@@ -18,9 +17,10 @@ import org.springframework.cglib.proxy.Proxy;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @AllArgsConstructor
-public class MappingProcessor implements Processor {
+public class JSAProcessor implements Processor {
 
-	protected final Class<?> beanClass;
+	protected final Class<?> apiInterface;
+
 	protected final Injector injector;
 
 	@Override
@@ -48,7 +48,7 @@ public class MappingProcessor implements Processor {
 	}
 
 	private void prepareExchangeWithAttachments(Exchange exchange,
-			String headerKey) {
+												String headerKey) {
 		// Get arguments from exchange
 		Object[] args = exchange.getIn().getBody(Object[].class);
 		for (Object obj : args) {
@@ -61,8 +61,8 @@ public class MappingProcessor implements Processor {
 
 	private Method findMethod(String operationName, Object[] parameters)
 			throws SecurityException, NoSuchMethodException {
-		return beanClass.getMethod(operationName,
-				getParameterTypes(parameters));
+		return apiInterface.getMethod(operationName,
+									  getParameterTypes(parameters));
 	}
 
 	private Class<?>[] getParameterTypes(Object[] parameters) {
@@ -79,20 +79,7 @@ public class MappingProcessor implements Processor {
 	}
 
 	private Object getObjectInstance() {
-		try {
-			return injector.getInstance(beanClass);
-		}
-		catch (Exception e) {
-			Object instance = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { beanClass }, new InvocationHandler() {
-
-				@Override
-				public Object invoke(Object o, Method method, Object[] os) throws Throwable {
-					//
-					return null;
-				}
-			});
-			return instance;
-		}
+		return EndpointBridgeProxy.create(apiInterface, injector);
 	}
 
 }

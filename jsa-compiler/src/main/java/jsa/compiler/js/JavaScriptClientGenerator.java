@@ -84,11 +84,12 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 
 	private void writeMethod(ServiceMethod method) {
 		RestMethodMeta rmm = restMeta.getRestMethod(method.getMethod());
+		System.out.println(rmm);
 		String url = rmm.getPath(new JavaScriptPathVisitor());
 		String name = method.getName();
 
 		String parameters = buildParameters(rmm);
-		sf.blockOpen("%s.prototype.%s = function(%s)", apiName, method.getName(), parameters);
+		sf.blockOpen("%s.prototype.%s = function(%s)", apiName, name, parameters);
 
 		String payload = buildPayload(rmm);
 		sf.line("return new %s(this.%s, this.ctx + %s, %s)",
@@ -166,7 +167,6 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 	}
 
 	private String buildParameters(RestMethodMeta rmm) {
-		System.out.println(rmm);
 		List<String> functionalParams = rmm.getFunctionalParameters();
 		
 		if (rmm.isJSONEndcoded()) {

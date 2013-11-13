@@ -17,15 +17,15 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class RestMappingProcessor implements Processor {
+public class RestJSAProcessor implements Processor {
 
-	private final MappingProcessor processor;
+	private final JSAProcessor processor;
 	private final APIProcessor apiProcessor;
 	private final Class<?> apiInterface;
 
-	public RestMappingProcessor(Class<?> beanClass, Injector injector) {
+	public RestJSAProcessor(Class<?> beanClass, Injector injector) {
 		apiInterface = beanClass;
-		processor = new MappingProcessor(beanClass, injector);
+		processor = new JSAProcessor(beanClass, injector);
 		apiProcessor = injector.getInstance(APIProcessor.class);
 	}
 

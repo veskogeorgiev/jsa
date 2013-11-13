@@ -10,15 +10,19 @@ import com.google.inject.Injector;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import lombok.AllArgsConstructor;
+import java.util.logging.Level;
+import jsa.NotImplementedException;
+import lombok.extern.java.Log;
 
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  * @param <T> API interface
  */
-@AllArgsConstructor
+@Log
 public class EndpointBridgeProxy<T> implements InvocationHandler {
+
+	private static final Object mutex = new Object();
 
 	public static <T> T create(Class<T> apiInterface, Injector injector) {
 		ClassLoader classLoader = EndpointBridgeProxy.class.getClassLoader();
@@ -28,11 +32,40 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 
 	private final Class<T> apiInterface;
 	private final Injector injector;
-	
+
+	private T apiInstance;
+
+	public EndpointBridgeProxy(Class<T> apiInterface, Injector injector) {
+		this.apiInterface = apiInterface;
+		this.injector = injector;
+		
+		this.apiInstance = locateApiInstance();
+	}
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		System.out.println(method);
-		return null;
+		if (apiInstance != null) {
+			return method.invoke(apiInstance, args);
+		}
+		throw new NotImplementedException();
+	}
+
+	private synchronized T locateApiInstance() {
+		if (apiInstance == null) {
+			synchronized (mutex) {
+				if (apiInstance == null) { // check again
+					try {
+						apiInstance = injector.getInstance(apiInterface);
+					}
+					catch (Exception e) {
+						log.log(Level.WARNING, 
+								String.format("No implementation for %s specified", apiInterface),
+								e);
+					}
+				}
+			}
+		}
+		return apiInstance;
 	}
 
 }

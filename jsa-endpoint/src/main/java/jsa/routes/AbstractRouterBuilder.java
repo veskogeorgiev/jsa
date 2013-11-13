@@ -1,11 +1,11 @@
 package jsa.routes;
 
 import com.google.inject.Injector;
-import jsa.MappingProcessor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.inject.Inject;
+import jsa.JSAProcessor;
 import jsa.compiler.APIProcessor;
 import jsa.compiler.meta.ServiceAPI;
 import org.apache.camel.Processor;
@@ -60,6 +60,6 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 	}
 
 	protected Processor createProcessor() {
-		return new MappingProcessor(apiInterface, injector);
+		return new JSAProcessor(apiInterface, injector);
 	}
 }

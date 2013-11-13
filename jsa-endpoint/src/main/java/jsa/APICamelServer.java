@@ -3,7 +3,7 @@ package jsa;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.java.Log;
 
 import org.apache.camel.CamelContext;
 
@@ -12,7 +12,7 @@ import org.apache.camel.CamelContext;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Singleton
-@CommonsLog
+@Log
 public class APICamelServer {
 
 	@Inject

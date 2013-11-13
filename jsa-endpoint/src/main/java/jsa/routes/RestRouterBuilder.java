@@ -1,7 +1,7 @@
 package jsa.routes;
 
-import jsa.RestMappingProcessor;
 import java.util.Map;
+import jsa.RestJSAProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -55,6 +55,6 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 
 	@Override
 	protected Processor createProcessor() {
-		return new RestMappingProcessor(apiInterface, injector);
+		return new RestJSAProcessor(apiInterface, injector);
 	}
 }
