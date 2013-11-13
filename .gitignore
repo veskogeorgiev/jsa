@@ -4,3 +4,6 @@
 *.jar
 *.war
 *.ear
+/jsa-api/target/
+/jsa-compiler/target/
+/jsa-endpoint/target/
