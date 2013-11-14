@@ -10,7 +10,6 @@ import com.google.inject.Key;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.logging.Level;
 import jsa.NotImplementedException;
 import lombok.extern.java.Log;
 
@@ -61,21 +60,18 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 						log.info(String.format("%s implementation found through a bridge", apiInstance));
 					}
 					catch (Exception e) {
-						log.log(Level.INFO,
-								String.format("No implementation for %s found through a bridge", apiInterface),
-								e);
+						log.info(String.format("No implementation for %s found through a bridge. %s",
+											   apiInterface, e));
 					}
 
 					if (apiInstance == null) {
 						try {
 							apiInstance = injector.getInstance(apiInterface);
 							log.info(String.format("%s implementation found directly", apiInstance));
-
 						}
 						catch (Exception e) {
-							log.log(Level.INFO,
-									String.format("No direct implementation for %s specified", apiInterface),
-									e);
+							log.info(String.format("No direct implementation for %s specified",
+												   apiInterface, e));
 						}
 					}
 
