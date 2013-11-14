@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jsa.routes;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -26,11 +26,12 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 
 	public static <T> T create(Class<T> apiInterface, Injector injector) {
 		ClassLoader classLoader = EndpointBridgeProxy.class.getClassLoader();
-		Class[] interfaces = new Class[] { apiInterface };
+		Class[] interfaces = new Class[]{apiInterface};
 		return (T) Proxy.newProxyInstance(classLoader, interfaces, new EndpointBridgeProxy(apiInterface, injector));
-	} 
+	}
 
 	private final Class<T> apiInterface;
+
 	private final Injector injector;
 
 	private T apiInstance;
@@ -38,7 +39,7 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 	public EndpointBridgeProxy(Class<T> apiInterface, Injector injector) {
 		this.apiInterface = apiInterface;
 		this.injector = injector;
-		
+
 		this.apiInstance = locateApiInstance();
 	}
 
@@ -55,12 +56,31 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 			synchronized (mutex) {
 				if (apiInstance == null) { // check again
 					try {
-						apiInstance = injector.getInstance(apiInterface);
+						Key<T> key = Key.get(apiInterface, EndpointBrigde.class);
+						apiInstance = injector.getInstance(key);
+						log.info(String.format("%s implementation found through a bridge", apiInstance));
 					}
 					catch (Exception e) {
-						log.log(Level.WARNING, 
-								String.format("No implementation for %s specified", apiInterface),
+						log.log(Level.INFO,
+								String.format("No implementation for %s found through a bridge", apiInterface),
 								e);
+					}
+
+					if (apiInstance == null) {
+						try {
+							apiInstance = injector.getInstance(apiInterface);
+							log.info(String.format("%s implementation found directly", apiInstance));
+
+						}
+						catch (Exception e) {
+							log.log(Level.INFO,
+									String.format("No direct implementation for %s specified", apiInterface),
+									e);
+						}
+					}
+
+					if (apiInstance == null) {
+						log.warning(String.format("No implementation for %s specified", apiInterface));
 					}
 				}
 			}
