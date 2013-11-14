@@ -16,35 +16,33 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package jsa.ext;
+package jsa.inject.web;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.inject.Singleton;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.Component;
-import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class CxfRsEndpointExt extends CxfRsEndpoint {
+@SuppressWarnings("serial")
+@Singleton
+public class JSAServlet extends CXFNonSpringServlet {
 
-	public CxfRsEndpointExt(String endpointUri, Component component) {
-		super(endpointUri, component);
+	@Override
+	protected void loadBus(ServletConfig sc) {
+        setBus(BusFactory.getDefaultBus());
 	}
 
 	@Override
-	protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
-		JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
-		List<?> providers = bean.getProviders();
-		List<Object> newPorivders = new LinkedList<>(providers);
-		newPorivders.add(new JacksonJsonProvider());
-		bean.setProviders(newPorivders);
-		return bean;
+	protected void invoke(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+		super.invoke(request, response);
 	}
-
 	
 }

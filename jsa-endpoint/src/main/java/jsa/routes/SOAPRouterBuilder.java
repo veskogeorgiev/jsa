@@ -10,15 +10,15 @@ import org.apache.cxf.BusFactory;
  *
  * @author vesko
  */
-public class CXFRouterBuilder extends AbstractRouterBuilder {
+public class SOAPRouterBuilder extends AbstractRouterBuilder {
 
-	public CXFRouterBuilder(Class<?> apiInterface) {
+	public SOAPRouterBuilder(Class<?> apiInterface) {
 		super(apiInterface);
 	}
 
 	@Override
 	public void configure() throws Exception {
-		fromCxfEndpoint().process(createProcessor()).to("log:output");
+		fromSoapEndpoint().process(createProcessor()).to("log:output");
 	}
 
 	@Override
@@ -30,12 +30,12 @@ public class CXFRouterBuilder extends AbstractRouterBuilder {
 		return endpoint;
 	}
 
-	protected CxfEndpoint cxfEndpoint() throws Exception {
+	protected CxfEndpoint soapEndpoint() throws Exception {
 		return (CxfEndpoint) endpoint(defaultEndpointAddress());
 	}
 
-	protected RouteDefinition fromCxfEndpoint() throws Exception {
-		return from(cxfEndpoint());
+	protected RouteDefinition fromSoapEndpoint() throws Exception {
+		return from(soapEndpoint());
 	}
 
 	protected String defaultEndpointAddress(String params) {

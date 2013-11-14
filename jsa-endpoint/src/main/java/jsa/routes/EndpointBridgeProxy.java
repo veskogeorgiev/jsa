@@ -70,13 +70,8 @@ public class EndpointBridgeProxy<T> implements InvocationHandler {
 							log.info(String.format("%s implementation found directly", apiInstance));
 						}
 						catch (Exception e) {
-							log.info(String.format("No direct implementation for %s specified",
-												   apiInterface, e));
+							log.warning(String.format("No implementation for %s specified", apiInterface));
 						}
-					}
-
-					if (apiInstance == null) {
-						log.warning(String.format("No implementation for %s specified", apiInterface));
 					}
 				}
 			}
