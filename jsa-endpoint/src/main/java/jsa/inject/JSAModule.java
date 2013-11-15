@@ -15,10 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package jsa.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import jsa.ext.CxfRsComponentExt;
+import org.apache.bval.guice.ValidationModule;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.guice.CamelModule;
 
 /**
@@ -30,6 +34,12 @@ public class JSAModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		install(new CamelModule());
+		install(new ValidationModule());
 	}
 
+	@Provides
+	CxfRsComponent cxfRsComponent(CamelContext camelContext) {
+		CxfRsComponent cmp = new CxfRsComponentExt(camelContext);
+		return cmp;
+	}
 }

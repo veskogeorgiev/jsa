@@ -15,36 +15,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+package jsa;
 
-package jsa.inject.web;
-
-import com.google.inject.Provides;
-import com.google.inject.servlet.ServletModule;
-import jsa.ext.CxfRsComponentExt;
-import jsa.inject.JSAModule;
-import lombok.AllArgsConstructor;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.inject.Inject;
+import lombok.extern.java.Log;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
-import org.apache.camel.guice.CamelModule;
+import org.apache.camel.Endpoint;
 
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-@AllArgsConstructor
-public class JSAServletModule extends ServletModule {
-	
-	private String context;
-	
-	public JSAServletModule() {
-		this("/api");
-	}
-	
-	@Override
-	protected void configureServlets() {
-		install(new JSAModule());
-		serve(context + "/*").with(JSAServlet.class);
-		serve(context).with(JSAServlet.class);
-	}
+@Log
+public class TestDecorator {
 
+	@Inject
+	private CamelContext camelContext;
+
+	public void decorate(String httpAddress) {
+		for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
+			try {
+				String uriStr = e.getKey();
+				URI uri = new URI(uriStr);
+				String scheme = uri.getScheme();
+
+				uriStr = scheme + ":///" + httpAddress + uriStr.substring(scheme.length() + 3);
+
+//				log.info(String.format("%s: %s", e.getKey(), e.getValue()));
+				camelContext.addEndpoint(uriStr, e.getValue());
+			}
+			catch (URISyntaxException ex) {
+				log.log(Level.SEVERE, null, ex);
+			}
+			catch (Exception ex) {
+				log.log(Level.SEVERE, null, ex);
+			}
+		}
+	}
 }

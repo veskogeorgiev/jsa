@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import jsa.dto.HasAttachments;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import jsa.routes.EndpointBridgeProxy;
+import jsa.routes.ImplementorBridgeProxy;
 import lombok.AllArgsConstructor;
 
 import org.apache.camel.Exchange;
@@ -25,8 +25,7 @@ public class JSAProcessor implements Processor {
 
 	@Override
 	public void process(Exchange exchange) throws Exception {
-		String operationName = exchange.getIn().getHeader(
-				CxfConstants.OPERATION_NAME, String.class);
+		String operationName = getOperationName(exchange);
 		if (operationName == null) {
 			return;
 		}
@@ -78,8 +77,13 @@ public class JSAProcessor implements Processor {
 		return answer;
 	}
 
+	private String getOperationName(Exchange exchange) {
+		return exchange.getIn().getHeader(
+				CxfConstants.OPERATION_NAME, String.class);
+	}
+
 	private Object getObjectInstance() {
-		return EndpointBridgeProxy.create(apiInterface, injector);
+		return ImplementorBridgeProxy.create(apiInterface, injector);
 	}
 
 }
