@@ -49,7 +49,9 @@ public class TestDecorator {
 				uriStr = scheme + "://" + httpAddress + uriStr.substring(scheme.length() + 3);
 
 //				log.info(String.format("%s: %s", e.getKey(), e.getValue()));
-				camelContext.addEndpoint(uriStr, e.getValue());
+				
+				Endpoint endpoint = camelContext.getEndpoint(uriStr);
+				camelContext.addEndpoint(uriStr, endpoint);
 			}
 			catch (URISyntaxException ex) {
 				log.log(Level.SEVERE, null, ex);
