@@ -25,3 +25,4 @@ jsa-endpoint/.project
 jsa-endpoint/.settings/org.eclipse.core.resources.prefs
 jsa-endpoint/.settings/org.eclipse.jdt.core.prefs
 jsa-endpoint/.settings/org.eclipse.m2e.core.prefs
+/jsa-endpoint
