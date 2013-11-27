@@ -11,12 +11,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.google.inject.BindingAnnotation;
+
 /**
  *
  * @author vesko
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@BindingAnnotation
 public @interface ImplementorBrigde {
 	
 }

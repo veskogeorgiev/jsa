@@ -60,7 +60,7 @@ public class ImplementorBridgeProxy<T> implements InvocationHandler {
 			if (args != null) {
 				for (Object object : args) {
 					Set<ConstraintViolation<Object>> res = validator.validate(object);
-					if (res.isEmpty()) {
+					if (!res.isEmpty()) {
 						ConstraintViolation<Object> constraint = res.iterator().next();
 						throw new ValidationException(constraint.getMessage());
 					}

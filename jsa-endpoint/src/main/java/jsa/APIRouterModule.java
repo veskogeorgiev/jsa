@@ -1,13 +1,18 @@
 package jsa;
 
+import jsa.annotations.ImplementorBrigde;
 import jsa.routes.SOAPRouterBuilder;
 import jsa.routes.RestRouterBuilder;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
+
 import org.apache.camel.RoutesBuilder;
 
 /**
@@ -53,8 +58,12 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 		return this;
 	}
 
+	protected void bindBridge(Class<? extends Ifc> cls) {
+		bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(cls);
+	}
+
 	@Override
-	protected void configure() {
+	protected final void configure() {
 		Multibinder<RoutesBuilder> uriBinder = Multibinder.newSetBinder(binder(), RoutesBuilder.class);
 		for (Class<? extends RoutesBuilder> rbc : routesClasses) {
 			uriBinder.addBinding().to(rbc);
@@ -63,5 +72,9 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 			requestInjection(rb);
 			uriBinder.addBinding().toInstance(rb);
 		}
+		customBindings();
+	}
+	
+	protected void customBindings() {
 	}
 }
