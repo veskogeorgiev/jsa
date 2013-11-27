@@ -12,4 +12,6 @@ package jsa;
  */
 public class NotImplementedException extends RuntimeException {
 
+	private static final long serialVersionUID = 5345309342134086660L;
+
 }

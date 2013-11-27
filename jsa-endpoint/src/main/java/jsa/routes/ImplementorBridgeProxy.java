@@ -7,13 +7,16 @@ package jsa.routes;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Set;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+
 import jsa.NotImplementedException;
 import jsa.annotations.ImplementorBrigde;
 import lombok.extern.java.Log;
@@ -28,10 +31,11 @@ public class ImplementorBridgeProxy<T> implements InvocationHandler {
 
 	private static final Object mutex = new Object();
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T create(Class<T> apiInterface, Injector injector) {
 		ClassLoader classLoader = ImplementorBridgeProxy.class.getClassLoader();
 		Class[] interfaces = new Class[]{apiInterface};
-		return (T) Proxy.newProxyInstance(classLoader, interfaces, new ImplementorBridgeProxy(apiInterface, injector));
+		return (T) Proxy.newProxyInstance(classLoader, interfaces, new ImplementorBridgeProxy<T>(apiInterface, injector));
 	}
 
 	private final Class<T> apiInterface;

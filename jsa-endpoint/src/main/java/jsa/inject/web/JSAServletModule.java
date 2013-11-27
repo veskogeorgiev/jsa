@@ -18,14 +18,9 @@
 
 package jsa.inject.web;
 
-import com.google.inject.Provides;
 import com.google.inject.servlet.ServletModule;
-import jsa.ext.CxfRsComponentExt;
 import jsa.inject.JSAModule;
 import lombok.AllArgsConstructor;
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
-import org.apache.camel.guice.CamelModule;
 
 /**
  *

@@ -2,9 +2,10 @@ package jsa;
 
 
 import java.util.Map;
-import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import lombok.extern.java.Log;
 
 import org.apache.camel.CamelContext;

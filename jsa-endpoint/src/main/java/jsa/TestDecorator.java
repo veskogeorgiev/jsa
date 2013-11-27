@@ -21,9 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.inject.Inject;
+
 import lombok.extern.java.Log;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 
@@ -44,7 +46,7 @@ public class TestDecorator {
 				URI uri = new URI(uriStr);
 				String scheme = uri.getScheme();
 
-				uriStr = scheme + ":///" + httpAddress + uriStr.substring(scheme.length() + 3);
+				uriStr = scheme + "://" + httpAddress + uriStr.substring(scheme.length() + 3);
 
 //				log.info(String.format("%s: %s", e.getKey(), e.getValue()));
 				camelContext.addEndpoint(uriStr, e.getValue());
