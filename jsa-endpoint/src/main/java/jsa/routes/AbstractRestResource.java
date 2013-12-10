@@ -1,20 +1,12 @@
-
 package jsa.routes;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- *
- * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
- */
-public interface AbstractRestResource {
+public class AbstractRestResource implements RestResource {
 
-	@GET
-	@Path("__js")
-	@Produces(MediaType.TEXT_PLAIN)
-	Response __js();
+	@Override
+	public Response __js() {
+		return null;
+	}
+
 }
