@@ -1,16 +1,20 @@
 package jsa.routes;
 
-import com.google.inject.Injector;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.inject.Inject;
+
 import jsa.JSAProcessor;
 import jsa.compiler.APIProcessor;
 import jsa.compiler.meta.ServiceAPI;
-import org.apache.camel.Processor;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+
+import com.google.inject.Injector;
 
 /**
  *
@@ -34,7 +38,7 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 
 	public ServiceAPI getServiceAPI() {
 		if (serviceAPI == null) {
-			serviceAPI = processor.process(apiInterface, null);
+			serviceAPI = processor.process(apiInterface);
 		}
 		return serviceAPI;
 	}
@@ -60,6 +64,9 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 	}
 
 	protected Processor createProcessor() {
+//		Object pojo = injector.getInstance(apiInterface);
+//		CamelContext camelContext = injector.getInstance(CamelContext.class);
+//		return new BeanProcessor(pojo, camelContext);
 		return new JSAProcessor(apiInterface, injector);
 	}
 }

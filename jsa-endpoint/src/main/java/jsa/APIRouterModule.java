@@ -29,6 +29,8 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 
 	protected List<RoutesBuilder> routesInstances = new LinkedList<>();
 
+	protected Class<? extends Ifc> bridgeClass;
+	
 	public APIRouterModule(Class<Ifc> apiInterface) {
 		this.apiInterface = apiInterface;
 	}
@@ -59,7 +61,7 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 	}
 
 	protected void bindBridge(Class<? extends Ifc> cls) {
-		bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(cls);
+		this.bridgeClass = cls;
 	}
 
 	@Override
@@ -71,6 +73,10 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 		for (RoutesBuilder rb : routesInstances) {
 			requestInjection(rb);
 			uriBinder.addBinding().toInstance(rb);
+		}
+
+		if (bridgeClass != null) {
+			bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(bridgeClass);
 		}
 		customBindings();
 	}

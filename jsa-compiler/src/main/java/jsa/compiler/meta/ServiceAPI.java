@@ -2,6 +2,7 @@ package jsa.compiler.meta;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -24,7 +25,7 @@ public class ServiceAPI {
 		return String.format("%s/rest", getUrl());
 	}
 
-	public static Builder newBuilder() {
+	public static Builder builder() {
 		return new Builder();
 	}
 
@@ -36,28 +37,28 @@ public class ServiceAPI {
 
 		private final ServiceAPI item;
 
-		public Builder withName(final String name) {
+		public Builder name(final String name) {
 			this.item.name = name;
 			return this;
 		}
 
-		public Builder withVersion(final ServiceVersion version) {
+		public Builder version(final ServiceVersion version) {
 			this.item.version = version;
 			return this;
 		}
 
-		public Builder withMethods(final List<ServiceMethod> methods) {
+		public Builder methods(final List<ServiceMethod> methods) {
 			this.item.methods = methods;
 			return this;
 		}
 
-		public Builder withMethod(final ServiceMethod method) {
+		public Builder method(final ServiceMethod method) {
 			this.item.methods.add(method);
 			method.setApi(this.item);
 			return this;
 		}
 
-		public Builder withResourceClass(final Class<?> resourceClass) {
+		public Builder resourceClass(final Class<?> resourceClass) {
 			this.item.setResourceClass(resourceClass);
 			return this;
 		}

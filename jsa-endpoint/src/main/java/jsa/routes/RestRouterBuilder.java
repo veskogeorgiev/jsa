@@ -55,6 +55,6 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 
 	@Override
 	protected Processor createProcessor() {
-		return new RestJSAProcessor(apiInterface, restDecorator, injector);
+		return new RestJSAProcessor(apiInterface, restDecorator, injector, super.createProcessor());
 	}
 }

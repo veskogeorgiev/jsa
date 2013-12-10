@@ -3,6 +3,8 @@ package jsa;
 import com.google.inject.Injector;
 
 import java.util.List;
+
+import jsa.annotations.ImplementorBrigde;
 import jsa.compiler.APIProcessor;
 import jsa.compiler.ClientServiceGenerator;
 import jsa.compiler.SourceFile;
@@ -21,15 +23,17 @@ public class RestJSAProcessor implements Processor {
 
 	private static final String JS_OPERATION_NAME = "__js";
 
-	private final JSAProcessor processor;
+	private final Processor processor;
 	private final APIProcessor apiProcessor;
 	private final Class<?> apiInterface;
 	private final Class<?> resourceClass;
 
-	public RestJSAProcessor(Class<?> apiInterface, Class<?> resourceClass, Injector injector) {
+	public RestJSAProcessor(Class<?> apiInterface, Class<?> resourceClass, Injector injector, Processor processor) {
 		this.apiInterface = apiInterface;
 		this.resourceClass = resourceClass;
-		processor = new JSAProcessor(apiInterface, injector);
+
+//		Class<?> stubClass = getImplementorStubClass();
+		this.processor = processor;//new JSAProcessor(stubClass, injector);
 		apiProcessor = injector.getInstance(APIProcessor.class);
 	}
 
@@ -47,6 +51,12 @@ public class RestJSAProcessor implements Processor {
 		else {
 			processor.process(exchange);
 		}
+	}
+
+	private Class<?> getImplementorStubClass() {
+		return resourceClass.isAnnotationPresent(ImplementorBrigde.class) 
+				? resourceClass
+				: apiInterface;
 	}
 
 	private String getOperationName(Exchange exchange) {

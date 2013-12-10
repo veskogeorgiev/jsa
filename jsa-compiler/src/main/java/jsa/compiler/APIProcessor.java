@@ -4,8 +4,12 @@ import jsa.annotations.API;
 import jsa.compiler.meta.ServiceAPI;
 import jsa.compiler.meta.ServiceMethod;
 import jsa.compiler.meta.types.TypeFactory;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+
 import javax.inject.Singleton;
+
 import jsa.compiler.meta.ServiceVersion;
 
 /**
@@ -15,17 +19,39 @@ import jsa.compiler.meta.ServiceVersion;
 @Singleton
 public class APIProcessor {
 
+	private static final API.Version DEFAULT_VERSION = new API.Version() {
+		
+		@Override
+		public Class<? extends Annotation> annotationType() {
+			return API.Version.class;
+		}
+		
+		@Override
+		public String tag() {
+			return "v1";
+		}
+		
+		@Override
+		public int number() {
+			return 1;
+		}
+	};
+
+	public ServiceAPI process(Class<?> apiInterface) {
+		return process(apiInterface, apiInterface);
+	}
+
 	public ServiceAPI process(Class<?> apiInterface, Class<?> endpointClass) {
-		ServiceAPI.Builder builder = ServiceAPI.newBuilder();
-		builder.withName(apiInterface.getSimpleName());
-		builder.withResourceClass(endpointClass);
+		ServiceAPI.Builder builder = ServiceAPI.builder();
+		builder.name(apiInterface.getSimpleName());
+		builder.resourceClass(endpointClass);
 
 		API api = apiInterface.getAnnotation(API.class);
-		API.Version version = api.version();
-		builder.withVersion(new ServiceVersion(version.number(), version.tag()));
+		API.Version version = api != null ? api.version() : DEFAULT_VERSION;
+		builder.version(new ServiceVersion(version.number(), version.tag()));
 
-		for (Method m : apiInterface.getDeclaredMethods()) {
-			builder.withMethod(createMethod(m));
+		for (Method m : endpointClass.getDeclaredMethods()) {
+			builder.method(createMethod(m));
 		}
 		return builder.build();
 	}
