@@ -1,4 +1,3 @@
-
 package jsa.routes;
 
 import javax.ws.rs.GET;
