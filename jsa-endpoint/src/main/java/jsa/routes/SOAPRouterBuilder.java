@@ -12,8 +12,8 @@ import org.apache.cxf.BusFactory;
  */
 public class SOAPRouterBuilder extends AbstractRouterBuilder {
 
-	public SOAPRouterBuilder(Class<?> apiInterface) {
-		super(apiInterface);
+	public SOAPRouterBuilder(Class<?> apiInterface, Class<?> soapPort) {
+		super(apiInterface, soapPort);
 	}
 
 	@Override
@@ -31,20 +31,11 @@ public class SOAPRouterBuilder extends AbstractRouterBuilder {
 	}
 
 	protected CxfEndpoint soapEndpoint() throws Exception {
-		return (CxfEndpoint) endpoint(defaultEndpointAddress());
+		return (CxfEndpoint) endpoint(defaultEndpointAddress("cxf"));
 	}
 
 	protected RouteDefinition fromSoapEndpoint() throws Exception {
 		return from(soapEndpoint());
 	}
-
-	protected String defaultEndpointAddress(String params) {
-		return String.format("cxf:/%s/v1/soap?%s", apiInterface.getSimpleName(), params);
-	}
-
-	protected String defaultEndpointAddress() {
-		return defaultEndpointAddress(getDefaultParamQuery());
-	}
-
 
 }

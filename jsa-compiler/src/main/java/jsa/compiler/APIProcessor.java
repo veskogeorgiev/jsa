@@ -37,14 +37,14 @@ public class APIProcessor {
 		}
 	};
 
-	public ServiceAPI process(Class<?> apiInterface) {
-		return process(apiInterface, apiInterface);
-	}
+//	public ServiceAPI process(Class<?> apiInterface) {
+//		return process(apiInterface, apiInterface);
+//	}
 
 	public ServiceAPI process(Class<?> apiInterface, Class<?> endpointClass) {
 		ServiceAPI.Builder builder = ServiceAPI.builder();
 		builder.name(apiInterface.getSimpleName());
-		builder.resourceClass(endpointClass);
+		builder.apiPort(endpointClass);
 
 		API api = apiInterface.getAnnotation(API.class);
 		API.Version version = api != null ? api.version() : DEFAULT_VERSION;

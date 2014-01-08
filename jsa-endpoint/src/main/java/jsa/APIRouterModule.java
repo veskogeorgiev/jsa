@@ -1,19 +1,17 @@
 package jsa;
 
-import jsa.annotations.ImplementorBrigde;
-import jsa.routes.SOAPRouterBuilder;
-import jsa.routes.RestRouterBuilder;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import jsa.routes.RestRouterBuilder;
+import jsa.routes.SOAPRouterBuilder;
 import lombok.AllArgsConstructor;
 
 import org.apache.camel.RoutesBuilder;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 
 /**
  *
@@ -29,7 +27,7 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 
 	protected List<RoutesBuilder> routesInstances = new LinkedList<>();
 
-	protected Class<? extends Ifc> bridgeClass;
+//	protected Class<? extends Ifc> bridgeClass;
 	
 	public APIRouterModule(Class<Ifc> apiInterface) {
 		this.apiInterface = apiInterface;
@@ -50,19 +48,19 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 		return this;
 	}
 
-	public APIRouterModule<Ifc> exposeRest(Class<?> restResource) {
-		addRoute(new RestRouterBuilder(apiInterface, restResource));
+	public APIRouterModule<Ifc> exposeRest(Class<?> restPort) {
+		addRoute(new RestRouterBuilder(apiInterface, restPort));
 		return this;
 	}
 
-	public APIRouterModule<Ifc> exposeSoap() {
-		addRoute(new SOAPRouterBuilder(apiInterface));
+	public APIRouterModule<Ifc> exposeSoap(Class<?> soapPort) {
+		addRoute(new SOAPRouterBuilder(apiInterface, soapPort));
 		return this;
 	}
 
-	protected void bindBridge(Class<? extends Ifc> cls) {
-		this.bridgeClass = cls;
-	}
+//	protected void bindBridge(Class<? extends Ifc> cls) {
+//		this.bridgeClass = cls;
+//	}
 
 	@Override
 	protected final void configure() {
@@ -75,9 +73,9 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 			uriBinder.addBinding().toInstance(rb);
 		}
 
-		if (bridgeClass != null) {
-			bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(bridgeClass);
-		}
+//		if (bridgeClass != null) {
+//			bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(bridgeClass);
+//		}
 		customBindings();
 	}
 	

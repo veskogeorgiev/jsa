@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import jsa.dto.HasAttachments;
-import jsa.routes.ImplementorBridgeProxy;
+import jsa.routes.APIImplementationLocator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,16 +23,26 @@ import com.google.inject.Injector;
  */
 public class JSAProcessor implements Processor {
 
-	protected final Class<?> apiInterface;
+	protected final Class<?> apiPort;
 
 	protected final Injector injector;
 
-	protected final MethodRepository methodRepository;
+	protected MethodRepository methodRepository;
 
-	public JSAProcessor(Class<?> apiInterface, Injector injector) {
-		this.apiInterface = apiInterface;
+	private Object serviceInstance;
+
+	public JSAProcessor(Class<?> apiPort, Injector injector) {
+		this.apiPort = apiPort;
 		this.injector = injector;
-		methodRepository = new MethodRepository(apiInterface);
+
+		try {
+			this.serviceInstance = APIImplementationLocator.locateServiceImplementor(apiPort, injector);
+			methodRepository = new MethodRepository(serviceInstance.getClass());
+		}
+		catch (NotImplementedException e) {
+			methodRepository = new MethodRepository(null);
+		}
+
 	}
 
 	@Override
@@ -45,7 +55,7 @@ public class JSAProcessor implements Processor {
 		Method method = findMethod(operationName, body);
 
 		try {
-			Object response = method.invoke(getObjectInstance(), body);
+			Object response = method.invoke(serviceInstance, body);
 
 			exchange.getOut().setBody(response);
 
@@ -78,16 +88,14 @@ public class JSAProcessor implements Processor {
 		return exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
 	}
 
-	private Object getObjectInstance() {
-		return ImplementorBridgeProxy.create(apiInterface, injector);
-	}
-
 	private static class MethodRepository {
 		private Map<String, List<Method>> nameToMethod = new HashMap<>();
 
-		 MethodRepository(Class<?> cls) {
-			for (Method m : cls.getDeclaredMethods()) {
-				methodsByName(m.getName()).add(m);
+		MethodRepository(Class<?> cls) {
+			if (cls != null) {
+				for (Method m : cls.getDeclaredMethods()) {
+					methodsByName(m.getName()).add(m);
+				}
 			}
 		}
 		
@@ -110,17 +118,17 @@ public class JSAProcessor implements Processor {
 			throw new NoSuchMethodException();
 		}
 		
-		private Class<?>[] getParameterTypes(Object[] parameters) {
-			if (parameters == null) {
-				return new Class[0];
-			}
-			Class<?>[] answer = new Class[parameters.length];
-			int i = 0;
-			for (Object object : parameters) {
-				answer[i] = object != null ? object.getClass() : Object.class;
-				i++;
-			}
-			return answer;
-		}
+//		private Class<?>[] getParameterTypes(Object[] parameters) {
+//			if (parameters == null) {
+//				return new Class[0];
+//			}
+//			Class<?>[] answer = new Class[parameters.length];
+//			int i = 0;
+//			for (Object object : parameters) {
+//				answer[i] = object != null ? object.getClass() : Object.class;
+//				i++;
+//			}
+//			return answer;
+//		}
 	}
 }

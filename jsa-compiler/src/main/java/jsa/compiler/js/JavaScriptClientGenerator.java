@@ -71,7 +71,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 	private void writeService() {
 		sf.blockOpen("%s = function(%s)", apiName, HTTP_INTERFACE);
 		sf.line("this.%s = %s", HTTP_INTERFACE, HTTP_INTERFACE);
-		sf.line("this.ctx = idg.url + '%s'", api.getRestUrl());
+		sf.line("this.ctx = idg.url + '%s'", api.getApiPortContext());
 		sf.blockClose();
 		sf.line("%s.prototype = {}", apiName);
 	}
@@ -134,7 +134,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 
 	private void init(ServiceAPI api) {
 		this.api = api;
-		this.restMeta = new RestResourceMeta(api.getResourceClass());
+		this.restMeta = new RestResourceMeta(api.getApiPort());
 		this.apiName = String.format("%s.%s", namespace, api.getName());
 		sf = newSourceFile(api.getName(), "{", "}");
 

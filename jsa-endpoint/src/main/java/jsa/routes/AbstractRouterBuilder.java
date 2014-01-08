@@ -7,13 +7,14 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import jsa.JSAProcessor;
+import jsa.annotations.APIPort;
 import jsa.compiler.APIProcessor;
 import jsa.compiler.meta.ServiceAPI;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
 
 /**
@@ -22,33 +23,46 @@ import com.google.inject.Injector;
  */
 public abstract class AbstractRouterBuilder extends RouteBuilder {
 
-	@Inject
-	protected Injector injector;
+	@Inject protected Injector injector;
 
-	@Inject
-	protected APIProcessor processor;
+	@Inject protected APIProcessor processor;
 
 	protected final Class<?> apiInterface;
+	protected final Class<?> apiPortClass;
+	protected final APIPort apiPort;
 
 	private ServiceAPI serviceAPI;
 
-	public AbstractRouterBuilder(Class<?> apiInterface) {
+	public AbstractRouterBuilder(Class<?> apiInterface, Class<?> apiPortClass) {
 		this.apiInterface = apiInterface;
+		this.apiPortClass = apiPortClass;
+		this.apiPort = apiPortClass.getAnnotation(APIPort.class);
+
+		Preconditions.checkNotNull(apiPort,
+				"If class %s is to be used as a port it must be annotated with @APIPort.");
 	}
 
 	public ServiceAPI getServiceAPI() {
 		if (serviceAPI == null) {
-			serviceAPI = processor.process(apiInterface);
+			serviceAPI = processor.process(apiInterface, apiPortClass);
 		}
 		return serviceAPI;
 	}
 
 	protected Map<String, String> getDefaultParams() {
 		Map<String, String> params = new HashMap<>();
-		params.put("serviceClass", apiInterface.getName());
+		params.put("serviceClass", apiPortClass.getName());
 		params.put("setDefaultBus", "true");
 
 		return params;
+	}
+
+	protected String defaultEndpointAddress(String protocol, String params) {
+		return String.format("%s://%s/%s?%s", protocol, getServiceAPI().getUrl(), apiPort.context(), params);
+	}
+
+	protected String defaultEndpointAddress(String protocol) {
+		return defaultEndpointAddress(protocol, getDefaultParamQuery());
 	}
 
 	protected String getDefaultParamQuery() {
@@ -64,9 +78,6 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 	}
 
 	protected Processor createProcessor() {
-//		Object pojo = injector.getInstance(apiInterface);
-//		CamelContext camelContext = injector.getInstance(CamelContext.class);
-//		return new BeanProcessor(pojo, camelContext);
-		return new JSAProcessor(apiInterface, injector);
+		return new JSAProcessor(apiPortClass, injector);
 	}
 }

@@ -1,7 +1,9 @@
 package jsa.routes;
 
 import java.util.Map;
+
 import jsa.RestJSAProcessor;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -15,16 +17,13 @@ import org.apache.cxf.BusFactory;
  */
 public class RestRouterBuilder extends AbstractRouterBuilder {
 
-	private final Class<?> restDecorator;
-
 	public RestRouterBuilder(Class<?> apiInterface, Class<?> restDecorator) {
-		super(apiInterface);
-		this.restDecorator = restDecorator;
+		super(apiInterface, restDecorator);
 	}
 
 	@Override
 	public void configure() throws Exception {
-		CxfRsEndpoint endpoint = restEndpoint(restDecorator);
+		CxfRsEndpoint endpoint = restEndpoint(apiPortClass);
 		from(endpoint).process(createProcessor()).to("log:output");
 	}
 
@@ -42,7 +41,7 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 		params.put("setDefaultBus", "true");
 
 		String paramString = buildParamQuery(params);
-		String endpointAddress = String.format("cxfrs:%s?%s", getServiceAPI().getRestUrl(), paramString);
+		String endpointAddress = defaultEndpointAddress("cxfrs", paramString);
 
 		CxfRsEndpoint endpoint = (CxfRsEndpoint) endpoint(endpointAddress);
 		endpoint.addResourceClass(restDecorator);
@@ -55,6 +54,6 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 
 	@Override
 	protected Processor createProcessor() {
-		return new RestJSAProcessor(apiInterface, restDecorator, injector, super.createProcessor());
+		return new RestJSAProcessor(apiInterface, apiPortClass, injector, super.createProcessor());
 	}
 }

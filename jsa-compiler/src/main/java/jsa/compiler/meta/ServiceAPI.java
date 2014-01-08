@@ -3,6 +3,7 @@ package jsa.compiler.meta;
 import java.util.LinkedList;
 import java.util.List;
 
+import jsa.annotations.APIPort;
 import lombok.Data;
 
 /**
@@ -15,18 +16,18 @@ public class ServiceAPI {
 	private String name;
 	private ServiceVersion version;
 	private List<ServiceMethod> methods = new LinkedList<>();
-	private Class<?> resourceClass;
+	private Class<?> apiPort;
 
 	public String getUrl() {
 		return String.format("/%s/%s", getName(), getVersion().getTag());
 	}
 
-	public String getRestUrl() {
-		return String.format("%s/rest", getUrl());
-	}
-
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	public String getApiPortContext() {
+		return apiPort.getAnnotation(APIPort.class).context();
 	}
 
 	public static class Builder {
@@ -58,8 +59,8 @@ public class ServiceAPI {
 			return this;
 		}
 
-		public Builder resourceClass(final Class<?> resourceClass) {
-			this.item.setResourceClass(resourceClass);
+		public Builder apiPort(final Class<?> apiPort) {
+			this.item.setApiPort(apiPort);
 			return this;
 		}
 
