@@ -20,6 +20,9 @@ package jsa.ext;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
@@ -27,22 +30,23 @@ import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 
+import com.google.inject.Injector;
+
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class CxfRsComponentExt extends CxfRsComponent {
 
-	public CxfRsComponentExt() {
-	}
-
+	@Inject private Injector injector; 
+	
 	public CxfRsComponentExt(CamelContext context) {
 		super(context);
 	}
 
 	@Override
 	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		CxfRsEndpoint answer = new CxfRsEndpointExt(remaining, this);
+		CxfRsEndpoint answer = new CxfRsEndpointExt(remaining, this, injector);
 
 		String resourceClass = getAndRemoveParameter(parameters, "resourceClass", String.class);
 		if (resourceClass != null) {
@@ -64,4 +68,5 @@ public class CxfRsComponentExt extends CxfRsComponent {
 		setEndpointHeaderFilterStrategy(answer);
 		return answer;
 	}
+
 }

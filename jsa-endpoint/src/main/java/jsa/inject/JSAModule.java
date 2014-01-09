@@ -22,6 +22,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 import jsa.ext.CxfRsComponentExt;
@@ -46,8 +47,10 @@ public class JSAModule extends AbstractModule {
 	}
 
 	@Provides
-	CxfRsComponent cxfRsComponent(CamelContext camelContext) {
+	CxfRsComponent cxfRsComponent(CamelContext camelContext, Injector injector) {
 		CxfRsComponent cmp = new CxfRsComponentExt(camelContext);
+		injector.injectMembers(cmp);
+		
 		return cmp;
 	}
 
