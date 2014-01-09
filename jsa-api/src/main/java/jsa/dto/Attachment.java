@@ -5,7 +5,7 @@ import javax.activation.DataHandler;
 
 /**
  *
- * @author vesko
+ * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public interface Attachment {
 

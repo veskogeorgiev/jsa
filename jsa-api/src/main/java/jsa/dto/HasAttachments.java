@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author vesko
+ * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public interface HasAttachments {
 	

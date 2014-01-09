@@ -36,7 +36,7 @@ public class APIImplementationLocator {
 		APIPort port = apiPort.getAnnotation(APIPort.class);
 		if (port != null) {
 			switch (port.type()) {
-			case BRIDGE:
+			case ADAPTER:
 				return apiPort;
 			case DECORATOR:
 				return port.api();
