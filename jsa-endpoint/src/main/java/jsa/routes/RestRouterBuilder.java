@@ -2,11 +2,8 @@ package jsa.routes;
 
 import java.util.Map;
 
-import jsa.RestJSAProcessor;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.cxf.BusFactory;
@@ -50,10 +47,5 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 
 	protected RouteDefinition fromRestEndpoint(Class<?> restDecorator) throws Exception {
 		return from(restEndpoint(restDecorator));
-	}
-
-	@Override
-	protected Processor createProcessor() {
-		return new RestJSAProcessor(apiInterface, apiPortClass, injector, super.createProcessor());
 	}
 }

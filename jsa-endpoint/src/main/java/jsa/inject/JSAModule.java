@@ -17,13 +17,20 @@
  */
 package jsa.inject;
 
+import java.util.Arrays;
+
+import javax.inject.Inject;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+
 import jsa.ext.CxfRsComponentExt;
+
 import org.apache.bval.guice.ValidationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.guice.CamelModule;
+import org.apache.cxf.jaxrs.provider.ProviderFactory;
 
 /**
  *
@@ -35,11 +42,19 @@ public class JSAModule extends AbstractModule {
 	protected void configure() {
 		install(new CamelModule());
 		install(new ValidationModule());
+		bind(Initializer.class).asEagerSingleton();
 	}
 
 	@Provides
 	CxfRsComponent cxfRsComponent(CamelContext camelContext) {
 		CxfRsComponent cmp = new CxfRsComponentExt(camelContext);
 		return cmp;
+	}
+
+	private static class Initializer {
+		@Inject
+		public Initializer(JsGenerator jsGenerator) {
+			ProviderFactory.getSharedInstance().setUserProviders(Arrays.asList(jsGenerator));
+		}
 	}
 }
