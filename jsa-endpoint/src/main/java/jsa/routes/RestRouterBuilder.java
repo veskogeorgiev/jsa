@@ -21,7 +21,12 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 	@Override
 	public void configure() throws Exception {
 		CxfRsEndpoint endpoint = restEndpoint(apiPortClass);
+		
 		from(endpoint).process(createProcessor()).to("log:output");
+
+//		from(restEndpoint(ApiListingResourceJSON.class))
+//			.process(new SwaggerProcessor(injector))
+//			.to("log:output");
 	}
 
 	@Override

@@ -18,18 +18,11 @@
 
 package jsa.ext;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import javax.inject.Provider;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  *
@@ -37,39 +30,16 @@ import com.google.inject.TypeLiteral;
  */
 public class CxfRsEndpointExt extends CxfRsEndpoint {
 
-	private Injector injector;
+	private Provider<JAXRSServerFactoryBean> factoryBean;
 
-	public CxfRsEndpointExt(String endpointUri, Component component, Injector injector) {
+	public CxfRsEndpointExt(String endpointUri, Component component, Provider<JAXRSServerFactoryBean> factoryBean) {
 		super(endpointUri, component);
-		this.injector = injector;
+		this.factoryBean = factoryBean;
 	}
 
 	@Override
 	protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
-		JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
-
-		List<?> providers = bean.getProviders();
-
-		List<Object> newPorivders = new LinkedList<>(providers);
-		newPorivders.add(new JacksonJsonProvider());
-
-		bean.setProviders(newPorivders);
-
-		decorate(bean);
-
-		return bean;
+		return factoryBean.get();
 	}
 
-	private void decorate(JAXRSServerFactoryBean bean) {
-		TypeLiteral<Set<FactoryBeanDecorator>> type = new TypeLiteral<Set<FactoryBeanDecorator>>() {}; 
-	    try {
-			Set<FactoryBeanDecorator> decorators = injector.getInstance(Key.get(type));
-			for (FactoryBeanDecorator factoryBeanDecorator : decorators) {
-				factoryBeanDecorator.decorate(bean);
-			}
-		}
-		catch (Exception e) {
-			// no providers
-		}
-	}
 }

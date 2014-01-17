@@ -44,7 +44,8 @@ public class APIImplementationLocator {
 				break;
 			}
 		}
-		throw new RuntimeException("");
+		return apiPort;
+//		throw new RuntimeException("");
 	}
 
 //	private final Class<T> apiInterface;

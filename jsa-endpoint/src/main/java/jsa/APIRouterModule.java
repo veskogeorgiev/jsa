@@ -27,8 +27,6 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 
 	protected List<RoutesBuilder> routesInstances = new LinkedList<>();
 
-//	protected Class<? extends Ifc> bridgeClass;
-	
 	public APIRouterModule(Class<Ifc> apiInterface) {
 		this.apiInterface = apiInterface;
 	}
@@ -58,10 +56,6 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 		return this;
 	}
 
-//	protected void bindBridge(Class<? extends Ifc> cls) {
-//		this.bridgeClass = cls;
-//	}
-
 	@Override
 	protected final void configure() {
 		Multibinder<RoutesBuilder> uriBinder = Multibinder.newSetBinder(binder(), RoutesBuilder.class);
@@ -73,12 +67,9 @@ public class APIRouterModule<Ifc> extends AbstractModule {
 			uriBinder.addBinding().toInstance(rb);
 		}
 
-//		if (bridgeClass != null) {
-//			bind(apiInterface).annotatedWith(ImplementorBrigde.class).to(bridgeClass);
-//		}
-		customBindings();
+		customBindings(uriBinder);
 	}
-	
-	protected void customBindings() {
+
+	protected void customBindings(Multibinder<RoutesBuilder> uriBinder) {
 	}
 }

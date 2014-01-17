@@ -18,31 +18,42 @@
 package jsa.inject;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-
 import jsa.ext.CxfRsComponentExt;
+import lombok.extern.java.Log;
 
 import org.apache.bval.guice.ValidationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.guice.CamelModule;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.Multibinder;
 
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
+@Log
 public class JSAModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
 		install(new CamelModule());
 		install(new ValidationModule());
+
+		Multibinder<FactoryBeanDecorator> multibinder = Multibinder.newSetBinder(binder(), FactoryBeanDecorator.class);
+		multibinder.addBinding().to(DefaultFactoryBeanDecorator.class);
+
 		bind(Initializer.class).asEagerSingleton();
 	}
 
@@ -54,9 +65,29 @@ public class JSAModule extends AbstractModule {
 		return cmp;
 	}
 
+	@Provides
+	JAXRSServerFactoryBean factoryBean(Injector injector) {
+		JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
+
+		// decorate the factory bean if any decorators are defined
+		try {
+			Set<FactoryBeanDecorator> decorators = injector.getInstance(
+					Key.get(new TypeLiteral<Set<FactoryBeanDecorator>>() {}));
+			for (FactoryBeanDecorator decorator : decorators) {
+				decorator.decorate(bean);
+			}
+		}
+		catch (Exception e) {
+			log.info("No FactoryBeanDecorator found");
+		}
+
+		return bean;
+	}
+
 	private static class Initializer {
 		@Inject
 		public Initializer(JsGenerator jsGenerator) {
+			// add custom request processor to intercept "?_js" query path
 			ProviderFactory.getSharedInstance().setUserProviders(Arrays.asList(jsGenerator));
 		}
 	}

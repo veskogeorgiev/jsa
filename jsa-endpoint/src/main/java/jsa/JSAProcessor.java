@@ -42,7 +42,6 @@ public class JSAProcessor implements Processor {
 		catch (NotImplementedException e) {
 			methodRepository = new MethodRepository(null);
 		}
-
 	}
 
 	@Override
@@ -58,6 +57,9 @@ public class JSAProcessor implements Processor {
 			Object response = method.invoke(serviceInstance, body);
 
 			exchange.getOut().setBody(response);
+			exchange.getOut().setHeader("Access-Control-Allow-Origin", "*");
+		    exchange.getOut().setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+		    exchange.getOut().setHeader("Access-Control-Allow-Headers", "Content-Type");
 
 			// In order for the multicast to work we shallow copy the attachment
 			// streams in the header so the appropriate route can process them
@@ -96,6 +98,10 @@ public class JSAProcessor implements Processor {
 				for (Method m : cls.getDeclaredMethods()) {
 					methodsByName(m.getName()).add(m);
 				}
+				for (Method m : cls.getMethods()) {
+					methodsByName(m.getName()).add(m);
+				}
+
 			}
 		}
 		

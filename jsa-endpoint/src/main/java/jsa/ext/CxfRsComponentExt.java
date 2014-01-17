@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -29,8 +30,7 @@ import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-
-import com.google.inject.Injector;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
 /**
  *
@@ -38,7 +38,7 @@ import com.google.inject.Injector;
  */
 public class CxfRsComponentExt extends CxfRsComponent {
 
-	@Inject private Injector injector; 
+	@Inject private Provider<JAXRSServerFactoryBean> factoryBean;
 	
 	public CxfRsComponentExt(CamelContext context) {
 		super(context);
@@ -46,7 +46,7 @@ public class CxfRsComponentExt extends CxfRsComponent {
 
 	@Override
 	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		CxfRsEndpoint answer = new CxfRsEndpointExt(remaining, this, injector);
+		CxfRsEndpoint answer = new CxfRsEndpointExt(remaining, this, factoryBean);
 
 		String resourceClass = getAndRemoveParameter(parameters, "resourceClass", String.class);
 		if (resourceClass != null) {
