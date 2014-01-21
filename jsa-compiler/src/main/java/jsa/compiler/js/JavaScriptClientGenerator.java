@@ -6,7 +6,7 @@ import jsa.compiler.AbstractSourceGenerator;
 import jsa.compiler.SourceFile;
 import jsa.compiler.meta.Field;
 import jsa.compiler.meta.rest.RestResourceMeta;
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.meta.ServiceAPIMetaData;
 import jsa.compiler.meta.ServiceMethod;
 import jsa.compiler.meta.types.ComplexType;
 import jsa.compiler.meta.types.CustomType;
@@ -27,7 +27,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 
 	private static final String HTTP_INTERFACE = "HttpInterface";
 
-	private ServiceAPI api;
+	private ServiceAPIMetaData api;
 	private RestResourceMeta restMeta;
 
 	private String apiName;
@@ -41,7 +41,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 	}
 
 	@Override
-	public List<SourceFile> write(ServiceAPI api) {
+	public List<SourceFile> write(ServiceAPIMetaData api) {
 		init(api);
 
 		writeHeader();
@@ -132,7 +132,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 		sf.blockClose();
 	}
 
-	private void init(ServiceAPI api) {
+	private void init(ServiceAPIMetaData api) {
 		this.api = api;
 		this.restMeta = new RestResourceMeta(api.getApiPort());
 		this.apiName = String.format("%s.%s", namespace, api.getName());

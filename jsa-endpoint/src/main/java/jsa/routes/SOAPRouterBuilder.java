@@ -2,6 +2,7 @@ package jsa.routes;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.cxf.BusFactory;
@@ -12,13 +13,13 @@ import org.apache.cxf.BusFactory;
  */
 public class SOAPRouterBuilder extends AbstractRouterBuilder {
 
-	public SOAPRouterBuilder(Class<?> apiInterface, Class<?> soapPort) {
-		super(apiInterface, soapPort);
+	public SOAPRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
+		super(apiInterface, apiPort, processor);
 	}
 
 	@Override
 	public void configure() throws Exception {
-		fromSoapEndpoint().process(createProcessor()).to("log:output");
+		fromSoapEndpoint().process(processor).to("log:output");
 	}
 
 	@Override

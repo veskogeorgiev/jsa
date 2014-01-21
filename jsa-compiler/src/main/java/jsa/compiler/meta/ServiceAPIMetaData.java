@@ -11,7 +11,7 @@ import lombok.Data;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Data
-public class ServiceAPI {
+public class ServiceAPIMetaData {
 
 	private String name;
 	private ServiceVersion version;
@@ -33,10 +33,10 @@ public class ServiceAPI {
 	public static class Builder {
 
 		public Builder() {
-			this.item = new ServiceAPI();
+			this.item = new ServiceAPIMetaData();
 		}
 
-		private final ServiceAPI item;
+		private final ServiceAPIMetaData item;
 
 		public Builder name(final String name) {
 			this.item.name = name;
@@ -64,7 +64,7 @@ public class ServiceAPI {
 			return this;
 		}
 
-		public ServiceAPI build() {
+		public ServiceAPIMetaData build() {
 			return this.item;
 		}
 	}

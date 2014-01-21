@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class ServiceMethod {
 
-	private ServiceAPI api;
+	private ServiceAPIMetaData api;
 	private String name;
 	private Type returnType;
 	private List<Type> arguments = new LinkedList<>();

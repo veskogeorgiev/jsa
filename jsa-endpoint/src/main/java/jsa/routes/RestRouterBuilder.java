@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.cxf.BusFactory;
@@ -14,19 +15,19 @@ import org.apache.cxf.BusFactory;
  */
 public class RestRouterBuilder extends AbstractRouterBuilder {
 
-	public RestRouterBuilder(Class<?> apiInterface, Class<?> restDecorator) {
-		super(apiInterface, restDecorator);
+	public RestRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
+		super(apiInterface, apiPort, processor);
 	}
 
 	@Override
 	public void configure() throws Exception {
-		CxfRsEndpoint endpoint = restEndpoint(apiPortClass);
-		
-		from(endpoint).process(createProcessor()).to("log:output");
+		CxfRsEndpoint endpoint = restEndpoint(apiPort);
 
-//		from(restEndpoint(ApiListingResourceJSON.class))
-//			.process(new SwaggerProcessor(injector))
-//			.to("log:output");
+		from(endpoint).process(processor).to("log:output");
+
+		//		from(restEndpoint(ApiListingResourceJSON.class))
+		//			.process(new SwaggerProcessor(injector))
+		//			.to("log:output");
 	}
 
 	@Override

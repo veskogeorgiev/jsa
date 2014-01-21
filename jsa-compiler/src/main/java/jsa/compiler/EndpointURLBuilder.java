@@ -6,7 +6,7 @@
 
 package jsa.compiler;
 
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.meta.ServiceAPIMetaData;
 import javax.inject.Singleton;
 
 /**
@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 @Singleton
 public class EndpointURLBuilder {
 	
-	public String buildRest(ServiceAPI sreviceAPI) {
+	public String buildRest(ServiceAPIMetaData sreviceAPI) {
 		return String.format("/%s/%s/rest", sreviceAPI.getName(), sreviceAPI.getVersion().getNumber());
 	}
 }

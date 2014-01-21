@@ -6,7 +6,7 @@
 
 package jsa.compiler;
 
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.meta.ServiceAPIMetaData;
 import java.util.List;
 
 /**
@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface ClientServiceGenerator {
 	
-	List<SourceFile> write(ServiceAPI serviceAPI);
+	List<SourceFile> write(ServiceAPIMetaData serviceAPI);
 }

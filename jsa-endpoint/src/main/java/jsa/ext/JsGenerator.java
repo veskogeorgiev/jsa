@@ -1,22 +1,4 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package jsa.inject;
+package jsa.ext;
 
 import java.util.List;
 
@@ -26,11 +8,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import jsa.annotations.APIPort;
-import jsa.compiler.APIProcessor;
+import jsa.compiler.APIInspector;
 import jsa.compiler.ClientServiceGenerator;
 import jsa.compiler.SourceFile;
 import jsa.compiler.js.JavaScriptClientGenerator;
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.meta.ServiceAPIMetaData;
 
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.impl.UriInfoImpl;
@@ -48,7 +30,7 @@ public class JsGenerator implements RequestHandler {
 	public static final String JS_QUERY = "_js";
 	public static final MediaType JS_TYPE = JAXRSUtils.toMediaType(MediaType.TEXT_PLAIN);
 
-	@Inject private APIProcessor apiProcessor;
+	@Inject private APIInspector apiProcessor;
 
 	@Override
 	public Response handleRequest(Message m, ClassResourceInfo resource) {
@@ -77,7 +59,7 @@ public class JsGenerator implements RequestHandler {
 	}
 
 	private List<SourceFile> generateJavaScriptSources(Class<?> apiInterface, Class<?> apiPort) {
-		ServiceAPI api = apiProcessor.process(apiInterface, apiPort);
+		ServiceAPIMetaData api = apiProcessor.process(apiInterface, apiPort);
 		ClientServiceGenerator csg = new JavaScriptClientGenerator();
 		List<SourceFile> res = csg.write(api);
 		return res;

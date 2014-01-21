@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package jsa.compiler.meta.refl;
 
 import java.lang.annotation.Annotation;
@@ -18,6 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.reflect.TypeResolver;
+import com.google.common.reflect.TypeToken;
 
 /**
  *
@@ -43,6 +40,10 @@ public class ReflectionUtils {
 		return ret;
 	}
 
+	public static <T> Class<?> getTypeArgument(Class<T> baseClass, Class<? extends T> childClass) {
+		return getTypeArguments(baseClass, childClass).get(0);
+	}
+		
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Taken from Taken from http://www.artima.com/weblogs/viewpost.jsp?thread=208860
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +69,16 @@ public class ReflectionUtils {
 			else {
 				return null;
 			}
+		}
+		else if (type instanceof TypeVariable) {
+			TypeResolver tr = new TypeResolver();
+			Type t = tr.resolveType(type);
+			
+			TypeVariable<?> tv = (TypeVariable<?>) type;
+			TypeToken<?> tk = TypeToken.of(tv.getGenericDeclaration().getClass());
+			Class<?> cls = tk.getRawType();
+
+			return null;
 		}
 		else {
 			return null;

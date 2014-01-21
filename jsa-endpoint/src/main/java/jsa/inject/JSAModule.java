@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
+ * Copyright (C) 2013 <a href="mailto:vesko.georgiev@icloud.com">Vesko Georgiev</a>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +23,9 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import jsa.ext.CxfRsComponentExt;
+import jsa.ext.JsGenerator;
 import lombok.extern.java.Log;
 
-import org.apache.bval.guice.ValidationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.guice.CamelModule;
@@ -34,10 +34,7 @@ import org.apache.cxf.jaxrs.provider.ProviderFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.Multibinder;
 
 /**
  *
@@ -49,10 +46,6 @@ public class JSAModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		install(new CamelModule());
-		install(new ValidationModule());
-
-		Multibinder<FactoryBeanDecorator> multibinder = Multibinder.newSetBinder(binder(), FactoryBeanDecorator.class);
-		multibinder.addBinding().to(DefaultFactoryBeanDecorator.class);
 
 		bind(Initializer.class).asEagerSingleton();
 	}
@@ -66,14 +59,14 @@ public class JSAModule extends AbstractModule {
 	}
 
 	@Provides
-	JAXRSServerFactoryBean factoryBean(Injector injector) {
+	JAXRSServerFactoryBean factoryBean(Injector injector, Set<JaxRsFactoryBeanDecorator> decorators) {
 		JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
 
 		// decorate the factory bean if any decorators are defined
 		try {
-			Set<FactoryBeanDecorator> decorators = injector.getInstance(
-					Key.get(new TypeLiteral<Set<FactoryBeanDecorator>>() {}));
-			for (FactoryBeanDecorator decorator : decorators) {
+//			Set<JaxRsFactoryBeanDecorator> decorators = injector.getInstance(
+//					Key.get(new TypeLiteral<Set<JaxRsFactoryBeanDecorator>>() {}));
+			for (JaxRsFactoryBeanDecorator decorator : decorators) {
 				decorator.decorate(bean);
 			}
 		}

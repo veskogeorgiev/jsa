@@ -1,4 +1,4 @@
-package jsa;
+package jsa.proc;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -7,40 +7,41 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
+import jsa.NotImplementedException;
 import jsa.dto.HasAttachments;
-import jsa.routes.APIImplementationLocator;
+import jsa.inject.PortImplementationLocator;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-
-import com.google.inject.Injector;
 
 /**
  * 
- * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class JSAProcessor implements Processor {
+public class DefaultJSAProcessor implements APIPortProcessor {
 
 	protected final Class<?> apiPort;
 
-	protected final Injector injector;
+	protected volatile MethodRepository methodRepository;
+	protected volatile Object serviceInstance;
 
-	protected MethodRepository methodRepository;
-
-	private Object serviceInstance;
-
-	public JSAProcessor(Class<?> apiPort, Injector injector) {
+	public DefaultJSAProcessor(@NotNull Class<?> apiPort) {
 		this.apiPort = apiPort;
-		this.injector = injector;
+	}
 
-		try {
-			this.serviceInstance = APIImplementationLocator.locateServiceImplementor(apiPort, injector);
+	public DefaultJSAProcessor(@NotNull Class<?> apiPort, @NotNull PortImplementationLocator locator) throws NotImplementedException {
+		this(apiPort);
+		init(locator);
+	}
+
+	@Inject
+	private void init(PortImplementationLocator locator) throws NotImplementedException {
+		if (methodRepository == null) {
+			this.serviceInstance = locator.locateServiceImplementor(apiPort);
 			methodRepository = new MethodRepository(serviceInstance.getClass());
-		}
-		catch (NotImplementedException e) {
-			methodRepository = new MethodRepository(null);
 		}
 	}
 
@@ -50,6 +51,8 @@ public class JSAProcessor implements Processor {
 		if (operationName == null) {
 			return;
 		}
+		// init method repository
+
 		Object[] body = exchange.getIn().getBody(Object[].class);
 		Method method = findMethod(operationName, body);
 
@@ -57,9 +60,6 @@ public class JSAProcessor implements Processor {
 			Object response = method.invoke(serviceInstance, body);
 
 			exchange.getOut().setBody(response);
-			exchange.getOut().setHeader("Access-Control-Allow-Origin", "*");
-		    exchange.getOut().setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-		    exchange.getOut().setHeader("Access-Control-Allow-Headers", "Content-Type");
 
 			// In order for the multicast to work we shallow copy the attachment
 			// streams in the header so the appropriate route can process them
@@ -81,8 +81,8 @@ public class JSAProcessor implements Processor {
 		}
 	}
 
-	private Method findMethod(String operationName, Object[] parameters)
-			throws SecurityException, NoSuchMethodException {
+	private Method findMethod(String operationName, Object[] parameters) throws SecurityException,
+			NoSuchMethodException {
 		return methodRepository.singleMethod(operationName, parameters);
 	}
 
@@ -104,7 +104,7 @@ public class JSAProcessor implements Processor {
 
 			}
 		}
-		
+
 		public List<Method> methodsByName(String methodName) {
 			List<Method> res = nameToMethod.get(methodName);
 			if (res == null) {
@@ -113,8 +113,9 @@ public class JSAProcessor implements Processor {
 			}
 			return res;
 		}
-		
-		public Method singleMethod(String methodName, Object[] parameters) throws NoSuchMethodException {
+
+		public Method singleMethod(String methodName, Object[] parameters)
+				throws NoSuchMethodException {
 			List<Method> possibleMethods = methodsByName(methodName);
 			for (Method method : possibleMethods) {
 				if (method.getParameterTypes().length == parameters.length) {
@@ -123,18 +124,5 @@ public class JSAProcessor implements Processor {
 			}
 			throw new NoSuchMethodException();
 		}
-		
-//		private Class<?>[] getParameterTypes(Object[] parameters) {
-//			if (parameters == null) {
-//				return new Class[0];
-//			}
-//			Class<?>[] answer = new Class[parameters.length];
-//			int i = 0;
-//			for (Object object : parameters) {
-//				answer[i] = object != null ? object.getClass() : Object.class;
-//				i++;
-//			}
-//			return answer;
-//		}
 	}
 }

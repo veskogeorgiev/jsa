@@ -1,7 +1,7 @@
 package jsa.compiler;
 
 import jsa.annotations.API;
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.meta.ServiceAPIMetaData;
 import jsa.compiler.meta.ServiceMethod;
 import jsa.compiler.meta.types.TypeFactory;
 
@@ -17,7 +17,7 @@ import jsa.compiler.meta.ServiceVersion;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Singleton
-public class APIProcessor {
+public class APIInspector {
 
 	private static final API.Version DEFAULT_VERSION = new API.Version() {
 		
@@ -41,16 +41,16 @@ public class APIProcessor {
 //		return process(apiInterface, apiInterface);
 //	}
 
-	public ServiceAPI process(Class<?> apiInterface, Class<?> endpointClass) {
-		ServiceAPI.Builder builder = ServiceAPI.builder();
+	public ServiceAPIMetaData process(Class<?> apiInterface, Class<?> portClass) {
+		ServiceAPIMetaData.Builder builder = ServiceAPIMetaData.builder();
 		builder.name(apiInterface.getSimpleName());
-		builder.apiPort(endpointClass);
+		builder.apiPort(portClass);
 
 		API api = apiInterface.getAnnotation(API.class);
 		API.Version version = api != null ? api.version() : DEFAULT_VERSION;
 		builder.version(new ServiceVersion(version.number(), version.tag()));
 
-		for (Method m : endpointClass.getDeclaredMethods()) {
+		for (Method m : portClass.getDeclaredMethods()) {
 			builder.method(createMethod(m));
 		}
 		return builder.build();

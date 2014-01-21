@@ -99,16 +99,6 @@
 				<artifactId>validation-api</artifactId>
 				<version>1.1.0.Final</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.bval</groupId>
-				<artifactId>bval-core</artifactId>
-				<version>${bval.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.bval</groupId>
-				<artifactId>bval-guice</artifactId>
-				<version>${bval.version}</version>
-			</dependency>
 
 			<!-- Other -->
 			<dependency>

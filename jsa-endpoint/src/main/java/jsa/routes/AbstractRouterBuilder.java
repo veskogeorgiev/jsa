@@ -6,10 +6,12 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import jsa.JSAProcessor;
+import jsa.NotImplementedException;
 import jsa.annotations.APIPort;
-import jsa.compiler.APIProcessor;
-import jsa.compiler.meta.ServiceAPI;
+import jsa.compiler.APIInspector;
+import jsa.compiler.meta.ServiceAPIMetaData;
+import jsa.inject.PortImplementationLocator;
+import jsa.proc.DefaultJSAProcessor;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,41 +26,52 @@ import com.google.inject.Injector;
 public abstract class AbstractRouterBuilder extends RouteBuilder {
 
 	@Inject protected Injector injector;
-
-	@Inject protected APIProcessor processor;
+	@Inject protected APIInspector inspector;
 
 	protected final Class<?> apiInterface;
-	protected final Class<?> apiPortClass;
-	protected final APIPort apiPort;
+	protected final Class<?> apiPort;
+	protected final APIPort apiPortMeta;
 
-	private ServiceAPI serviceAPI;
+	protected Processor processor;
 
-	public AbstractRouterBuilder(Class<?> apiInterface, Class<?> apiPortClass) {
+	protected ServiceAPIMetaData serviceMeta;
+
+	public AbstractRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
 		this.apiInterface = apiInterface;
-		this.apiPortClass = apiPortClass;
-		this.apiPort = apiPortClass.getAnnotation(APIPort.class);
+		this.apiPort = apiPort;
+		this.apiPortMeta = apiPort.getAnnotation(APIPort.class);
 
-		Preconditions.checkNotNull(apiPort,
+		Preconditions.checkNotNull(apiPortMeta,
 				"If class %s is to be used as a port it must be annotated with @APIPort.");
+
+		this.processor = processor;
 	}
 
-	public ServiceAPI getServiceAPI() {
-		if (serviceAPI == null) {
-			serviceAPI = processor.process(apiInterface, apiPortClass);
+	@Inject
+	private void init(PortImplementationLocator locator) throws NotImplementedException {
+		if (processor == null) {
+			processor = new DefaultJSAProcessor(apiPort, locator);
 		}
-		return serviceAPI;
+	}
+
+	public ServiceAPIMetaData getServiceAPI() {
+		if (serviceMeta == null) {
+			serviceMeta = inspector.process(apiInterface, apiPort);
+		}
+		return serviceMeta;
 	}
 
 	protected Map<String, String> getDefaultParams() {
 		Map<String, String> params = new HashMap<>();
-		params.put("serviceClass", apiPortClass.getName());
+		params.put("serviceClass", apiPort.getName());
 		params.put("setDefaultBus", "true");
 
 		return params;
 	}
 
 	protected String defaultEndpointAddress(String protocol, String params) {
-		return String.format("%s://%s/%s?%s", protocol, getServiceAPI().getUrl(), apiPort.context(), params);
+		return String.format("%s://%s/%s?%s", protocol, getServiceAPI().getUrl(),
+				apiPortMeta.context(), params);
 	}
 
 	protected String defaultEndpointAddress(String protocol) {
@@ -77,7 +90,4 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 		return builder.substring(0, builder.length() - 1).toString();
 	}
 
-	protected Processor createProcessor() {
-		return new JSAProcessor(apiPortClass, injector);
-	}
 }
