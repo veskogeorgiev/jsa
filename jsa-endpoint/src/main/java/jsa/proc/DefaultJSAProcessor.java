@@ -15,13 +15,14 @@ import jsa.dto.HasAttachments;
 import jsa.inject.PortImplementationLocator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class DefaultJSAProcessor implements APIPortProcessor {
+public class DefaultJSAProcessor implements Processor {
 
 	protected final Class<?> apiPort;
 
