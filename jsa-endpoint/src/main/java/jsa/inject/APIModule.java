@@ -10,6 +10,7 @@ import jsa.annotations.API;
 import jsa.compiler.meta.refl.ReflectionUtils;
 import jsa.proc.DefaultJSAProcessor;
 import jsa.routes.RestRouterBuilder;
+import jsa.routes.RouteWithProcessor;
 import jsa.routes.SOAPRouterBuilder;
 
 import org.apache.camel.Processor;
@@ -38,6 +39,9 @@ public class APIModule<Ifc> extends AbstractModule {
 	}
 
 	public APIModule<Ifc> addRoute(RoutesBuilder builder) {
+		if (builder instanceof RouteWithProcessor) {
+			processors.add(((RouteWithProcessor) builder).getProcessor());
+		}
 		routesInstances.add(builder);
 		return this;
 	}

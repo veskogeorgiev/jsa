@@ -12,6 +12,7 @@ import jsa.compiler.APIInspector;
 import jsa.compiler.meta.ServiceAPIMetaData;
 import jsa.inject.PortImplementationLocator;
 import jsa.proc.DefaultJSAProcessor;
+import lombok.Getter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,7 +24,7 @@ import com.google.inject.Injector;
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouterBuilder extends RouteBuilder {
+public abstract class AbstractRouterBuilder extends RouteBuilder implements RouteWithProcessor {
 
 	@Inject protected Injector injector;
 	@Inject protected APIInspector inspector;
@@ -32,7 +33,7 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 	protected final Class<?> apiPort;
 	protected final APIPort apiPortMeta;
 
-	protected Processor processor;
+	protected @Getter Processor processor;
 
 	protected ServiceAPIMetaData serviceMeta;
 
