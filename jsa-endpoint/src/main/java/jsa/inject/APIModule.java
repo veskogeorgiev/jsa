@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import jsa.annotations.API;
 import jsa.compiler.meta.refl.ReflectionUtils;
 import jsa.proc.DefaultJSAProcessor;
 import jsa.routes.RestRouterBuilder;
@@ -14,6 +15,7 @@ import jsa.routes.SOAPRouterBuilder;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
@@ -30,6 +32,8 @@ public class APIModule<Ifc> extends AbstractModule {
 	@SuppressWarnings("unchecked")
 	public APIModule(RoutesBuilder... rbs) {
 		this.apiInterface = (Class<Ifc>) ReflectionUtils.getTypeArgument(APIModule.class, getClass());
+		Preconditions.checkState(apiInterface.isAnnotationPresent(API.class), 
+				String.format("%s is used to create %s, but it is not annotated with @API", apiInterface, getClass()));
 		routesInstances.addAll(Arrays.asList(rbs));
 	}
 

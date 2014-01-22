@@ -71,13 +71,6 @@ public class ReflectionUtils {
 			}
 		}
 		else if (type instanceof TypeVariable) {
-			TypeResolver tr = new TypeResolver();
-			Type t = tr.resolveType(type);
-			
-			TypeVariable<?> tv = (TypeVariable<?>) type;
-			TypeToken<?> tk = TypeToken.of(tv.getGenericDeclaration().getClass());
-			Class<?> cls = tk.getRawType();
-
 			return null;
 		}
 		else {
