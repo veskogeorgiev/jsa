@@ -70,6 +70,15 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 		return finalizeSourceFiles();
 	}
 
+	private void init(ServiceAPIMetaData api) {
+		this.api = api;
+		this.restMeta = new RestResourceMeta(api.getApiPort());
+		this.apiName = String.format("%s.%s", namespace, api.getName());
+		sf = newSourceFile(api.getName(), "{", "}");
+
+		collectDtos();
+	}
+
 	private void writeHeader() {
 		sf.line("////////////////////////////////////////////////////////////");
 		sf.line("// %s version: %s", api.getName(), api.getVersion().getSingleString());
@@ -88,7 +97,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 	private void writeService() {
 		sf.blockOpen("%s = function(%s)", apiName, HTTP_INTERFACE);
 		sf.line("this.%s = %s", HTTP_INTERFACE, HTTP_INTERFACE);
-		sf.line("this.ctx = idg.url + '%s'", api.getApiPortContext());
+		sf.line("this.ctx = idg.url + '%s/%s'", api.getUrl(), api.getApiPortContext());
 		sf.blockClose();
 		sf.line("%s.prototype = {}", apiName);
 	}
@@ -109,8 +118,10 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 		sf.blockOpen("%s.prototype.%s = function(%s)", apiName, name, parameters);
 
 		String payload = buildPayload(rmm);
-		sf.line("return new %s(this.%s, this.ctx + %s, %s)",
-				getRequestType(rmm), HTTP_INTERFACE, url, payload);
+		String httpMethod = rmm.getHttpMethod();
+		sf.line("return new %s(this.%s, '%s', this.ctx + %s, %s)",
+				getRequestType(rmm), HTTP_INTERFACE, httpMethod, url, payload);
+
 		sf.blockClose();
 	}
 
@@ -149,15 +160,6 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 		sf.blockClose();
 	}
 
-	private void init(ServiceAPIMetaData api) {
-		this.api = api;
-		this.restMeta = new RestResourceMeta(api.getApiPort());
-		this.apiName = String.format("%s.%s", namespace, api.getName());
-		sf = newSourceFile(api.getName(), "{", "}");
-
-		collectDtos();
-	}
-
 	private void collectDtos() {
 		for (ServiceMethod sm : api.getMethods()) {
 			addDtoType(sm.getReturnType());
@@ -187,7 +189,7 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 		List<String> functionalParams = rmm.getFunctionalParameters();
 		
 		if (rmm.isJSONEndcoded()) {
-			functionalParams.add("payload");
+			functionalParams.add("_payload");
 		}
 		return Joiner.on(", ").join(functionalParams);
 	}
@@ -200,7 +202,10 @@ public class JavaScriptClientGenerator extends AbstractSourceGenerator {
 			}
 			return buildJSONString(jsonObj);
 		}
-		return "payload";
+		if (rmm.isJSONEndcoded()) {
+			return "_payload";
+		}
+		return "null";
 	}
 	
 	private String buildJSONString(Map<String, String> map) {

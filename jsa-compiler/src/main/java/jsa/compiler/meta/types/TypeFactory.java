@@ -17,10 +17,16 @@
  *******************************************************************************/
 package jsa.compiler.meta.types;
 
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jsa.compiler.meta.Field;
+
+import com.google.common.base.Joiner;
 
 /**
  * 
@@ -28,10 +34,25 @@ import jsa.compiler.meta.Field;
  */
 public class TypeFactory {
 
-	private static final Map<Class<?>, Type> types = new HashMap<>();
+	private static final Map<Class<?>, Type> cache = new ConcurrentHashMap<>();
 
-	public static Type createType(Class<?> cls) {
-		Type ret = types.get(cls);
+	private Set<String> possiblePackages = new HashSet<String>();
+
+	public TypeFactory(List<Package> domainPackages) {
+		for (Package pckg : domainPackages) {
+			possiblePackages.addAll(getParentPackages(pckg));
+		}
+	}
+
+	public TypeFactory(Package ...domainPackages) {
+		for (Package pckg : domainPackages) {
+			possiblePackages.addAll(getParentPackages(pckg));
+		}
+	}
+
+	public Type createType(Package domainPackage, Class<?> cls) {
+		Type ret = cache.get(cls);
+
 		if (ret != null) {
 			return ret;
 		}
@@ -57,11 +78,16 @@ public class TypeFactory {
 		if (cls.isEnum()) {
 			ret = createEnumType(cls);
 		}
+
+		if (cls == Void.class || cls == void.class || !shouldProcess(cls)) {
+			ret = new Type.VoidType();
+		}
+
 		if (ret == null) {
 			ret = createComplexType(cls);
 		}
 
-		types.put(cls, ret);
+		cache.put(cls, ret);
 		return ret;
 
 		// TypeBinary
@@ -71,7 +97,7 @@ public class TypeFactory {
 		// TypeSet
 	}
 
-	public static EnumType createEnumType(Class<?> cls) {
+	public EnumType createEnumType(Class<?> cls) {
 		EnumType ret = new EnumType();
 		ret.setJavaType(cls);
 		ret.setName(cls.getSimpleName());
@@ -85,14 +111,39 @@ public class TypeFactory {
 		return ret;
 	}
 
-	public static ComplexType createComplexType(Class<?> cls) {
+	public ComplexType createComplexType(Class<?> cls) {
 		ComplexType type = new ComplexType();
 		type.setName(cls.getSimpleName());
 		type.setJavaType(cls);
 
 		for (java.lang.reflect.Field f : cls.getDeclaredFields()) {
-			type.getFields().add(new Field(createType(f.getType()), f.getName()));
+			type.getFields().add(new Field(createType(cls.getPackage(), f.getType()), f.getName()));
 		}
 		return type;
+	}
+
+	private boolean shouldProcess(Class<?> cls) {
+		if (cls.getPackage() == null) {
+			return false;
+		}
+		String packageName = cls.getPackage().getName();
+
+		for (String prefix : possiblePackages) {
+			if (packageName.startsWith(prefix)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private List<String> getParentPackages(Package pckg) {
+		List<String> res = new LinkedList<>();
+		List<String> builder = new LinkedList<>(); 
+
+		for (String part : pckg.getName().split("\\.")) {
+			builder.add(part);
+			res.add(Joiner.on(".").join(builder));
+		}
+		return res;
 	}
 }

@@ -54,10 +54,6 @@ public class APIInspector {
 		}
 	};
 
-//	public ServiceAPI process(Class<?> apiInterface) {
-//		return process(apiInterface, apiInterface);
-//	}
-
 	public ServiceAPIMetaData process(Class<?> apiInterface, Class<?> portClass) {
 		ServiceAPIMetaData.Builder builder = ServiceAPIMetaData.builder();
 		builder.name(apiInterface.getSimpleName());
@@ -67,21 +63,25 @@ public class APIInspector {
 		API.Version version = api != null ? api.version() : DEFAULT_VERSION;
 		builder.version(new ServiceVersion(version.number(), version.tag()));
 
+		TypeFactory typeFactory = new TypeFactory(apiInterface.getPackage(), portClass.getPackage());
+
 		for (Method m : portClass.getDeclaredMethods()) {
-			builder.method(createMethod(m));
+			builder.method(createMethod(typeFactory, m));
 		}
 		return builder.build();
 	}
 
-	private ServiceMethod createMethod(Method method) {
+	private ServiceMethod createMethod(TypeFactory typeFactory, Method method) {
 		ServiceMethod ret = new ServiceMethod();
 		ret.setName(method.getName());
 		ret.setMethod(method);
 
+		Package domainPackage = method.getDeclaringClass().getPackage();
+
 		for (Class<?> paramType : method.getParameterTypes()) {
-			ret.getArguments().add(TypeFactory.createType(paramType));
+			ret.getArguments().add(typeFactory.createType(domainPackage, paramType));
 		}
-		ret.setReturnType(TypeFactory.createType(method.getReturnType()));
+		ret.setReturnType(typeFactory.createType(domainPackage, method.getReturnType()));
 		return ret;
 	}
 }

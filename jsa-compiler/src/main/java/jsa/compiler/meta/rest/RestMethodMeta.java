@@ -26,12 +26,16 @@ package jsa.compiler.meta.rest;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import jsa.compiler.meta.refl.AnnotatedParameter;
 import jsa.compiler.meta.refl.ReflectionUtils;
 
@@ -103,6 +107,16 @@ public class RestMethodMeta {
 			}
 		}
 		return false;
+	}
+
+	public String getHttpMethod() {
+		if (method.isAnnotationPresent(POST.class)) {
+			return "POST";
+		}
+		if (method.isAnnotationPresent(GET.class)) {
+			return "GET";
+		}
+		return "POST";
 	}
 
 	private String getPath(Path path) {

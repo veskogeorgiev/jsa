@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import jsa.NotImplementedException;
 import jsa.dto.HasAttachments;
 import jsa.inject.PortImplementationLocator;
+import lombok.extern.java.Log;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -39,6 +40,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
+@Log
 public class DefaultJSAProcessor implements Processor {
 
 	protected final Class<?> apiPort;
@@ -75,6 +77,8 @@ public class DefaultJSAProcessor implements Processor {
 		Method method = findMethod(operationName, body);
 
 		try {
+			log.info("Executing API method : " + method);
+
 			Object response = method.invoke(serviceInstance, body);
 
 			exchange.getOut().setBody(response);

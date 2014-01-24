@@ -32,6 +32,10 @@ import lombok.Setter;
  */
 public class Type {
 
+	public static class VoidType extends Type {
+		
+	}
+
 	public static class TypeBool extends Type {
 		
 	}
