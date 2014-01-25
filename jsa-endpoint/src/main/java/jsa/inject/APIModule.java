@@ -27,6 +27,8 @@ import jsa.annotations.API;
 import jsa.compiler.meta.refl.ReflectionUtils;
 import jsa.routes.APIPortProcessor;
 import jsa.routes.CustomProcessor;
+import jsa.routes.HasPorcessor;
+import jsa.routes.ProcessorDecorator;
 import jsa.routes.RestRouterBuilder;
 import jsa.routes.SOAPRouterBuilder;
 
@@ -57,29 +59,40 @@ public abstract class APIModule<Ifc> extends AbstractModule {
 
 	public APIModule<Ifc> addRoute(RoutesBuilder builder) {
 		routesInstances.add(builder);
+		if (builder instanceof HasPorcessor) {
+			processors.add(((HasPorcessor) builder).getProcessor());
+		}
 		return this;
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, CustomProcessor customProcessor) {
-		APIPortProcessor processor = new APIPortProcessor(restPort, customProcessor);
-		processors.add(processor);
-		addRoute(new RestRouterBuilder(apiInterface, restPort, processor));
-		return this;
+		return addRoute(new RestRouterBuilder(restPort,
+				new APIPortProcessor(restPort, customProcessor)));
+	}
+
+	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, ProcessorDecorator decorator) {
+		return addRoute(new RestRouterBuilder(restPort,
+				new APIPortProcessor(restPort, decorator)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort) {
-		return exposeRest(restPort, null);
+		return addRoute(new RestRouterBuilder(restPort,
+				new APIPortProcessor(restPort)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, CustomProcessor customProcessor) {
-		APIPortProcessor processor = new APIPortProcessor(soapPort, customProcessor);
-		processors.add(processor);
-		addRoute(new SOAPRouterBuilder(apiInterface, soapPort, processor));
-		return this;
+		return addRoute(new SOAPRouterBuilder(soapPort, 
+				new APIPortProcessor(soapPort, customProcessor)));
+	}
+
+	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, ProcessorDecorator decorator) {
+		return addRoute(new SOAPRouterBuilder(soapPort, 
+				new APIPortProcessor(soapPort, decorator)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort) {
-		return exposeSoap(soapPort, null);
+		return addRoute(new SOAPRouterBuilder(soapPort, 
+				new APIPortProcessor(soapPort)));
 	}
 
 	@Override

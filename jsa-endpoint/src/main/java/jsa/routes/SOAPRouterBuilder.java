@@ -30,8 +30,8 @@ import org.apache.cxf.BusFactory;
  */
 public class SOAPRouterBuilder extends AbstractRouterBuilder {
 
-	public SOAPRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
-		super(apiInterface, apiPort, processor);
+	public SOAPRouterBuilder(Class<?> apiPort, Processor processor) {
+		super(apiPort, processor);
 	}
 
 	@Override

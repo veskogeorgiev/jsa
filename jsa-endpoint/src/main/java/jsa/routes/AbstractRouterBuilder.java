@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import jsa.annotations.APIPort;
 import jsa.compiler.APIInspector;
 import jsa.compiler.meta.ServiceAPIMetaData;
+import lombok.Getter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +38,7 @@ import com.google.inject.Injector;
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouterBuilder extends RouteBuilder {
+public abstract class AbstractRouterBuilder extends RouteBuilder implements HasPorcessor {
 
 	@Inject protected Injector injector;
 	@Inject protected APIInspector inspector;
@@ -46,17 +47,17 @@ public abstract class AbstractRouterBuilder extends RouteBuilder {
 	protected final Class<?> apiPort;
 	protected final APIPort apiPortMeta;
 
-	protected Processor processor;
+	protected @Getter Processor processor;
 
 	protected ServiceAPIMetaData serviceMeta;
 
-	public AbstractRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
-		this.apiInterface = apiInterface;
+	public AbstractRouterBuilder(Class<?> apiPort, Processor processor) {
 		this.apiPort = apiPort;
 		this.apiPortMeta = apiPort.getAnnotation(APIPort.class);
-
 		Preconditions.checkNotNull(apiPortMeta,
 				"If class %s is to be used as a port it must be annotated with @APIPort.");
+
+		this.apiInterface = apiPortMeta.api();
 
 		this.processor = processor;
 	}

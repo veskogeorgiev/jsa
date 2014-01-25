@@ -45,14 +45,21 @@ public class APIPortProcessor implements Processor {
 	protected Object serviceInstance;
 
 	private CustomProcessor customProcessor;
+	private ProcessorDecorator decorator;
 
 	public APIPortProcessor(Class<?> apiPort, CustomProcessor customProcessor) {
 		this.apiPort = apiPort;
 		this.customProcessor = customProcessor;
+		this.decorator = new EmptyDecorator();
+	}
+
+	public APIPortProcessor(Class<?> apiPort, ProcessorDecorator decorator) {
+		this.apiPort = apiPort;
+		this.decorator = decorator != null ? decorator : EmptyDecorator.INSTANCE;
 	}
 
 	public APIPortProcessor(Class<?> apiPort) {
-		this(apiPort, null);
+		this(apiPort, EmptyDecorator.INSTANCE);
 	}
 
 	@Inject
@@ -86,8 +93,13 @@ public class APIPortProcessor implements Processor {
 		else {
 			try {
 				log.info("Execute API method : " + method);
+
+				decorator.beforeInvocation(exchange);
+
 				Object response = invCtx.invoke();
 				exchange.getOut().setBody(response);
+
+				decorator.beforeInvocation(exchange);
 			}
 			catch (InvocationTargetException e) {
 				throw (Exception) e.getCause();
@@ -104,4 +116,21 @@ public class APIPortProcessor implements Processor {
 		return exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
 	}
 
+	private static class EmptyDecorator implements ProcessorDecorator {
+		private static final EmptyDecorator INSTANCE = new EmptyDecorator();
+		
+		private EmptyDecorator() {
+			// no allocation, please
+		}
+	
+		@Override
+		public void beforeInvocation(Exchange exchange) {
+			// empty
+		}
+
+		@Override
+		public void afterInvocation(Exchange exchange) {
+			// empty			
+		}
+	}
 }

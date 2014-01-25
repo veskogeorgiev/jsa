@@ -32,8 +32,8 @@ import org.apache.cxf.BusFactory;
  */
 public class RestRouterBuilder extends AbstractRouterBuilder {
 
-	public RestRouterBuilder(Class<?> apiInterface, Class<?> apiPort, Processor processor) {
-		super(apiInterface, apiPort, processor);
+	public RestRouterBuilder(Class<?> apiPort, Processor processor) {
+		super(apiPort, processor);
 	}
 
 	@Override
@@ -41,10 +41,6 @@ public class RestRouterBuilder extends AbstractRouterBuilder {
 		CxfRsEndpoint endpoint = restEndpoint(apiPort);
 
 		from(endpoint).process(processor).to("log:output");
-
-		//		from(restEndpoint(ApiListingResourceJSON.class))
-		//			.process(new SwaggerProcessor(injector))
-		//			.to("log:output");
 	}
 
 	@Override
