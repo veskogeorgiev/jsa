@@ -30,9 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.reflect.TypeResolver;
-import com.google.common.reflect.TypeToken;
-
 /**
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>

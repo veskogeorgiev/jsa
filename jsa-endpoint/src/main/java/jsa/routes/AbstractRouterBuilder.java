@@ -23,13 +23,9 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import jsa.NotImplementedException;
 import jsa.annotations.APIPort;
 import jsa.compiler.APIInspector;
 import jsa.compiler.meta.ServiceAPIMetaData;
-import jsa.inject.PortImplementationLocator;
-import jsa.proc.DefaultJSAProcessor;
-import lombok.Getter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +37,7 @@ import com.google.inject.Injector;
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouterBuilder extends RouteBuilder implements RouteWithProcessor {
+public abstract class AbstractRouterBuilder extends RouteBuilder {
 
 	@Inject protected Injector injector;
 	@Inject protected APIInspector inspector;
@@ -50,7 +46,7 @@ public abstract class AbstractRouterBuilder extends RouteBuilder implements Rout
 	protected final Class<?> apiPort;
 	protected final APIPort apiPortMeta;
 
-	protected @Getter Processor processor;
+	protected Processor processor;
 
 	protected ServiceAPIMetaData serviceMeta;
 
@@ -63,13 +59,6 @@ public abstract class AbstractRouterBuilder extends RouteBuilder implements Rout
 				"If class %s is to be used as a port it must be annotated with @APIPort.");
 
 		this.processor = processor;
-	}
-
-	@Inject
-	private void init(PortImplementationLocator locator) throws NotImplementedException {
-		if (processor == null) {
-			processor = new DefaultJSAProcessor(apiPort, locator);
-		}
 	}
 
 	public ServiceAPIMetaData getServiceAPI() {

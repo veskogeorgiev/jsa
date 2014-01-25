@@ -44,7 +44,6 @@ public class Test {
 
 	public static void main(String[] args) {
 		Injector inj = Guice.createInjector();
-		Demo demo = inj.getInstance(Demo.class);
-		
+		inj.getInstance(Demo.class);
 	}
 }

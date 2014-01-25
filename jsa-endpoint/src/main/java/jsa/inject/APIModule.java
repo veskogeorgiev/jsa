@@ -25,9 +25,9 @@ import java.util.Set;
 
 import jsa.annotations.API;
 import jsa.compiler.meta.refl.ReflectionUtils;
-import jsa.proc.DefaultJSAProcessor;
+import jsa.routes.APIPortProcessor;
+import jsa.routes.CustomProcessor;
 import jsa.routes.RestRouterBuilder;
-import jsa.routes.RouteWithProcessor;
 import jsa.routes.SOAPRouterBuilder;
 
 import org.apache.camel.Processor;
@@ -38,49 +38,48 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class APIModule<Ifc> extends AbstractModule {
+public abstract class APIModule<Ifc> extends AbstractModule {
 
 	protected Class<Ifc> apiInterface;
 	protected Set<Processor> processors = new HashSet<>();
 	protected List<RoutesBuilder> routesInstances = new LinkedList<>();
 
 	@SuppressWarnings("unchecked")
-	public APIModule(RoutesBuilder... rbs) {
+	protected APIModule(RoutesBuilder... rbs) {
 		this.apiInterface = (Class<Ifc>) ReflectionUtils.getTypeArgument(APIModule.class, getClass());
-		Preconditions.checkState(apiInterface.isAnnotationPresent(API.class), 
+		Preconditions.checkState(apiInterface.isAnnotationPresent(API.class),
 				String.format("%s is used to create %s, but it is not annotated with @API", apiInterface, getClass()));
 		routesInstances.addAll(Arrays.asList(rbs));
 	}
 
 	public APIModule<Ifc> addRoute(RoutesBuilder builder) {
-		if (builder instanceof RouteWithProcessor) {
-			processors.add(((RouteWithProcessor) builder).getProcessor());
-		}
 		routesInstances.add(builder);
 		return this;
 	}
 
-	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, Processor processor) {
+	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, CustomProcessor customProcessor) {
+		APIPortProcessor processor = new APIPortProcessor(restPort, customProcessor);
 		processors.add(processor);
 		addRoute(new RestRouterBuilder(apiInterface, restPort, processor));
 		return this;
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort) {
-		return exposeRest(restPort, createDefaultProcessor(restPort));
+		return exposeRest(restPort, null);
 	}
 
-	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, Processor processor) {
+	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, CustomProcessor customProcessor) {
+		APIPortProcessor processor = new APIPortProcessor(soapPort, customProcessor);
 		processors.add(processor);
 		addRoute(new SOAPRouterBuilder(apiInterface, soapPort, processor));
 		return this;
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort) {
-		return exposeSoap(soapPort, createDefaultProcessor(soapPort));
+		return exposeSoap(soapPort, null);
 	}
 
 	@Override
@@ -102,9 +101,5 @@ public class APIModule<Ifc> extends AbstractModule {
 	}
 
 	protected void customBindings(Multibinder<RoutesBuilder> uriBinder) {
-	}
-
-	protected <ApiPort> Processor createDefaultProcessor(Class<ApiPort> apiPort) {
-		return new DefaultJSAProcessor(apiPort);
 	}
 }
