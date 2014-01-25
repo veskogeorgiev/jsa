@@ -30,9 +30,9 @@ import org.apache.cxf.BusFactory;
  *
  * @author vesko
  */
-public class RestRouterBuilder extends AbstractRouterBuilder {
+public class RestRouteBuilder extends AbstractRouteBuilder {
 
-	public RestRouterBuilder(Class<?> apiPort, Processor processor) {
+	public RestRouteBuilder(Class<?> apiPort, Processor processor) {
 		super(apiPort, processor);
 	}
 

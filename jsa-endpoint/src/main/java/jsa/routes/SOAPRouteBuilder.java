@@ -28,9 +28,9 @@ import org.apache.cxf.BusFactory;
  *
  * @author vesko
  */
-public class SOAPRouterBuilder extends AbstractRouterBuilder {
+public class SOAPRouteBuilder extends AbstractRouteBuilder {
 
-	public SOAPRouterBuilder(Class<?> apiPort, Processor processor) {
+	public SOAPRouteBuilder(Class<?> apiPort, Processor processor) {
 		super(apiPort, processor);
 	}
 

@@ -29,8 +29,8 @@ import jsa.routes.APIPortProcessor;
 import jsa.routes.CustomProcessor;
 import jsa.routes.HasPorcessor;
 import jsa.routes.ProcessorDecorator;
-import jsa.routes.RestRouterBuilder;
-import jsa.routes.SOAPRouterBuilder;
+import jsa.routes.RestRouteBuilder;
+import jsa.routes.SOAPRouteBuilder;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -66,32 +66,32 @@ public abstract class APIModule<Ifc> extends AbstractModule {
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, CustomProcessor customProcessor) {
-		return addRoute(new RestRouterBuilder(restPort,
+		return addRoute(new RestRouteBuilder(restPort,
 				new APIPortProcessor(restPort, customProcessor)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, ProcessorDecorator decorator) {
-		return addRoute(new RestRouterBuilder(restPort,
+		return addRoute(new RestRouteBuilder(restPort,
 				new APIPortProcessor(restPort, decorator)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort) {
-		return addRoute(new RestRouterBuilder(restPort,
+		return addRoute(new RestRouteBuilder(restPort,
 				new APIPortProcessor(restPort)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, CustomProcessor customProcessor) {
-		return addRoute(new SOAPRouterBuilder(soapPort, 
+		return addRoute(new SOAPRouteBuilder(soapPort, 
 				new APIPortProcessor(soapPort, customProcessor)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, ProcessorDecorator decorator) {
-		return addRoute(new SOAPRouterBuilder(soapPort, 
+		return addRoute(new SOAPRouteBuilder(soapPort, 
 				new APIPortProcessor(soapPort, decorator)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort) {
-		return addRoute(new SOAPRouterBuilder(soapPort, 
+		return addRoute(new SOAPRouteBuilder(soapPort, 
 				new APIPortProcessor(soapPort)));
 	}
 

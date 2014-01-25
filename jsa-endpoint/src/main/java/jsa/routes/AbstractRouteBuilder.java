@@ -38,7 +38,7 @@ import com.google.inject.Injector;
  *
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouterBuilder extends RouteBuilder implements HasPorcessor {
+public abstract class AbstractRouteBuilder extends RouteBuilder implements HasPorcessor {
 
 	@Inject protected Injector injector;
 	@Inject protected APIInspector inspector;
@@ -51,7 +51,7 @@ public abstract class AbstractRouterBuilder extends RouteBuilder implements HasP
 
 	protected ServiceAPIMetaData serviceMeta;
 
-	public AbstractRouterBuilder(Class<?> apiPort, Processor processor) {
+	public AbstractRouteBuilder(Class<?> apiPort, Processor processor) {
 		this.apiPort = apiPort;
 		this.apiPortMeta = apiPort.getAnnotation(APIPort.class);
 		Preconditions.checkNotNull(apiPortMeta,
