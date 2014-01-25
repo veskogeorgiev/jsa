@@ -26,7 +26,7 @@ import java.util.Set;
 import jsa.annotations.API;
 import jsa.compiler.meta.refl.ReflectionUtils;
 import jsa.routes.APIPortProcessor;
-import jsa.routes.CustomProcessor;
+import jsa.routes.ProcessorDelegate;
 import jsa.routes.HasPorcessor;
 import jsa.routes.ProcessorDecorator;
 import jsa.routes.RestRouteBuilder;
@@ -65,9 +65,9 @@ public abstract class APIModule<Ifc> extends AbstractModule {
 		return this;
 	}
 
-	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, CustomProcessor customProcessor) {
+	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, ProcessorDelegate delegate) {
 		return addRoute(new RestRouteBuilder(restPort,
-				new APIPortProcessor(restPort, customProcessor)));
+				new APIPortProcessor(restPort, delegate)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeRest(Class<PortType> restPort, ProcessorDecorator decorator) {
@@ -80,9 +80,9 @@ public abstract class APIModule<Ifc> extends AbstractModule {
 				new APIPortProcessor(restPort)));
 	}
 
-	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, CustomProcessor customProcessor) {
+	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, ProcessorDelegate delegate) {
 		return addRoute(new SOAPRouteBuilder(soapPort, 
-				new APIPortProcessor(soapPort, customProcessor)));
+				new APIPortProcessor(soapPort, delegate)));
 	}
 
 	public <PortType> APIModule<Ifc> exposeSoap(Class<?> soapPort, ProcessorDecorator decorator) {

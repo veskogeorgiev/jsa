@@ -44,12 +44,12 @@ public class APIPortProcessor implements Processor {
 	protected MethodRepository methodRepository;
 	protected Object serviceInstance;
 
-	private CustomProcessor customProcessor;
+	private ProcessorDelegate delegate;
 	private ProcessorDecorator decorator;
 
-	public APIPortProcessor(Class<?> apiPort, CustomProcessor customProcessor) {
+	public APIPortProcessor(Class<?> apiPort, ProcessorDelegate delegate) {
 		this.apiPort = apiPort;
-		this.customProcessor = customProcessor;
+		this.delegate = delegate;
 		this.decorator = new EmptyDecorator();
 	}
 
@@ -67,8 +67,8 @@ public class APIPortProcessor implements Processor {
 		this.serviceInstance = locator.locateServiceImplementor(apiPort);
 		this.methodRepository = new MethodRepository(serviceInstance.getClass());
 
-		if (customProcessor != null) {
-			injector.injectMembers(customProcessor);
+		if (delegate != null) {
+			injector.injectMembers(delegate);
 		}
 	}
 
@@ -86,9 +86,9 @@ public class APIPortProcessor implements Processor {
 
 		APIInvocationContext invCtx = new APIInvocationContext(serviceInstance, method, body);
 
-		if (customProcessor != null) {
-			log.info("Dispaching API method : " + method + " to custom processor");
-			customProcessor.process(exchange, invCtx);
+		if (delegate != null) {
+			log.info("Delegating API method: " + method + " ");
+			delegate.process(exchange, invCtx);
 		}
 		else {
 			try {
