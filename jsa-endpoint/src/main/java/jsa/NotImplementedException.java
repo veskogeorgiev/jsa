@@ -18,7 +18,7 @@
 package jsa;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class NotImplementedException extends Exception {

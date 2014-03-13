@@ -1,48 +1,110 @@
-/*
- * Copyright (C) 2013 <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
-
 package jsa.inject.web;
 
-import javax.inject.Singleton;
+import java.io.IOException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.cxf.BusFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.apache.camel.component.servlet.DefaultHttpRegistry;
+import org.apache.camel.component.servlet.HttpRegistry;
+import org.apache.cxf.Bus;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 
-/**
- *
- * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
- */
-@SuppressWarnings("serial")
-@Singleton
-public class JSAServlet extends CXFNonSpringServlet {
+@AllArgsConstructor
+@Slf4j
+public class JSAServlet extends HttpServlet {
+	private static final long serialVersionUID = -8504554374979363076L;
 
-	@Override
-	protected void loadBus(ServletConfig sc) {
-        setBus(BusFactory.getDefaultBus());
+	private Bus bus;
+	private String context;
+
+	private JSACXFServlet cxfServlet = new JSACXFServlet();
+	private JSACamelServlet camelServlet = new JSACamelServlet();
+
+	private HttpServlet[] delegates = new HttpServlet[] {
+	      cxfServlet, camelServlet
+	};
+
+	private HttpRegistry registry;
+
+	public JSAServlet(Bus bus, String context) {
+		this.bus = bus;
+		this.context = context;
+
+		this.registry = DefaultHttpRegistry.getHttpRegistry(this.context);
+
+		log.info("Setting CamelServlet's name {}", this.context);
+		camelServlet.setServletName(this.context);
+		registry.register(camelServlet);
 	}
 
 	@Override
-	protected void invoke(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		super.invoke(request, response);
+	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		if (camelServlet.canHandle(req)) {
+			camelServlet.service(req, res);
+		}
+		else {
+			cxfServlet.service(req, res);
+		}
 	}
-	
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		for (HttpServlet servlet : delegates) {
+			servlet.init();
+		}
+		camelServlet.setServletName(this.context);
+	}
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		for (HttpServlet servlet : delegates) {
+			servlet.init(config);
+		}
+		camelServlet.setServletName(this.context);
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+		for (HttpServlet servlet : delegates) {
+			servlet.destroy();
+		}
+	}
+
+	/**
+	 * 
+	 * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
+	 */
+	@AllArgsConstructor
+	class JSACXFServlet extends CXFNonSpringServlet {
+		private static final long serialVersionUID = -5683222201447667591L;
+
+		@Override
+		protected void loadBus(ServletConfig sc) {
+			setBus(bus);
+		}
+	}
+
+	/**
+	 * 
+	 * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
+	 */
+	class JSACamelServlet extends CamelHttpTransportServlet {
+		private static final long serialVersionUID = 2863542950972764850L;
+
+		boolean canHandle(HttpServletRequest request) {
+			return resolve(request) != null;
+		}
+	}
+
 }

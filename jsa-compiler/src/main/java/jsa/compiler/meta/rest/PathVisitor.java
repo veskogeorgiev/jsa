@@ -24,13 +24,13 @@
 package jsa.compiler.meta.rest;
 
 /**
- *
+ * 
  * @author vesko
  */
 public interface PathVisitor {
-	
+
 	String visit(PlainPathPart part);
-	
+
 	String visit(PathParamPart part);
 
 	String visit(PathQueryPart part);

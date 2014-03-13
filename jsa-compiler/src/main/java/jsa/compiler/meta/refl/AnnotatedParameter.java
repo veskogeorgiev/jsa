@@ -24,6 +24,7 @@
 package jsa.compiler.meta.refl;
 
 import java.lang.annotation.Annotation;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -33,7 +34,7 @@ import lombok.Getter;
  */
 /**
  * Pair of an argument and its annotation
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  * @param <T>
  */

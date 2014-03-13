@@ -33,13 +33,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class CxfRsComponentExt extends CxfRsComponent {
 
 	@Inject private Provider<JAXRSServerFactoryBean> factoryBean;
-	
+
 	public CxfRsComponentExt(CamelContext context) {
 		super(context);
 	}

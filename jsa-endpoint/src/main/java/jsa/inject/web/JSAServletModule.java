@@ -18,28 +18,29 @@
 
 package jsa.inject.web;
 
+import org.apache.cxf.Bus;
+
 import com.google.inject.servlet.ServletModule;
-import jsa.inject.JSAModule;
-import lombok.AllArgsConstructor;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-@AllArgsConstructor
 public class JSAServletModule extends ServletModule {
-	
-	private String context;
-	
-	public JSAServletModule() {
-		this("/api");
+
+	protected String context;
+	protected Bus bus;
+	protected JSAServlet servlet;
+
+	public JSAServletModule(String context, Bus bus) {
+		this.context = context;
+		this.bus = bus;
+		servlet = new JSAServlet(bus, context);
 	}
-	
+
 	@Override
 	protected void configureServlets() {
-		install(new JSAModule());
-		serve(context + "/*").with(JSAServlet.class);
-		serve(context).with(JSAServlet.class);
+		serve(context + "/*").with(servlet);
 	}
 
 }

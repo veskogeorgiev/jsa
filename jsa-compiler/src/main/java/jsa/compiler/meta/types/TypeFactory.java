@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import jsa.compiler.meta.Field;
+import org.reflections.ReflectionUtils;
 
 import com.google.common.base.Joiner;
 
@@ -34,7 +34,7 @@ import com.google.common.base.Joiner;
  */
 public class TypeFactory {
 
-	private static final Map<Class<?>, Type> cache = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, Type> cache = new ConcurrentHashMap<Class<?>, Type>();
 
 	private Set<String> possiblePackages = new HashSet<String>();
 
@@ -44,13 +44,13 @@ public class TypeFactory {
 		}
 	}
 
-	public TypeFactory(Package ...domainPackages) {
+	public TypeFactory(Package... domainPackages) {
 		for (Package pckg : domainPackages) {
 			possiblePackages.addAll(getParentPackages(pckg));
 		}
 	}
 
-	public Type createType(Package domainPackage, Class<?> cls) {
+	public Type createType(Class<?> cls) {
 		Type ret = cache.get(cls);
 
 		if (ret != null) {
@@ -60,26 +60,37 @@ public class TypeFactory {
 		if (cls == Boolean.class || cls == boolean.class) {
 			ret = new Type.TypeBool();
 		}
-		if (cls == Byte.class || cls == byte.class) {
+		else if (cls == Byte.class || cls == byte.class) {
 			ret = new Type.TypeByte();
 		}
-		if (cls == Integer.class || cls == int.class || cls == Long.class || cls == long.class) {
+		else if (cls == Integer.class || cls == int.class) {
 			ret = new Type.TypeInteger();
 		}
-		if (cls == Double.class || cls == double.class || cls == Float.class || cls == float.class) {
+		else if (cls == Long.class || cls == long.class) {
+			ret = new Type.TypeLong();
+		}
+		else if (cls == Double.class || cls == double.class || cls == Float.class || cls == float.class) {
 			ret = new Type.TypeDouble();
 		}
-		if (cls == Double.class || cls == double.class) {
+		else if (cls == Double.class || cls == double.class) {
 			ret = new Type.TypeDouble();
 		}
-		if (cls == String.class) {
+		else if (cls == String.class) {
 			ret = new Type.TypeString();
 		}
-		if (cls.isEnum()) {
+		else if (List.class.isAssignableFrom(cls)) {
+			ret = new Type.TypeList();
+		}
+		else if (Set.class.isAssignableFrom(cls)) {
+			ret = new Type.TypeSet();
+		}
+		else if (Map.class.isAssignableFrom(cls)) {
+			ret = new Type.TypeMap();
+		}
+		else if (cls.isEnum()) {
 			ret = createEnumType(cls);
 		}
-
-		if (cls == Void.class || cls == void.class || !shouldProcess(cls)) {
+		else if (cls == Void.class || cls == void.class || !shouldProcess(cls)) {
 			ret = new Type.VoidType();
 		}
 
@@ -92,9 +103,6 @@ public class TypeFactory {
 
 		// TypeBinary
 		// ContainerType
-		// TypeMap
-		// TypeList
-		// TypeSet
 	}
 
 	public EnumType createEnumType(Class<?> cls) {
@@ -111,13 +119,14 @@ public class TypeFactory {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ComplexType createComplexType(Class<?> cls) {
 		ComplexType type = new ComplexType();
 		type.setName(cls.getSimpleName());
 		type.setJavaType(cls);
 
-		for (java.lang.reflect.Field f : cls.getDeclaredFields()) {
-			type.getFields().add(new Field(createType(cls.getPackage(), f.getType()), f.getName()));
+		for (java.lang.reflect.Field f : ReflectionUtils.getAllFields(cls)) {
+			type.getFields().add(new Field(createType(f.getType()), f.getName()));
 		}
 		return type;
 	}
@@ -137,8 +146,8 @@ public class TypeFactory {
 	}
 
 	private List<String> getParentPackages(Package pckg) {
-		List<String> res = new LinkedList<>();
-		List<String> builder = new LinkedList<>(); 
+		List<String> res = new LinkedList<String>();
+		List<String> builder = new LinkedList<String>();
 
 		for (String part : pckg.getName().split("\\.")) {
 			builder.add(part);

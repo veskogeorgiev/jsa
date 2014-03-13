@@ -25,7 +25,7 @@ import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class CxfRsEndpointExt extends CxfRsEndpoint {

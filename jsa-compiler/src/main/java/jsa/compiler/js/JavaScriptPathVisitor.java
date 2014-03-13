@@ -29,10 +29,10 @@ import jsa.compiler.meta.rest.PathVisitor;
 import jsa.compiler.meta.rest.PlainPathPart;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class JavaScriptPathVisitor implements PathVisitor {
+class JavaScriptPathVisitor implements PathVisitor {
 
 	@Override
 	public String visit(PlainPathPart part) {

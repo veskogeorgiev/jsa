@@ -27,55 +27,62 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class Type {
 
 	public static class VoidType extends Type {
-		
+
 	}
 
 	public static class TypeBool extends Type {
-		
+
 	}
 
 	public static class TypeByte extends Type {
-		
+
 	}
 
 	public static class TypeInteger extends Type {
-		
+
+	}
+
+	public static class TypeLong extends Type {
+
 	}
 
 	public static class TypeDouble extends Type {
-		
+
 	}
 
 	public static class TypeString extends Type {
-		
+
 	}
 
 	public static class TypeBinary extends Type {
-		
+
 	}
 
 	public static class ContainerType extends Type {
-		
+
 	}
 
-	@Getter @Setter
+	@Getter
+	@Setter
 	public static class TypeMap extends ContainerType {
 		private Type keyType;
 		private Type valueType;
 	}
 
-	@Getter @Setter
+	@Getter
+	@Setter
 	public static class TypeList extends ContainerType {
 		private Type innerType;
 	}
 
-	@Getter @Setter
+	@Getter
+	@Setter
 	public static class TypeSet extends ContainerType {
 		private Type innerType;
 	}

@@ -31,14 +31,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class ReflectionUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends Annotation> List<AnnotatedParameter<T>> getArgumentsWithAnnotation(Method method, Class<T> annotationClass) {
-		List<AnnotatedParameter<T>> ret = new LinkedList<>();
+		List<AnnotatedParameter<T>> ret = new LinkedList<AnnotatedParameter<T>>();
 
 		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 		int argIdx = 0;
@@ -46,7 +46,7 @@ public class ReflectionUtils {
 		for (Annotation[] argAnnotations : parameterAnnotations) {
 			for (Annotation an : argAnnotations) {
 				if (an.annotationType().isAssignableFrom(annotationClass)) {
-					ret.add(new AnnotatedParameter<>((T) an, argIdx));
+					ret.add(new AnnotatedParameter<T>((T) an, argIdx));
 				}
 			}
 			argIdx++;
@@ -57,14 +57,18 @@ public class ReflectionUtils {
 	public static <T> Class<?> getTypeArgument(Class<T> baseClass, Class<? extends T> childClass) {
 		return getTypeArguments(baseClass, childClass).get(0);
 	}
-		
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Taken from Taken from http://www.artima.com/weblogs/viewpost.jsp?thread=208860
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Taken from Taken from
+	// http://www.artima.com/weblogs/viewpost.jsp?thread=208860
+	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Get the underlying class for a type, or null if the type is a variable type.
-	 * @param type the type
+	 * Get the underlying class for a type, or null if the type is a variable
+	 * type.
+	 * 
+	 * @param type
+	 *           the type
 	 * @return the underlying class
 	 */
 	public static Class<?> getClass(Type type) {
@@ -95,9 +99,11 @@ public class ReflectionUtils {
 	/**
 	 * Get the actual type arguments a child class has used to extend a generic
 	 * base class.
-	 *
-	 * @param baseClass the base class
-	 * @param childClass the child class
+	 * 
+	 * @param baseClass
+	 *           the base class
+	 * @param childClass
+	 *           the child class
 	 * @return a list of the raw classes for the actual type arguments.
 	 */
 	public static <T> List<Class<?>> getTypeArguments(Class<T> baseClass, Class<? extends T> childClass) {
@@ -106,7 +112,8 @@ public class ReflectionUtils {
 		// start walking up the inheritance hierarchy until we hit baseClass
 		while (!getClass(type).equals(baseClass)) {
 			if (type instanceof Class) {
-				// there is no useful information for us in raw types, so just keep going.
+				// there is no useful information for us in raw types, so just keep
+				// going.
 				type = ((Class<?>) type).getGenericSuperclass();
 			}
 			else {
@@ -125,7 +132,8 @@ public class ReflectionUtils {
 			}
 		}
 
-		// finally, for each actual type argument provided to baseClass, determine (if possible)
+		// finally, for each actual type argument provided to baseClass, determine
+		// (if possible)
 		// the raw class for that type argument.
 		Type[] actualTypeArguments;
 		if (type instanceof Class) {

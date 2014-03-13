@@ -1,0 +1,3 @@
+OUT_DIR=src/gen/cocoa
+mkdir $OUT_DIR
+thrift --gen cocoa -out $OUT_DIR src/main/thrift/items.thrift

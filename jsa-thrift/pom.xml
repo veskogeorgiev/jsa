@@ -1,0 +1,73 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>jsa</groupId>
+      <artifactId>jsa-parent</artifactId>
+      <version>1.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>jsa-thrift</artifactId>
+   <packaging>jar</packaging>
+
+   <properties>
+      <slf.version>1.7.5</slf.version>       
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>jsa</groupId>
+         <artifactId>jsa-endpoint</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>com.google.inject</groupId>
+         <artifactId>guice</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>com.google.guava</groupId>
+         <artifactId>guava</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.apache.thrift</groupId>
+         <artifactId>libthrift</artifactId>
+         <version>0.9.1</version>
+      </dependency>
+      <dependency>
+         <groupId>net.sf.dozer</groupId>
+         <artifactId>dozer</artifactId>
+         <version>5.4.0</version>
+         <exclusions>
+            <exclusion>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-log4j12</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>${slf.version}</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-simple</artifactId>
+         <version>${slf.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+</project>

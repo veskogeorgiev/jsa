@@ -28,12 +28,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class PathBuilder {
 
-	private final List<PathPart> parts = new LinkedList<>();
+	private final List<PathPart> parts = new LinkedList<PathPart>();
 
 	public PathBuilder addRawString(String strPart) {
 		return addParts(Arrays.asList(strPart.split("/")));
@@ -59,15 +59,15 @@ public class PathBuilder {
 	public String buildPath(PathVisitor visitor) {
 		StringBuilder sb = new StringBuilder("'");
 		boolean queryParamAppended = false;
-		
 		for (PathPart part : parts) {
+			String p = part.accept(visitor);
 			if (part instanceof PathQueryPart) {
 				if (!queryParamAppended) {
 					sb.append("?");
 					queryParamAppended = true;
 				}
 			}
-			else {
+			else if (!p.isEmpty()) {
 				sb.append("/");
 			}
 			sb.append(part.accept(visitor));

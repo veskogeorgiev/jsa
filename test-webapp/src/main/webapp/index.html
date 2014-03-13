@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en" ng:app="test-app" xmlns:ng="http://angularjs.org">
+	<head>
+		<title>API Test</title>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- JS -->
+		<script src="/js/angular.min.js"></script>
+		<script src="/js/app.js"></script>
+
+		<!-- API -->
+		<script src="/api/ItemsAPI/v1/rest?_js" ></script>
+	</head>
+
+	<body ng-controller="MainCtrl">
+		<button ng-click="getItems()">getItems()</button>
+		<button ng-click="getItemResult()">getItemResult()</button>
+		<button ng-click="getMapResult()">getMapResult()</button>
+		<div>{{result}}</div>	
+	</body>
+
+</html>

@@ -24,8 +24,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class EnumType extends CustomType {
 	private String[] values;
-	
+
 }

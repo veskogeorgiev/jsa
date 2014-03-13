@@ -26,14 +26,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @AllArgsConstructor
 public abstract class PathPart {
 
-	@Getter
-	protected final String part;
-	
+	@Getter protected final String part;
+
 	public abstract String accept(PathVisitor visitor);
+
+	@Override
+	public String toString() {
+		return part;
+	}
 }

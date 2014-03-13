@@ -1,0 +1,3 @@
+OUT_DIR=src/gen/java
+mkdir $OUT_DIR
+thrift --gen java:beans -out $OUT_DIR src/main/thrift/items.thrift

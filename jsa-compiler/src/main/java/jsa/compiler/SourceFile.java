@@ -23,29 +23,34 @@ import java.io.PrintWriter;
 import lombok.Getter;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 public class SourceFile {
 
-	private static final String INDENT = "\t";
 	private static final String NL = "\n";
 
 	private final PrintWriter writer;
 	private final ByteArrayOutputStream out;
 	private String indent = "";
 
-	@Getter
-	private final String name;
+	@Getter private final String name;
 	private final String blockOpen;
 	private final String blockClose;
+	private final String indentBase;
 
-	public SourceFile(String name, String blockOpen, String blockClose) {
+	public SourceFile(String name, String indentBase, String blockOpen, String blockClose) {
 		this.name = name;
+		this.indentBase = indentBase;
 		this.blockOpen = blockOpen;
 		this.blockClose = blockClose;
 		this.out = new ByteArrayOutputStream();
 		writer = new PrintWriter(out);
+	}
+
+	public SourceFile newLine() {
+		line("");
+		return this;
 	}
 
 	public SourceFile append(String format, Object... args) {
@@ -70,12 +75,12 @@ public class SourceFile {
 	}
 
 	public SourceFile indent() {
-		indent += INDENT;
+		indent += indentBase;
 		return this;
 	}
 
 	public SourceFile deindent() {
-		indent = indent.substring(0, indent.length() - INDENT.length());
+		indent = indent.substring(0, indent.length() - indentBase.length());
 		return this;
 	}
 

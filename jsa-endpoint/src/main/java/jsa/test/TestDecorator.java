@@ -30,14 +30,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 
 /**
- *
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Log
 public class TestDecorator {
 
-	@Inject
-	private CamelContext camelContext;
+	@Inject private CamelContext camelContext;
 
 	public void decorate(String httpAddress) {
 		for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
@@ -48,8 +47,8 @@ public class TestDecorator {
 
 				uriStr = scheme + "://" + httpAddress + uriStr.substring(scheme.length() + 3);
 
-//				log.info(String.format("%s: %s", e.getKey(), e.getValue()));
-				
+				// log.info(String.format("%s: %s", e.getKey(), e.getValue()));
+
 				Endpoint endpoint = camelContext.getEndpoint(uriStr);
 				camelContext.addEndpoint(uriStr, endpoint);
 			}
@@ -61,4 +60,19 @@ public class TestDecorator {
 			}
 		}
 	}
+
+	public String showBindings() {
+		StringBuilder sb = new StringBuilder();
+		for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
+			try {
+				String uriStr = e.getKey();
+				sb.append(uriStr).append("\n");
+			}
+			catch (Exception ex) {
+				log.log(Level.SEVERE, null, ex);
+			}
+		}
+		return sb.toString();
+	}
+
 }
