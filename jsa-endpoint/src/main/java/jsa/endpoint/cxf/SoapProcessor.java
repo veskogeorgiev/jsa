@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import jsa.endpoint.processors.JSAProcessor;
+import jsa.endpoint.processors.APIProcessor;
 
 import org.apache.camel.Exchange;
 
@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class SoapProcessor extends JSAProcessor {
+public class SoapProcessor extends APIProcessor {
 
     @Override
     protected void setOutputResult(Exchange exchange, Object result) {

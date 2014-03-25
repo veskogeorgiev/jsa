@@ -2,7 +2,7 @@ package jsa.endpoint;
 
 import org.apache.camel.Processor;
 
-public interface HasPorcessor {
+public interface HasProcessor {
 
     Processor getProcessor();
 }

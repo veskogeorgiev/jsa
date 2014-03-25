@@ -22,7 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
-import jsa.endpoint.processors.JSAProcessor;
+import jsa.endpoint.processors.APIProcessor;
 import jsa.endpoint.processors.MethodInvocationContext;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Slf4j
-public class RestProcessor extends JSAProcessor {
+public class RestProcessor extends APIProcessor {
 
     private ExceptionMapper<Exception> exceptionMapper;
 

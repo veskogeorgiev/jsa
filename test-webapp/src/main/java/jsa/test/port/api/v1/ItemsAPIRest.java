@@ -34,6 +34,7 @@ public interface ItemsAPIRest extends ItemsAPI {
     @GET
     @Description("method:getItems")
     @ElementClass(response = Item.class)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     List<Item> getItems();
 
     @Override

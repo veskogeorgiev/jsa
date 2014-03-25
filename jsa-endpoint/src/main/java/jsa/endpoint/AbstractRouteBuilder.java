@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouteBuilder extends RouteBuilder implements HasPorcessor, APIPortAware {
+public abstract class AbstractRouteBuilder extends RouteBuilder implements HasProcessor, APIPortAware {
 
     protected @Getter Processor processor;
     protected @Getter DefaultAPIPortMeta apiPortMeta;
@@ -62,10 +62,6 @@ public abstract class AbstractRouteBuilder extends RouteBuilder implements HasPo
 
     protected <T extends Endpoint> T createEndpoint(String protocol, Class<T> expectedType) {
         return endpoint(endpointAddress(protocol), expectedType);
-    }
-
-    protected Endpoint createEndpoint(String protocol) {
-        return endpoint(endpointAddress(protocol));
     }
 
     protected String endpointAddress(String protocol) {

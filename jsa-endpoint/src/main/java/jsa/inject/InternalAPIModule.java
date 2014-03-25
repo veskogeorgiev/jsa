@@ -26,7 +26,7 @@ import jsa.InvalidConfigurationException;
 import jsa.endpoint.APIModuleContextAware;
 import jsa.endpoint.APIPortAware;
 import jsa.endpoint.CxfBusAware;
-import jsa.endpoint.HasPorcessor;
+import jsa.endpoint.HasProcessor;
 import jsa.endpoint.PortExposerService;
 import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.endpoint.cxf.JaxRsConfigAware;
@@ -70,8 +70,8 @@ class InternalAPIModule extends PrivateModule {
     public InternalAPIModule addRoute(RoutesBuilder routeBuilder) {
         routesInstances.add(routeBuilder);
 
-        if (routeBuilder instanceof HasPorcessor) {
-            addToInject(((HasPorcessor) routeBuilder).getProcessor());
+        if (routeBuilder instanceof HasProcessor) {
+            addToInject(((HasProcessor) routeBuilder).getProcessor());
         }
         if (routeBuilder instanceof CxfBusAware) {
             // avoid private module

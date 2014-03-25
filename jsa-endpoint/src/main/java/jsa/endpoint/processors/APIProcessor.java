@@ -36,7 +36,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Slf4j
-public abstract class JSAProcessor implements Processor, APIPortAware {
+public abstract class APIProcessor implements Processor, APIPortAware {
 
     protected Class<?> apiPort;
     protected DefaultAPIPortMeta apiPortMeta;
