@@ -10,7 +10,7 @@ public class SoapExposer implements PortExposer {
     }
 
     @Override
-    public Class<SoapRouteBuilder> routBuilder() {
+    public Class<SoapRouteBuilder> routeBuilder() {
         return SoapRouteBuilder.class;
     }
 

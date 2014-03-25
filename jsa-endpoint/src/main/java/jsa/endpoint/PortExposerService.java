@@ -31,7 +31,7 @@ public class PortExposerService {
         for (PortExposer exposer : loader) {
             Class<? extends Annotation> a = exposer.annotation();
             if (apiPort.isAnnotationPresent(a)) {
-                Class<? extends RoutesBuilder> cls = exposer.routBuilder();
+                Class<? extends RoutesBuilder> cls = exposer.routeBuilder();
                 routeBuilder = cls.newInstance();
             }
         }

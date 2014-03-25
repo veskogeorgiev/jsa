@@ -12,7 +12,7 @@ public interface PortExposer {
 
     Class<? extends Annotation> annotation();
 
-    Class<? extends RoutesBuilder> routBuilder();
+    Class<? extends RoutesBuilder> routeBuilder();
 
     SourceGenerationConfig[] sourceGenerationConfig();
 

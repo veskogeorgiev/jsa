@@ -12,7 +12,7 @@ public class ThriftExposer implements PortExposer {
 	}
 
 	@Override
-	public Class<ThriftRouteBuilder> routBuilder() {
+	public Class<ThriftRouteBuilder> routeBuilder() {
 		return ThriftRouteBuilder.class;
 	}
 

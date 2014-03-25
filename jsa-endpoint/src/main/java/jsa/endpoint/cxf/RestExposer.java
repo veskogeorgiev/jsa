@@ -11,7 +11,7 @@ public class RestExposer implements PortExposer {
     }
 
     @Override
-    public Class<RestRouteBuilder> routBuilder() {
+    public Class<RestRouteBuilder> routeBuilder() {
         return RestRouteBuilder.class;
     }
 
