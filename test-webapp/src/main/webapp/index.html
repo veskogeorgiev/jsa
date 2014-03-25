@@ -14,13 +14,15 @@
 		<script src="/js/app.js"></script>
 
 		<!-- API -->
-		<script src="/api/ItemsAPI/v1/rest?_js" ></script>
+		<script src="/api/ItemsAPI/v2/rest?_js&ns=v2"></script>
+		<script src="/api/ItemsAPI/v1/rest?_js&ns=v1" ></script>
 	</head>
 
 	<body ng-controller="MainCtrl">
 		<button ng-click="getItems()">getItems()</button>
 		<button ng-click="getItemResult()">getItemResult()</button>
 		<button ng-click="getMapResult()">getMapResult()</button>
+		<button ng-click="save()">save()</button>
 		<div>{{result}}</div>	
 	</body>
 

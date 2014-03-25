@@ -1,5 +1,6 @@
 package jsa.endpoint.processors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import lombok.AllArgsConstructor;
@@ -11,12 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MethodInvocationContext {
 
-	private Object serviceInstance;
-	private Method method;
-	private Object[] arguments;
+    private Object serviceInstance;
+    private Method method;
+    private Object[] arguments;
 
-	public Object invoke() throws Exception {
-		method.setAccessible(true);
-		return method.invoke(serviceInstance, arguments);
-	}
+    public Object invoke() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        method.setAccessible(true);
+        return method.invoke(serviceInstance, arguments);
+    }
 }

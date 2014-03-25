@@ -14,36 +14,33 @@ import jsa.annotations.APIPort;
 import jsa.annotations.APIPortType;
 
 import org.apache.cxf.jaxrs.model.wadl.Description;
-import org.apache.cxf.jaxrs.model.wadl.ElementClass;
 
 @APIPort(api = ItemsAPI.class, context = "rest", type = APIPortType.DECORATOR)
 @Description("this is a super cool API for items")
 @Produces(MediaType.APPLICATION_JSON)
 public interface ItemsAPIRest extends ItemsAPI {
 
-	@Override
-	@Path("list")
-	@GET
-	@Description("awesome getItems")
-	@ElementClass(response = Item.class)
-	List<Item> getItems();
+    @Override
+    @Path("list")
+    @GET
+    @Description("awesome getItems")
+    List<Item> getItems();
 
-	@Override
-	@GET
-	@Path("ir")
-	@Description("awesome getItemResult")
-	@ElementClass(response = ItemResult.class)
-	ItemResult getItemResult();
+    @Override
+    @GET
+    @Path("ir")
+    @Description("awesome getItemResult")
+    ItemResult getItemResult();
 
-	@Override
-	@GET
-	@Path("mr")
-	Map<String, Item> getMapResult();
+    @Override
+    @GET
+    @Path("mr")
+    Map<String, Item> getMapResult();
 
-	@Override
-	@Path("save")
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	void save(Item item);
+    @Override
+    @Path("save")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    void save(Item item);
 
 }

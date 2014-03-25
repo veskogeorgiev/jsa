@@ -8,13 +8,13 @@ import jsa.endpoint.APIEndpoint;
  */
 public abstract class APIClientFactory {
 
-	protected APIEndpoint endpoint;
+    protected APIEndpoint endpoint;
 
-	public APIClientFactory(APIEndpoint endpoint) {
-		this.endpoint = endpoint;
-	}
+    public APIClientFactory(APIEndpoint endpoint) {
+        this.endpoint = endpoint;
+    }
 
-	public APIClientFactory(String apiEndpoint) {
-		this(new APIEndpoint(apiEndpoint));
-	}
+    public APIClientFactory(String apiEndpoint) {
+        this(new APIEndpoint(apiEndpoint));
+    }
 }

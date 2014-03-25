@@ -1,7 +1,7 @@
 /**
  * 
  */
-package jsa.ext;
+package jsa.endpoint;
 
 import java.io.IOException;
 
@@ -14,5 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface APIProtector {
 
-	boolean isAuthenticated(HttpServletRequest request, HttpServletResponse response) throws IOException;
+    boolean isAuthenticated(HttpServletRequest request, HttpServletResponse response)
+            throws IOException;
 }

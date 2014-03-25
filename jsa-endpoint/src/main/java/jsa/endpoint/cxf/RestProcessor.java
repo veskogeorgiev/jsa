@@ -17,7 +17,6 @@
  *******************************************************************************/
 package jsa.endpoint.cxf;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.ws.rs.core.Response;
@@ -25,60 +24,51 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 import jsa.endpoint.processors.JSAProcessor;
 import jsa.endpoint.processors.MethodInvocationContext;
-
-import org.apache.camel.Exchange;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-class RestProcessor extends JSAProcessor {
+@Slf4j
+public class RestProcessor extends JSAProcessor {
 
-	private ExceptionMapper<Exception> exceptionMapper;
+    private ExceptionMapper<Exception> exceptionMapper;
 
-	public RestProcessor(Class<?> apiPort) {
-		super(apiPort);
-	}
+    @Override
+    protected Object invoke(MethodInvocationContext invCtx)
+            throws InvocationTargetException, Exception {
+        try {
+            return invCtx.invoke();
+        }
+        catch (InvocationTargetException e) {
+            if (e.getCause() instanceof Exception) {
+                return toResponse((Exception) e.getCause());
+            }
+            throw e;
+        }
+    }
 
-	@Override
-	protected void setOutputResult(Exchange exchange, Object result) throws IOException {
-		exchange.getOut().setBody(result);
-	}
+    private Object toResponse(Exception e) throws Exception {
+        Response res = getExceptionMapper().toResponse(e);
+        if (res == null) {
+            throw e;
+        }
+        return res;
+    }
 
-	@Override
-	protected Object invoke(MethodInvocationContext invCtx) throws Exception {
-		try {
-			return invCtx.invoke();
-		}
-		catch (InvocationTargetException e) {
-			if (e.getCause() instanceof Exception) {
-				return handleInvocationException((Exception) e.getCause());
-			}
-			throw e;
-		}
-		catch (Exception e) {
-			return handleInvocationException(e);
-		}
-		catch (Throwable t) {
-			throw new RuntimeException(t);
-		}
-	}
-
-	private Object handleInvocationException(Exception e) throws Exception {
-		Response res = getExceptionMapper().toResponse(e);
-		if (res == null) {
-			throw e;
-		}
-		return res;
-	}
-
-	public synchronized ExceptionMapper<Exception> getExceptionMapper() {
-		if (exceptionMapper == null) {
-			ExposeRest rest = apiPort.getAnnotation(ExposeRest.class);
-			Class<? extends ExceptionMapper<Exception>> mapper = rest.exceptionMapper();
-			exceptionMapper = injector.getInstance(mapper);
-		}
-		return exceptionMapper;
-	}
+    public synchronized ExceptionMapper<Exception> getExceptionMapper() {
+        if (exceptionMapper == null) {
+            ExposeRest rest = apiPort.getAnnotation(ExposeRest.class);
+            Class<? extends ExceptionMapper<Exception>> mapper = rest.exceptionMapper();
+            try {
+                exceptionMapper = mapper.newInstance();
+            }
+            catch (Exception e) {
+                log.warn("Could not instantiate exception mapper {}", mapper);
+            }
+        }
+        return exceptionMapper;
+    }
 
 }

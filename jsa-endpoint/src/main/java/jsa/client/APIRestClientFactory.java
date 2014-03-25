@@ -15,6 +15,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
@@ -55,5 +56,5 @@ public class APIRestClientFactory extends APIClientFactory {
     public static interface ClientConfigurator {
         void config(Client client);
     }
-    
+
 }

@@ -5,11 +5,11 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
-	@Override
-	public Response toResponse(Exception exception) {
-		return Response.serverError()
-		      .entity(exception.getClass().getSimpleName())
-		      .build();
-	}
+    @Override
+    public Response toResponse(Exception exception) {
+        return Response.serverError()
+                .entity(exception.getClass().getSimpleName())
+                .build();
+    }
 
 }

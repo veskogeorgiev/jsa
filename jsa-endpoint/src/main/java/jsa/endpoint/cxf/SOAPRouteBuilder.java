@@ -17,45 +17,43 @@
  *******************************************************************************/
 package jsa.endpoint.cxf;
 
-import jsa.compiler.meta.AbstractAPIPortMeta;
 import jsa.endpoint.AbstractRouteBuilder;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.CxfBusAware;
+import lombok.Setter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.cxf.Bus;
 
 /**
  * 
  * @author vesko
  */
-public class SOAPRouteBuilder extends AbstractRouteBuilder {
+public class SoapRouteBuilder extends AbstractRouteBuilder implements CxfBusAware {
 
-	@Override
-	protected Processor createProcessor(Class<?> apiPort) {
-		return new SoapProcessor(apiPort);
-	}
+    private @Setter Bus bus;
 
-	@Override
-	protected AbstractAPIPortMeta createPortMeta(Class<?> apiPort) {
-		return DefaultAPIPortMeta.create(apiPort);
-	}
+    @Override
+    protected Processor createProcessor() {
+        return new SoapProcessor();
+    }
 
-	@Override
-	public void configure() throws Exception {
-		fromSoapEndpoint().process(processor).end();
-	}
+    @Override
+    public void configure() throws Exception {
+        fromSoapEndpoint().process(processor).end();
+    }
 
-	protected CxfEndpoint soapEndpoint() throws Exception {
-		CxfEndpoint endpoint = createEndpoint("cxf", CxfEndpoint.class);
-		endpoint.setBus(bus);
-		endpoint.setServiceClass(apiPortMeta.getApiPortClass());
+    protected CxfEndpoint soapEndpoint() throws Exception {
+        CxfEndpoint endpoint = createEndpoint("cxf", CxfEndpoint.class);
+        endpoint.setBus(bus);
+        endpoint.setServiceClass(apiPortMeta.getApiPortClass());
 
-		return endpoint;
-	}
+        return endpoint;
+    }
 
-	protected RouteDefinition fromSoapEndpoint() throws Exception {
-		return from(soapEndpoint());
-	}
+    protected RouteDefinition fromSoapEndpoint() throws Exception {
+        return from(soapEndpoint());
+    }
 
 }

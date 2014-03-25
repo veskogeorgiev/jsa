@@ -39,11 +39,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Joiner;
-
 import jsa.compiler.meta.AbstractAPIMethodMeta;
 import jsa.compiler.meta.refl.AnnotatedParameter;
 import jsa.compiler.meta.refl.ReflectionUtils;
+import jsa.compiler.meta.types.Type;
+
+import com.google.common.base.Joiner;
 
 /**
  * 
@@ -52,7 +53,7 @@ import jsa.compiler.meta.refl.ReflectionUtils;
 public class RestMethodMeta extends AbstractAPIMethodMeta {
 
     @SuppressWarnings("unchecked") private static final Class<? extends Annotation>[] annotations = new Class[] {
-            GET.class, PUT.class, POST.class, DELETE.class };
+            GET.class, PUT.class, POST.class, DELETE.class};
 
     private RestPortMeta restMeta;
 
@@ -86,7 +87,32 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
         for (AnnotatedParameter<FormParam> ap : getFormAnnotatedParameters()) {
             ret.add(ap.getAnnotation().value());
         }
+        ret.addAll(getNonAnnotatedParameters());
+
         return ret;
+    }
+
+    public List<Type> getPostBodyObjectTypes() {
+        List<Type> res = new LinkedList<Type>();
+        if (!arguments.isEmpty()) {
+            List<Integer> idxs = ReflectionUtils.getUnannotatedArguments(method);
+            for (Integer idx : idxs) {
+                res.add(arguments.get(idx));
+            }
+        }
+        return res;
+    }
+
+    public List<String> getNonAnnotatedParameters() {
+        List<String> res = new LinkedList<String>();
+
+        if (!arguments.isEmpty()) {
+            int arg = 0;
+            for (Integer i : ReflectionUtils.getUnannotatedArguments(method)) {
+                res.add("payloadArg" + arg++);
+            }
+        }
+        return res;
     }
 
     public List<String> getFormParameters() {
@@ -102,7 +128,9 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
     }
 
     public boolean isJSONEndcoded() {
-        return getConsumesContentType().contains(MediaType.APPLICATION_JSON);
+        String contentType = getConsumesContentType();
+
+        return contentType != null && contentType.contains(MediaType.APPLICATION_JSON);
     }
 
     public String getConsumesContentType() {
@@ -117,7 +145,7 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
         if (consumes != null) {
             return Joiner.on(",").join(consumes.value());
         }
-        return "*/*";
+        return null;
     }
 
     public String getProducesContentType() {

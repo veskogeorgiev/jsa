@@ -30,8 +30,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExposeRest {
 
-	Class<?>[] providers() default {};
+    Class<?>[] providers() default {};
 
-	Class<? extends ExceptionMapper<Exception>> exceptionMapper() default DefaultExceptionMapper.class;
+    Class<? extends ExceptionMapper<Exception>> exceptionMapper() default DefaultExceptionMapper.class;
 }
-

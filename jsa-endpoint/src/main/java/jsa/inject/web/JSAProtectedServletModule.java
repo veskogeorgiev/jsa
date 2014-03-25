@@ -18,7 +18,7 @@
 
 package jsa.inject.web;
 
-import jsa.ext.APIProtector;
+import jsa.endpoint.APIProtector;
 
 import org.apache.cxf.Bus;
 
@@ -28,17 +28,17 @@ import org.apache.cxf.Bus;
  */
 public class JSAProtectedServletModule extends JSAServletModule {
 
-	private APIProtector protector;
+    private APIProtector protector;
 
-	public JSAProtectedServletModule(String context, Bus bus, APIProtector protector) {
-		super(context, bus);
-		this.protector = protector;
-	}
+    public JSAProtectedServletModule(String context, Bus bus, APIProtector protector) {
+        super(context, bus);
+        this.protector = protector;
+    }
 
-	@Override
-	protected void configureServlets() {
-		super.configureServlets();
-		APIProtectionFilter filter = new APIProtectionFilter(protector);
-		filter(context + "/*").through(filter);
-	}
+    @Override
+    protected void configureServlets() {
+        super.configureServlets();
+        APIProtectionFilter filter = new APIProtectionFilter(protector);
+        filter(context + "/*").through(filter);
+    }
 }

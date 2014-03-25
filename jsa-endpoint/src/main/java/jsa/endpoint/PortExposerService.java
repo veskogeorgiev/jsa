@@ -12,44 +12,43 @@ import org.apache.camel.RoutesBuilder;
 
 public class PortExposerService {
 
-	private static PortExposerService service;
+    private static final PortExposerService INSTANCE = new PortExposerService();
 
-	private ServiceLoader<PortExposer> loader;
+    public static PortExposerService getInstance() {
+        return INSTANCE;
+    }
 
-	private PortExposerService() {
-		loader = ServiceLoader.load(PortExposer.class);
-	}
+    private ServiceLoader<PortExposer> loader;
 
-	public static synchronized PortExposerService getInstance() {
-		if (service == null) {
-			service = new PortExposerService();
-		}
-		return service;
-	}
+    private PortExposerService() {
+        loader = ServiceLoader.load(PortExposer.class);
+    }
 
-	public RoutesBuilder expose(Class<?> apiPort) throws InstantiationException,
-	      IllegalAccessException {
-		RoutesBuilder routeBuilder = null;
+    public RoutesBuilder expose(Class<?> apiPort) throws InstantiationException,
+            IllegalAccessException {
+        RoutesBuilder routeBuilder = null;
 
-		for (PortExposer exposer : loader) {
-			Class<? extends Annotation> a = exposer.annotation();
-			if (apiPort.isAnnotationPresent(a)) {
-				Class<? extends RoutesBuilder> cls = exposer.routBuilder();
-				routeBuilder = cls.newInstance();
-			}
-		}
-		return routeBuilder;
-	}
+        for (PortExposer exposer : loader) {
+            Class<? extends Annotation> a = exposer.annotation();
+            if (apiPort.isAnnotationPresent(a)) {
+                Class<? extends RoutesBuilder> cls = exposer.routBuilder();
+                routeBuilder = cls.newInstance();
+            }
+        }
+        return routeBuilder;
+    }
 
-	public Set<SourceGenerationConfig> sourceGenerators() {
-		Set<SourceGenerationConfig> res = new HashSet<SourceGenerationConfig>();
+    public Set<SourceGenerationConfig> sourceGenerators() {
+        Set<SourceGenerationConfig> res = new HashSet<SourceGenerationConfig>();
 
-		for (PortExposer exposer : loader) {
-			SourceGenerationConfig sg = exposer.sourceGenerationConfig();
-			if (sg != null) {
-				res.add(sg);
-			}
-		}
-		return res;
-	}
+        for (PortExposer exposer : loader) {
+            SourceGenerationConfig[] sgs = exposer.sourceGenerationConfig();
+            if (sgs != null) {
+                for (SourceGenerationConfig sg : sgs) {
+                    res.add(sg);
+                }
+            }
+        }
+        return res;
+    }
 }

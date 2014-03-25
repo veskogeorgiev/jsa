@@ -7,25 +7,40 @@ import jsa.compiler.SourceCodeGeneratorFactory;
 import jsa.compiler.SourceFile;
 import jsa.compiler.SourceGenerationContext;
 import jsa.compiler.js.JSGeneratorFactory;
+import jsa.endpoint.cxf.RestGeneratorFactory;
 import jsa.endpoint.test.mock.api.ItemsAPIRest;
 
 import org.junit.Test;
 
 public class TestCompiler {
 
-	private SourceCodeGeneratorFactory factory = new JSGeneratorFactory();
+    private SourceCodeGeneratorFactory jsFactory = new JSGeneratorFactory();
+    private SourceCodeGeneratorFactory restFactory = new RestGeneratorFactory();
 
-	@Test
-	public void compilation() {
-		SourceCodeGenerator gen = factory.create(ItemsAPIRest.class,
-		      new SourceGenerationContext("/api", "idg"));
-		List<SourceFile> files = gen.write();
-		StringBuilder sb = new StringBuilder();
+    private SourceGenerationContext context = new SourceGenerationContext("/api", "idg");
 
-		for (SourceFile sf : files) {
-			sb.append(sf).append("\n");
-		}
-		System.out.println(sb);
-	}
+    @Test
+    public void testJS() {
+        SourceCodeGenerator gen = jsFactory.create(ItemsAPIRest.class, context);
+        List<SourceFile> files = gen.write();
+        StringBuilder sb = new StringBuilder();
+
+        for (SourceFile sf : files) {
+            sb.append(sf).append("\n");
+        }
+        System.out.println(sb);
+    }
+
+    @Test
+    public void testRest() {
+        SourceCodeGenerator gen = restFactory.create(ItemsAPIRest.class, context);
+        List<SourceFile> files = gen.write();
+        StringBuilder sb = new StringBuilder();
+
+        for (SourceFile sf : files) {
+            sb.append(sf).append("\n");
+        }
+        System.out.println(sb);
+    }
 
 }

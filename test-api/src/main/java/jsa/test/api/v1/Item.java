@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Item {
 
-	@NotNull
-	String id;
-	String name;
-	int count;
+    @NotNull String id;
+    String name;
+    int count;
 
 }

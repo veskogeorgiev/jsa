@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright (C) 2013 <a href="mailto:vesko.georgiev@icloud.com">Vesko Georgiev</a>
+/*
+ * Copyright (C) 2013 <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,21 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *******************************************************************************/
-package jsa.annotations;
+ */
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+package jsa.endpoint.cxf.ext;
 
-import org.apache.camel.Processor;
+import org.apache.camel.Component;
+import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
+import org.apache.cxf.Bus;
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
 /**
- * Annotation that this is a port to an API.
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DelegateInvocation {
+public class CxfRsEndpointExt extends CxfRsEndpoint {
 
-	Class<? extends Processor> value();
+    private Bus bus;
+
+    public CxfRsEndpointExt(String endpointUri, Component component,
+            Bus bus) {
+        super(endpointUri, component);
+        this.bus = bus;
+    }
+
+    @Override
+    protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
+        JAXRSServerFactoryBean res = super.newJAXRSServerFactoryBean();
+        res.setBus(bus);
+        return res;
+    }
+
 }

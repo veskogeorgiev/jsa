@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import jsa.endpoint.thrift.proxy.ServerProxyFactory;
+import jsa.inject.InstanceLocator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,8 +23,6 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
-
-import com.google.inject.Injector;
 
 class ThriftProcessor implements Processor {
 
@@ -38,7 +37,7 @@ class ThriftProcessor implements Processor {
 	}
 
 	@Inject
-	private void init(Injector injector) {
+	private void init(InstanceLocator locator) {
 		try {
 			Class<? extends TProcessor> pc = apiPortMeta.getProcessorClass();
 			Constructor<? extends TProcessor> c = pc.getConstructor(apiPortMeta.getIfcClass());
@@ -49,10 +48,10 @@ class ThriftProcessor implements Processor {
 			switch (apiPortMeta.getPortType()) {
 			case ADAPTER:
 				// if it is an adapter
-				instance = injector.getInstance(apiPortMeta.getApiPortClass());
+				instance = locator.locate(apiPortMeta.getApiPortClass());
 				break;
 			case DECORATOR:
-				Object apiInstance = injector.getInstance(apiPortMeta.getAPIClass());
+				Object apiInstance = locator.locate(apiPortMeta.getAPIClass());
 				if (apiPortMeta.useDtoMapping()) {
 					instance = ServerProxyFactory.create(apiInstance, apiPortMeta.getApiPortClass(),
 					      apiPortMeta.getTypeMapping());

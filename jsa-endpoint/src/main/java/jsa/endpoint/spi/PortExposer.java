@@ -10,16 +10,16 @@ import org.apache.camel.RoutesBuilder;
 
 public interface PortExposer {
 
-	Class<? extends Annotation> annotation();
+    Class<? extends Annotation> annotation();
 
-	Class<? extends RoutesBuilder> routBuilder();
+    Class<? extends RoutesBuilder> routBuilder();
 
-	SourceGenerationConfig sourceGenerationConfig();
+    SourceGenerationConfig[] sourceGenerationConfig();
 
-	@Data
-	@AllArgsConstructor
-	public static class SourceGenerationConfig {
-		private final String context;
-		private final Class<? extends SourceCodeGeneratorFactory> factory;
-	}
+    @Data
+    @AllArgsConstructor
+    public static class SourceGenerationConfig {
+        private final String context;
+        private final Class<? extends SourceCodeGeneratorFactory> factory;
+    }
 }

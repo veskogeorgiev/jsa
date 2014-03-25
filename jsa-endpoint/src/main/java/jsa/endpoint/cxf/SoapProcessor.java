@@ -29,20 +29,16 @@ import org.apache.camel.Exchange;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-class SoapProcessor extends JSAProcessor {
+public class SoapProcessor extends JSAProcessor {
 
-	public SoapProcessor(Class<?> apiPort) {
-		super(apiPort);
-	}
-
-	@Override
-	protected void setOutputResult(Exchange exchange, Object result) {
-		if (result instanceof Collection) {
-			List<Object> res = new ArrayList<Object>();
-			res.add(result);
-			result = res;
-		}
-		exchange.getOut().setBody(result);
-	}
+    @Override
+    protected void setOutputResult(Exchange exchange, Object result) {
+        if (result instanceof Collection) {
+            List<Object> res = new ArrayList<Object>();
+            res.add(result);
+            result = res;
+        }
+        exchange.getOut().setBody(result);
+    }
 
 }

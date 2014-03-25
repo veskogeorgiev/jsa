@@ -41,6 +41,10 @@ public abstract class AbstractAPIPortMeta {
 		this.apiMeta = APIMeta.create(getAPIClass());
 	}
 
+	/**
+	 * Returns smth/smth
+	 * @return
+	 */
 	public String getFullContext() {
 		// TODO
 		return apiMeta.getUrl() + "/" + getContext();

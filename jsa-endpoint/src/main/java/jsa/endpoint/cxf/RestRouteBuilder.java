@@ -17,52 +17,100 @@
  *******************************************************************************/
 package jsa.endpoint.cxf;
 
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import jsa.compiler.meta.AbstractAPIPortMeta;
+import jsa.endpoint.APIModuleContextAware;
 import jsa.endpoint.AbstractRouteBuilder;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.CxfBusAware;
+import jsa.endpoint.cxf.ext.SourceGenerator;
+import jsa.endpoint.cxf.ext.WadlGeneratorExt;
+import lombok.Setter;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.cxf.Bus;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  * 
  * @author vesko
  */
-public class RestRouteBuilder extends AbstractRouteBuilder {
+public class RestRouteBuilder extends AbstractRouteBuilder implements CxfBusAware,
+        APIModuleContextAware, JaxRsConfigAware {
 
-	@Override
-	public void configure() throws Exception {
-		CxfRsEndpoint endpoint = restEndpoint(apiPortMeta.getApiPortClass());
-		from(endpoint).process(processor).end();
-	}
+    private @Setter Bus bus;
+    private @Setter JaxRsConfig jaxRsConfig;
+    private String context;
 
-	protected CxfRsEndpoint restEndpoint(Class<?> restDecorator) throws Exception {
-		CxfRsEndpoint endpoint = createEndpoint("cxfrs", CxfRsEndpoint.class);
-		endpoint.setBus(bus);
-		endpoint.addResourceClass(restDecorator);
-		endpoint.setProviders(Arrays.asList(getAdditionalProviders(restDecorator)));
-		return endpoint;
-	}
+    @Override
+    public void setAPIModuleContext(String context) {
+        this.context = context;
+    }
 
-	protected RouteDefinition fromRestEndpoint(Class<?> restDecorator) throws Exception {
-		return from(restEndpoint(restDecorator));
-	}
+    @Override
+    public void configure() throws Exception {
+        CxfRsEndpoint endpoint = restEndpoint(apiPortMeta.getApiPortClass());
+        from(endpoint).process(processor).end();
+    }
 
-	@Override
-	protected Processor createProcessor(Class<?> apiPort) {
-		return new RestProcessor(apiPort);
-	}
+    @Override
+    protected Processor createProcessor() {
+        return new RestProcessor();
+    }
 
-	@Override
-	protected AbstractAPIPortMeta createPortMeta(Class<?> apiPort) {
-		return DefaultAPIPortMeta.create(apiPort);
-	}
+    protected CxfRsEndpoint restEndpoint(Class<?> restDecorator) throws Exception {
+        CxfRsEndpoint endpoint = createEndpoint("cxfrs", CxfRsEndpoint.class);
+        endpoint.setBus(bus);
+        endpoint.addResourceClass(restDecorator);
+        endpoint.setProviders(getAdditionalProviders(restDecorator));
 
-	private Class<?>[] getAdditionalProviders(Class<?> restDecorator) {
-		ExposeRest rest = restDecorator.getAnnotation(ExposeRest.class);
-		return rest.providers();
-	}
+        return endpoint;
+    }
+
+    protected RouteDefinition fromRestEndpoint(Class<?> restDecorator) throws Exception {
+        return from(restEndpoint(restDecorator));
+    }
+
+    private List<Object> getAdditionalProviders(Class<?> restDecorator) {
+        List<Object> res = new LinkedList<Object>();
+        List<Object> providers = getProvidersFromConfig();
+
+        if (providers != null) {
+            res.addAll(jaxRsConfig.providers());
+        }
+        else {
+            res.add(new JacksonJsonProvider());
+        }
+
+        SourceGenerator sourceGenerator = new SourceGenerator(context);
+        WadlGeneratorExt wg = new WadlGeneratorExt();
+
+        res.add(sourceGenerator);
+        res.add(wg);
+
+        ExposeRest rest = restDecorator.getAnnotation(ExposeRest.class);
+        Class<?>[] localProviders = rest.providers();
+        for (Class<?> providerClass : localProviders) {
+            try {
+                res.add(providerClass.newInstance());
+            }
+            catch (Exception e) {
+                log.warn("Could not instantiate provider : " + providerClass, e);
+            }
+        }
+        return res;
+    }
+
+    private List<Object> getProvidersFromConfig() {
+        if (jaxRsConfig != null) {
+            List<Object> providers = jaxRsConfig.providers();
+            if (providers != null) {
+                return jaxRsConfig.providers();
+            }
+        }
+        return null;
+    }
 }

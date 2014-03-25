@@ -17,11 +17,11 @@ import jsa.test.api.v1.ItemsAPI;
 import jsa.test.api.v1.Request;
 
 @Singleton
-public class ItemsAPIImpl implements ItemsAPI {
+public class ItemsAPIv1Impl implements ItemsAPI {
 
 	private List<Item> list = new ArrayList<Item>();
 
-	public ItemsAPIImpl() {
+	public ItemsAPIv1Impl() {
 		list.add(new Item("1", "asdf", 5));
 		list.add(new Item("2", "25g24g", 5));
 		list.add(new Item("3", "259guh", 5));

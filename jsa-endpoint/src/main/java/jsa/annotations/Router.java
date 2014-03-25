@@ -30,5 +30,5 @@ import org.apache.camel.RoutesBuilder;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Router {
 
-	Class<? extends RoutesBuilder> value();
+    Class<? extends RoutesBuilder> value();
 }

@@ -23,26 +23,23 @@ import java.util.List;
 import java.util.Set;
 
 import jsa.InvalidConfigurationException;
-import jsa.annotations.APIContext;
+import jsa.endpoint.APIModuleContextAware;
+import jsa.endpoint.APIPortAware;
+import jsa.endpoint.CxfBusAware;
 import jsa.endpoint.HasPorcessor;
-import jsa.endpoint.JSARouteBuilder;
 import jsa.endpoint.PortExposerService;
 import jsa.endpoint.cxf.JaxRsConfig;
+import jsa.endpoint.cxf.JaxRsConfigAware;
+import jsa.endpoint.cxf.ext.CxfRsComponentExt;
 import jsa.endpoint.processors.DefaultAPIPortMeta;
-import jsa.ext.CxfRsComponentExt;
-import jsa.ext.SourceGenerator;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.cxf.jaxrs.CxfRsComponent;
 import org.apache.camel.guice.CamelModule;
 import org.apache.cxf.Bus;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.transport.http.DestinationRegistry;
-import org.apache.cxf.transport.http.DestinationRegistryImpl;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.google.inject.Injector;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.Multibinder;
@@ -53,106 +50,99 @@ import com.google.inject.multibindings.Multibinder;
  */
 class InternalAPIModule extends PrivateModule {
 
-	protected Set<Object> toInject = new HashSet<Object>();
-	protected List<RoutesBuilder> routesInstances = new LinkedList<RoutesBuilder>();
+    protected Set<Processor> toInject = new HashSet<Processor>();
+    protected List<RoutesBuilder> routesInstances = new LinkedList<RoutesBuilder>();
 
-	protected Bus bus;
-	protected String context;
+    protected Bus bus;
+    protected String context;
+    protected JaxRsConfig jaxRsConfig;
 
-	protected JaxRsConfig jaxRsConfig;
+    public InternalAPIModule(String context, Bus bus) {
+        this.context = context;
+        this.bus = bus;
+    }
 
-	public InternalAPIModule(String context, Bus bus) {
-		this.context = context;
-		this.bus = bus;
-		bus.setExtension(new DestinationRegistryImpl(), DestinationRegistry.class);
-	}
+    public InternalAPIModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
+        this.jaxRsConfig = jaxRsConfig;
+        return this;
+    }
 
-	public InternalAPIModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
-		this.jaxRsConfig = jaxRsConfig;
-		return this;
-	}
+    public InternalAPIModule addRoute(RoutesBuilder routeBuilder) {
+        routesInstances.add(routeBuilder);
 
-	public InternalAPIModule addRoute(RoutesBuilder builder) {
-		routesInstances.add(builder);
-		addToInject(builder);
-		if (builder instanceof HasPorcessor) {
-			addToInject(((HasPorcessor) builder).getProcessor());
-		}
-		return this;
-	}
+        if (routeBuilder instanceof HasPorcessor) {
+            addToInject(((HasPorcessor) routeBuilder).getProcessor());
+        }
+        if (routeBuilder instanceof CxfBusAware) {
+            // avoid private module
+            ((CxfBusAware) routeBuilder).setBus(bus);;
+        }
+        if (routeBuilder instanceof APIModuleContextAware) {
+            ((APIModuleContextAware) routeBuilder).setAPIModuleContext(context);
+        }
+        if (routeBuilder instanceof JaxRsConfigAware) {
+            ((JaxRsConfigAware) routeBuilder).setJaxRsConfig(jaxRsConfig);
+        }
+        // No check for APIPortAware. We assume that if you add a router
+        // manually, it should be aware of the port it exposes
 
-	public <PortType> InternalAPIModule automaticExpose(Class<PortType> apiPort) throws InstantiationException, IllegalAccessException, InvalidConfigurationException {
-		DefaultAPIPortMeta meta = DefaultAPIPortMeta.create(apiPort);
+        return this;
+    }
 
-		RoutesBuilder routeBuilder = null;
+    public <PortType> InternalAPIModule automaticExpose(Class<PortType> apiPort)
+            throws InstantiationException, IllegalAccessException, InvalidConfigurationException {
+        DefaultAPIPortMeta meta = DefaultAPIPortMeta.create(apiPort);
 
-		if (meta.hasRouter()) {
-			routeBuilder = meta.getRouter().newInstance();
-		}
-		else {
-			routeBuilder = PortExposerService.getInstance().expose(apiPort);
+        RoutesBuilder routeBuilder = null;
 
-			if (routeBuilder == null) {
-				throw new InvalidConfigurationException("%s is defined as an APIPort but is not specified with expose mechanism.", apiPort);
-			}
-		}
+        if (meta.hasRouter()) {
+            routeBuilder = meta.getRouter().newInstance();
+        }
+        else {
+            routeBuilder = PortExposerService.getInstance().expose(apiPort);
 
-		if (routeBuilder instanceof JSARouteBuilder) {
+            if (routeBuilder == null) {
+                throw new InvalidConfigurationException(
+                        "%s is defined as an APIPort but is not specified with expose mechanism.",
+                        apiPort);
+            }
+        }
 
-			((JSARouteBuilder) routeBuilder).init(apiPort);
-		}
-		addRoute(routeBuilder);
-		return this;
-	}
+        if (routeBuilder instanceof APIPortAware) {
+            ((APIPortAware) routeBuilder).setAPIPort(apiPort);
+        }
 
-	private void addToInject(Object instance) {
-		if (instance != null) {
-			toInject.add(instance);
-		}
-	}
+        addRoute(routeBuilder);
+        return this;
+    }
 
-	@Override
-	protected final void configure() {
-		install(new CamelModule());
+    private void addToInject(Processor instance) {
+        if (instance != null) {
+            toInject.add(instance);
+        }
+    }
 
-		bind(Bus.class).toInstance(bus);
-		bind(String.class).annotatedWith(APIContext.class).toInstance(context);
+    @Override
+    protected final void configure() {
+        // request injection for all registered processors
+        for (Object obj : toInject) {
+            requestInjection(obj);
+        }
+        Multibinder<RoutesBuilder> uriBinder = Multibinder.newSetBinder(binder(),
+                RoutesBuilder.class);
 
-		// request injection for all registered processors
-		for (Object obj : toInject) {
-			requestInjection(obj);
-		}
-		Multibinder<RoutesBuilder> uriBinder = Multibinder.newSetBinder(binder(),
-		      RoutesBuilder.class);
+        // request injection for all registered routes
+        for (RoutesBuilder rb : routesInstances) {
+            uriBinder.addBinding().toInstance(rb);
+        }
+        install(new CamelModule());
+    }
 
-		// request injection for all registered routes
-		for (RoutesBuilder rb : routesInstances) {
-			uriBinder.addBinding().toInstance(rb);
-		}
-	}
+    @Provides
+    CxfRsComponent cxfRsComponent(CamelContext camelContext) {
+        CxfRsComponent cmp = new CxfRsComponentExt(camelContext, bus);
 
-	@Provides
-	CxfRsComponent cxfRsComponent(CamelContext camelContext, Injector injector) {
-		CxfRsComponent cmp = new CxfRsComponentExt(camelContext);
-		injector.injectMembers(cmp);
-
-		return cmp;
-	}
-
-	@Provides
-	JAXRSServerFactoryBean factoryBean(Bus bus, SourceGenerator sourceGenerator) {
-		JAXRSServerFactoryBean bean = new JAXRSServerFactoryBean();
-		bean.setBus(bus);
-
-		bean.setProvider(sourceGenerator);
-
-		if (jaxRsConfig != null) {
-			jaxRsConfig.config(bean);
-		}
-		else {
-			bean.setProvider(new JacksonJsonProvider());
-		}
-		return bean;
-	}
+        return cmp;
+    }
 
 }

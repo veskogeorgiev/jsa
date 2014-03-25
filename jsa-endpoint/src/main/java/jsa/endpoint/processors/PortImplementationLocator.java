@@ -22,47 +22,46 @@ import javax.inject.Singleton;
 
 import jsa.NotImplementedException;
 import jsa.annotations.APIPort;
-import lombok.extern.java.Log;
-
-import com.google.inject.Injector;
+import jsa.inject.InstanceLocator;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  * @param <T>
- *           API interface
+ *            API interface
  */
-@Log
+@Slf4j
 @Singleton
 public class PortImplementationLocator {
 
-	@Inject private Injector injector;
+    @Inject private InstanceLocator locator;
 
-	public Object locateServiceImplementor(Class<?> apiPort) throws NotImplementedException {
-		Class<?> apiInterface = findServiceClassFromAPIPort(apiPort);
-		try {
-			return injector.getInstance(apiInterface);
-		}
-		catch (Exception e) {
-			log.warning(String.format("No implementation for %s specified", apiInterface));
-			throw new NotImplementedException(e);
-		}
-	}
+    public Object locateServiceImplementor(Class<?> apiPort) throws NotImplementedException {
+        Class<?> apiInterface = findServiceClassFromAPIPort(apiPort);
+        try {
+            return locator.locate(apiInterface);
+        }
+        catch (Exception e) {
+            log.warn(String.format("No implementation for %s specified", apiInterface));
+            throw new NotImplementedException(e);
+        }
+    }
 
-	private Class<?> findServiceClassFromAPIPort(Class<?> apiPort) {
-		APIPort port = apiPort.getAnnotation(APIPort.class);
-		if (port != null) {
-			switch (port.type()) {
-			case ADAPTER:
-				return apiPort;
-			case DECORATOR:
-				return port.api();
-			default:
-				break;
-			}
-		}
-		return apiPort;
-		// throw new RuntimeException("");
-	}
+    private Class<?> findServiceClassFromAPIPort(Class<?> apiPort) {
+        APIPort port = apiPort.getAnnotation(APIPort.class);
+        if (port != null) {
+            switch (port.type()) {
+            case ADAPTER:
+                return apiPort;
+            case DECORATOR:
+                return port.api();
+            default:
+                break;
+            }
+        }
+        return apiPort;
+        // throw new RuntimeException("");
+    }
 
 }

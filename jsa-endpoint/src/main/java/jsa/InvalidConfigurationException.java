@@ -23,16 +23,16 @@ package jsa;
  */
 public class InvalidConfigurationException extends Exception {
 
-	private static final long serialVersionUID = 5345309342134086660L;
+    private static final long serialVersionUID = 5345309342134086660L;
 
-	public InvalidConfigurationException() {
-	}
+    public InvalidConfigurationException() {
+    }
 
-	public InvalidConfigurationException(String format, Object... args) {
-		super(String.format(format, args));
-	}
+    public InvalidConfigurationException(String format, Object... args) {
+        super(String.format(format, args));
+    }
 
-	public InvalidConfigurationException(Exception exception) {
-		super(exception);
-	}
+    public InvalidConfigurationException(Exception exception) {
+        super(exception);
+    }
 }

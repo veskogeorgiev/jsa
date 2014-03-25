@@ -17,49 +17,59 @@
  *******************************************************************************/
 package jsa.endpoint;
 
-import javax.inject.Inject;
-
-import jsa.compiler.meta.AbstractAPIPortMeta;
+import jsa.endpoint.processors.DefaultAPIPortMeta;
 import lombok.Getter;
-import lombok.Setter;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.cxf.Bus;
 
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public abstract class AbstractRouteBuilder extends RouteBuilder implements JSARouteBuilder {
+public abstract class AbstractRouteBuilder extends RouteBuilder implements HasPorcessor, APIPortAware {
 
-	protected @Getter @Setter Processor processor;
-	protected @Getter @Setter AbstractAPIPortMeta apiPortMeta;
+    protected @Getter Processor processor;
+    protected @Getter DefaultAPIPortMeta apiPortMeta;
 
-	protected @Inject Bus bus;
+    @Override
+    public void setAPIPort(Class<?> apiPort) {
+        apiPortMeta = createPortMeta(apiPort);
+        if (apiPortMeta.hasCustomProcessor()) {
+            try {
+                processor = apiPortMeta.getCustomProcessor().newInstance();
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Could not create instance of "
+                        + "custom processor: " + apiPortMeta.getCustomProcessor(), e);
+            }
+        }
+        else {
+            processor = createProcessor();
+        }
 
-	private @Getter Class<?> apiPort;
+        if (processor instanceof APIPortAware) {
+            ((APIPortAware) processor).setAPIPort(apiPort);
+        }
+    }
 
-	public void init(Class<?> apiPort) {
-		apiPortMeta = createPortMeta(apiPort);
-		processor = createProcessor(apiPort);
-	};
+    protected abstract Processor createProcessor();
 
-	protected abstract AbstractAPIPortMeta createPortMeta(Class<?> apiPort);
+    protected DefaultAPIPortMeta createPortMeta(Class<?> apiPort) {
+        return DefaultAPIPortMeta.create(apiPort);
+    }
 
-	protected abstract Processor createProcessor(Class<?> apiPort);
+    protected <T extends Endpoint> T createEndpoint(String protocol, Class<T> expectedType) {
+        return endpoint(endpointAddress(protocol), expectedType);
+    }
 
-	protected <T extends Endpoint> T createEndpoint(String protocol, Class<T> expectedType) {
-		return endpoint(endpointAddress(protocol), expectedType);
-	}
+    protected Endpoint createEndpoint(String protocol) {
+        return endpoint(endpointAddress(protocol));
+    }
 
-	protected Endpoint createEndpoint(String protocol) {
-		return endpoint(endpointAddress(protocol));
-	}
-
-	protected String endpointAddress(String protocol) {
-		return String.format("%s://%s", protocol, apiPortMeta.getFullContext());
-	}
+    protected String endpointAddress(String protocol) {
+        return String.format("%s://%s", protocol, apiPortMeta.getFullContext());
+    }
 
 }

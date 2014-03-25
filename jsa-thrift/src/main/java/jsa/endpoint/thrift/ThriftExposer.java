@@ -17,7 +17,9 @@ public class ThriftExposer implements PortExposer {
 	}
 
 	@Override
-	public SourceGenerationConfig sourceGenerationConfig() {
-		return new SourceGenerationConfig("_t", ThriftGeneratorFactory.class);
+	public SourceGenerationConfig[] sourceGenerationConfig() {
+		return new SourceGenerationConfig[] {
+			new SourceGenerationConfig("_t", ThriftGeneratorFactory.class)
+		};
 	}
 }

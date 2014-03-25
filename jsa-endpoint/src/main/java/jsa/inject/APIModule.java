@@ -11,16 +11,16 @@ import jsa.inject.web.JSAServletModule;
  */
 public class APIModule extends AbstractAPIModule {
 
-	public APIModule(String context) {
-		super(context);
-	}
+    public APIModule(String context) {
+        super(context);
+    }
 
-	public APIModule(String context, String packageNamePrefix) {
-		super(context, packageNamePrefix);
-	}
+    public APIModule(String context, String packageNamePrefix) {
+        super(context, packageNamePrefix);
+    }
 
-	@Override
-	protected JSAServletModule createServletModule() {
-		return new JSAServletModule(context, bus);
-	}
+    @Override
+    protected JSAServletModule createServletModule() {
+        return new JSAServletModule(context, bus);
+    }
 }

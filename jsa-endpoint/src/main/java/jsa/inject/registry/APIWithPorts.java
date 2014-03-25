@@ -16,6 +16,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class APIWithPorts<Ifc> {
 
-	private Class<Ifc> api;
-	private Collection<Class<?>> ports;
+    private Class<Ifc> api;
+    private Collection<Class<?>> ports;
 }

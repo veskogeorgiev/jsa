@@ -9,11 +9,11 @@ import jsa.annotations.API.Version;
 @API(version = @Version(number = 1, tag = "v1"))
 public interface ItemsAPI {
 
-	List<Item> getItems() throws APIException;
+    List<Item> getItems() throws APIException;
 
-	ItemResult getItemResult();
+    ItemResult getItemResult();
 
-	Map<String, Item> getMapResult();
+    Map<String, Item> getMapResult();
 
-	void save(Item item);
+    void save(Item item);
 }

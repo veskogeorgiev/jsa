@@ -45,14 +45,14 @@ public class StressTestTest extends Assert {
 		pureThriftApi = thrift.get(ItemsAPIv3Thrift.class, ItemsAPI.Client.class);
 	}
 
-//	@Test
+	@Test
 	public void rest() throws Exception {
 		for (int i = 0; i < tests; i++) {
 			test("REST", restApi);
       }
 	}
 
-//	@Test
+	@Test
 	public void soap() throws Exception {
 		for (int i = 0; i < tests; i++) {
 			test("SOAP", soapApi);

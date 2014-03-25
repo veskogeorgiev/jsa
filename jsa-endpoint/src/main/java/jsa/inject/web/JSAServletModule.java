@@ -28,19 +28,19 @@ import com.google.inject.servlet.ServletModule;
  */
 public class JSAServletModule extends ServletModule {
 
-	protected String context;
-	protected Bus bus;
-	protected JSAServlet servlet;
+    protected String context;
+    protected Bus bus;
+    protected JSAServlet servlet;
 
-	public JSAServletModule(String context, Bus bus) {
-		this.context = context;
-		this.bus = bus;
-		servlet = new JSAServlet(bus, context);
-	}
+    public JSAServletModule(String context, Bus bus) {
+        this.context = context;
+        this.bus = bus;
+        servlet = new JSAServlet(bus, context);
+    }
 
-	@Override
-	protected void configureServlets() {
-		serve(context + "/*").with(servlet);
-	}
+    @Override
+    protected void configureServlets() {
+        serve(context + "/*").with(servlet);
+    }
 
 }

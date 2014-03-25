@@ -20,11 +20,10 @@ package jsa.test;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.inject.Inject;
 
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -33,46 +32,46 @@ import org.apache.camel.Endpoint;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-@Log
+@Slf4j
 public class TestDecorator {
 
-	@Inject private CamelContext camelContext;
+    @Inject private CamelContext camelContext;
 
-	public void decorate(String httpAddress) {
-		for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
-			try {
-				String uriStr = e.getKey();
-				URI uri = new URI(uriStr);
-				String scheme = uri.getScheme();
+    public void decorate(String httpAddress) {
+        for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
+            try {
+                String uriStr = e.getKey();
+                URI uri = new URI(uriStr);
+                String scheme = uri.getScheme();
 
-				uriStr = scheme + "://" + httpAddress + uriStr.substring(scheme.length() + 3);
+                uriStr = scheme + "://" + httpAddress + uriStr.substring(scheme.length() + 3);
 
-				// log.info(String.format("%s: %s", e.getKey(), e.getValue()));
+                // log.info(String.format("%s: %s", e.getKey(), e.getValue()));
 
-				Endpoint endpoint = camelContext.getEndpoint(uriStr);
-				camelContext.addEndpoint(uriStr, endpoint);
-			}
-			catch (URISyntaxException ex) {
-				log.log(Level.SEVERE, null, ex);
-			}
-			catch (Exception ex) {
-				log.log(Level.SEVERE, null, ex);
-			}
-		}
-	}
+                Endpoint endpoint = camelContext.getEndpoint(uriStr);
+                camelContext.addEndpoint(uriStr, endpoint);
+            }
+            catch (URISyntaxException ex) {
+                log.warn("", ex);
+            }
+            catch (Exception ex) {
+                log.warn("", ex);
+            }
+        }
+    }
 
-	public String showBindings() {
-		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
-			try {
-				String uriStr = e.getKey();
-				sb.append(uriStr).append("\n");
-			}
-			catch (Exception ex) {
-				log.log(Level.SEVERE, null, ex);
-			}
-		}
-		return sb.toString();
-	}
+    public String showBindings() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, Endpoint> e : camelContext.getEndpointMap().entrySet()) {
+            try {
+                String uriStr = e.getKey();
+                sb.append(uriStr).append("\n");
+            }
+            catch (Exception ex) {
+                log.warn("", ex);
+            }
+        }
+        return sb.toString();
+    }
 
 }

@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class ItemResult {
 
-	private String name;
-	private List<Item> items;
+    private String name;
+    private List<Item> items;
 }

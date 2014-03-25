@@ -54,6 +54,25 @@ public class ReflectionUtils {
 		return ret;
 	}
 
+	/**
+	 * Finds the indices of the non-annotated parameters 
+	 * @param method
+	 * @return
+	 */
+	public static List<Integer> getUnannotatedArguments(Method method) {
+		Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+		int argIdx = 0;
+
+		List<Integer> res = new LinkedList<Integer>();
+		for (Annotation[] argAnnotations : parameterAnnotations) {
+			if (argAnnotations == null || argAnnotations.length == 0) {
+			    res.add(argIdx);
+			}
+			argIdx++;
+		}
+		return res;
+	}
+
 	public static <T> Class<?> getTypeArgument(Class<T> baseClass, Class<? extends T> childClass) {
 		return getTypeArguments(baseClass, childClass).get(0);
 	}

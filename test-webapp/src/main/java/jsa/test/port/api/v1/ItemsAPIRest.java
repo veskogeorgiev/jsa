@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import jsa.annotations.APIPort;
@@ -24,38 +25,51 @@ import org.apache.cxf.jaxrs.model.wadl.ElementClass;
 
 @APIPort(api = ItemsAPI.class, context = "rest", type = APIPortType.DECORATOR)
 @ExposeRest(exceptionMapper = TestExcetionMapper.class)
-@Description("this is a super cool API for items")
+@Description("This is a super cool API for items")
 @Produces(MediaType.APPLICATION_JSON)
 public interface ItemsAPIRest extends ItemsAPI {
 
-	@Override
-	@Path("list")
-	@GET
-	@Description("awesome getItems")
-	@ElementClass(response = Item.class)
-	List<Item> getItems();
+    @Override
+    @Path("list")
+    @GET
+    @Description("method:getItems")
+    @ElementClass(response = Item.class)
+    List<Item> getItems();
 
-	@Override
-	@GET
-	@Path("ir")
-	@Description("awesome getItemResult")
-	@ElementClass(response = ItemResult.class)
-	ItemResult getItemResult();
+    @Override
+    @GET
+    @Path("ir")
+    @Description("method:getItemResult")
+    ItemResult getItemResult();
 
-	@Override
-	@GET
-	@Path("mr")
-	Map<String, Item> getMapResult();
+    @Override
+    @GET
+    @Path("mr")
+    @Description("method:getMapResult")
+    Map<String, Item> getMapResult();
 
-	@Override
-	@Path("save")
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	void save(Item item);
+    @Override
+    @Path("save")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Description("method:save")
+    void save(@Description("this is the new item") Item item);
 
-	@Override
-	@Path("savel")
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	void saveList(Request<List<Item>> item);
+    @Override
+    @Path("savel")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Description("method:saveList")
+    @ElementClass(request = Request.class)
+    void saveList(Request<List<Item>> item);
+
+    @Path("demo")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Description("method:demo")
+    @ElementClass(response = Item.class)
+    Item demoMethod(
+            @QueryParam("name") @Description("the name") String name, 
+            @QueryParam("age") @Description("the age") Integer age);
+
 }

@@ -20,7 +20,7 @@
  */
 package jsa.endpoint.cxf;
 
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import java.util.List;
 
 /**
  * Used to additionally configure the REST factory bean
@@ -29,5 +29,5 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
  */
 public interface JaxRsConfig {
 
-	void config(JAXRSServerFactoryBean factoryBean);
+    List<Object> providers();
 }

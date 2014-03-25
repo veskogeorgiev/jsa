@@ -24,125 +24,98 @@ import java.lang.reflect.Method;
 import javax.inject.Inject;
 
 import jsa.NotImplementedException;
+import jsa.endpoint.APIPortAware;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 
-import com.google.inject.Injector;
-
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Slf4j
-public abstract class JSAProcessor implements Processor {
+public abstract class JSAProcessor implements Processor, APIPortAware {
 
-	protected final Class<?> apiPort;
-	private DefaultAPIPortMeta apiPortMeta;
+    protected Class<?> apiPort;
+    protected DefaultAPIPortMeta apiPortMeta;
 
-	@Inject protected PortImplementationLocator locator;
-	@Inject protected Injector injector;
+    protected MethodRepository methodRepository;
+    protected Object serviceInstance;
 
-	protected MethodRepository methodRepository;
-	protected Object serviceInstance;
+    @Override
+    public void setAPIPort(Class<?> apiPort) {
+        this.apiPort = apiPort;
+        this.apiPortMeta = DefaultAPIPortMeta.create(apiPort);
+    }
 
-	protected Processor delegate;
-	protected ProcessorDecorator decorator = EmptyDecorator.INSTANCE;
+    @Inject
+    private void postConstruct(PortImplementationLocator locator)
+            throws NotImplementedException {
+        this.serviceInstance = locator.locateServiceImplementor(apiPort);
+        this.methodRepository = new MethodRepository(serviceInstance.getClass());
+    }
 
-	public JSAProcessor(Class<?> apiPort) {
-		this.apiPort = apiPort;
-		this.apiPortMeta = DefaultAPIPortMeta.create(apiPort);
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        MethodInvocationContext invCtx = createInvocationContext(exchange);
 
-	@Inject
-	private void postConstruct(PortImplementationLocator locator, Injector injector) throws NotImplementedException {
-		this.serviceInstance = locator.locateServiceImplementor(apiPort);
-		this.methodRepository = new MethodRepository(serviceInstance.getClass());
+        if (invCtx == null) {
+            log.info("Cannot create invocation context for operation : " + exchange);
+            return;
+        }
 
-		if (apiPortMeta.hasProcessorDelegate()) {
-			delegate = injector.getInstance(apiPortMeta.getProcessorDelegate());
-		}
-		else if (apiPortMeta.hasProcessorDecorator()) {
-			decorator = injector.getInstance(apiPortMeta.getProcessorDecorator());
-		}
-	}
+        try {
+            log.info("Execute API method : " + invCtx.getMethod());
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		if (delegate != null) {
-			log.info("Delegating API method: ");
-			delegate.process(exchange);
-			return;
-		}
-		String operationName = getOperationName(exchange);
+            Object response = invoke(invCtx);
 
-		if (operationName == null) {
-			log.info("Unknown operation name: " + operationName);
-			return;
-		}
-		Object[] body = exchange.getIn().getBody(Object[].class);
+            setOutputResult(exchange, response);
+        }
+        catch (InvocationTargetException e) {
+            handleException(e);
+        }
+    }
 
-		Method method = findMethod(operationName, body);
-		MethodInvocationContext invCtx = new MethodInvocationContext(serviceInstance, method, body);
+    protected MethodInvocationContext createInvocationContext(Exchange exchange)
+            throws SecurityException, NoSuchMethodException {
+        String operationName = getOperationName(exchange);
 
-		try {
-			log.info("Execute API method : " + method);
+        if (operationName == null) {
+            return null;
+        }
+        Object[] body = exchange.getIn().getBody(Object[].class);
 
-			decorator.beforeInvocation(exchange);
+        Method method = findMethod(operationName, body);
+        return new MethodInvocationContext(serviceInstance, method, body);
+    }
 
-			Object response = invoke(invCtx);
+    protected Object invoke(MethodInvocationContext invCtx)
+            throws InvocationTargetException, Exception {
+        return invCtx.invoke();
+    }
 
-			setOutputResult(exchange, response);
+    protected void setOutputResult(Exchange exchange, Object result) throws IOException {
+        exchange.getOut().setBody(result);
+    }
 
-			decorator.afterInvocation(exchange);
-		}
-		catch (InvocationTargetException e) {
-			if (e.getCause() instanceof Exception) {
-				throw (Exception) e.getCause();
-			}
-			throw new RuntimeException(e.getCause());
-		}
-	}
+    protected void handleException(InvocationTargetException e) throws
+            Exception {
+        if (e.getCause() instanceof Exception) {
+            throw (Exception) e.getCause();
+        }
+        throw new RuntimeException(e.getCause());
+    }
 
-	protected abstract void setOutputResult(Exchange exchange, Object result) throws IOException;
+    protected Method findMethod(String operationName, Object[] parameters)
+            throws SecurityException,
+            NoSuchMethodException {
+        return methodRepository.singleMethod(operationName, parameters);
+    }
 
-	protected Object invoke(MethodInvocationContext invCtx) throws Exception {
-		return invCtx.invoke();
-	}
+    protected String getOperationName(Exchange exchange) {
+        return exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
+    }
 
-	protected void handleException(InvocationTargetException e) throws Exception {
-		if (e.getCause() instanceof Exception) {
-			throw (Exception) e.getCause();
-		}
-		throw new RuntimeException(e.getCause());		
-	}
-
-	protected Method findMethod(String operationName, Object[] parameters) throws SecurityException,
-	      NoSuchMethodException {
-		return methodRepository.singleMethod(operationName, parameters);
-	}
-
-	protected String getOperationName(Exchange exchange) {
-		return exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
-	}
-
-	protected static class EmptyDecorator implements ProcessorDecorator {
-		private static final EmptyDecorator INSTANCE = new EmptyDecorator();
-
-		private EmptyDecorator() {
-			// no allocation, please
-		}
-
-		@Override
-		public void beforeInvocation(Exchange exchange) {
-			// empty
-		}
-
-		@Override
-		public void afterInvocation(Exchange exchange) {
-			// empty
-		}
-	}
 }

@@ -13,15 +13,15 @@ import com.google.common.base.Function;
  */
 public class APIPortToAPI implements Function<Class<?>, Class<?>> {
 
-	public static final APIPortToAPI INSTANCE = new APIPortToAPI();
+    public static final APIPortToAPI INSTANCE = new APIPortToAPI();
 
-	private APIPortToAPI() {
-		
-	}
+    private APIPortToAPI() {
 
-	@Override
-	public Class<?> apply(Class<?> input) {
-		return input.getAnnotation(APIPort.class).api();
-	}
+    }
+
+    @Override
+    public Class<?> apply(Class<?> input) {
+        return input.getAnnotation(APIPort.class).api();
+    }
 
 }

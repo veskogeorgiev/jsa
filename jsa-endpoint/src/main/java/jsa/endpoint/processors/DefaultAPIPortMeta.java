@@ -19,8 +19,7 @@ package jsa.endpoint.processors;
 
 import java.lang.annotation.Annotation;
 
-import jsa.annotations.DecorateInvocation;
-import jsa.annotations.DelegateInvocation;
+import jsa.annotations.CustomInvocation;
 import jsa.annotations.Router;
 import jsa.compiler.meta.AbstractAPIPortMeta;
 
@@ -33,47 +32,39 @@ import org.apache.camel.RoutesBuilder;
  */
 public class DefaultAPIPortMeta extends AbstractAPIPortMeta {
 
-	protected DefaultAPIPortMeta(Class<?> apiPortClass) {
-		super(apiPortClass);
-	}
+    protected DefaultAPIPortMeta(Class<?> apiPortClass) {
+        super(apiPortClass);
+    }
 
-	public boolean hasProcessorDecorator() {
-		return has(DecorateInvocation.class);
-	}
+    public boolean hasCustomProcessor() {
+        return has(CustomInvocation.class);
+    }
 
-	public Class<? extends ProcessorDecorator> getProcessorDecorator() {
-		return get(DecorateInvocation.class).value();
-	}
+    public Class<? extends Processor> getCustomProcessor() {
+        return get(CustomInvocation.class).value();
+    }
 
-	public boolean hasProcessorDelegate() {
-		return has(DelegateInvocation.class);
-	}
+    public boolean hasRouter() {
+        return has(Router.class);
+    }
 
-	public Class<? extends Processor> getProcessorDelegate() {
-		return get(DelegateInvocation.class).value();
-	}
+    public Class<? extends RoutesBuilder> getRouter() {
+        return get(Router.class).value();
+    }
 
-	public boolean hasRouter() {
-		return has(Router.class);
-	}
+    private <T extends Annotation> boolean has(Class<T> a) {
+        return apiPortClass.isAnnotationPresent(a);
+    }
 
-	public Class<? extends RoutesBuilder> getRouter() {
-		return get(Router.class).value();
-	}
+    private <T extends Annotation> T get(Class<T> a) {
+        return apiPortClass.getAnnotation(a);
+    }
 
-	private <T extends Annotation> boolean has(Class<T> a) {
-		return apiPortClass.isAnnotationPresent(a);
-	}
+    // //////////////////////////////////////////////////////////////////////////////
+    //
+    // //////////////////////////////////////////////////////////////////////////////
 
-	private <T extends Annotation> T get(Class<T> a) {
-		return apiPortClass.getAnnotation(a);
-	}
-
-	// //////////////////////////////////////////////////////////////////////////////
-	//
-	// //////////////////////////////////////////////////////////////////////////////
-
-	public static DefaultAPIPortMeta create(Class<?> apiPort) {
-		return new DefaultAPIPortMeta(apiPort);
-	}
+    public static DefaultAPIPortMeta create(Class<?> apiPort) {
+        return new DefaultAPIPortMeta(apiPort);
+    }
 }

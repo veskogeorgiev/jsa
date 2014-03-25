@@ -1,22 +1,22 @@
 package jsa.test.impl;
 
 import javax.inject.Singleton;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
-import jsa.test.api.v2.Item;
+import jsa.test.api.v1.Item;
 import jsa.test.api.v2.ItemsAPI;
-
-import org.apache.bval.constraints.NotEmpty;
-import org.apache.bval.guice.Validate;
 
 @Singleton
 public class ItemsAPIv2Impl implements ItemsAPI {
 
-	@Override
-	@Validate
-	public void save(@Valid Item item, @NotNull @NotEmpty String userId) {
-		System.out.println(item + " saved");
-	}
+    @Override
+    public void saveBoth(Item item1, Item item2) {
+        System.out.println("saved both for user Id" + item1 + "  " + item2);
+    }
+
+    @Override
+    public void save(Item item) {
+        System.out.println(item + " saved");
+        throw new RuntimeException();
+    }
 
 }

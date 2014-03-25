@@ -14,7 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jsa.ext.APIProtector;
+import jsa.endpoint.APIProtector;
 import lombok.AllArgsConstructor;
 
 /**
@@ -24,25 +24,25 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 class APIProtectionFilter implements Filter {
 
-	private APIProtector protector;
+    private APIProtector protector;
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-	      throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse resp = (HttpServletResponse) response;
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
 
-		if (protector.isAuthenticated(req, resp)) {
-			chain.doFilter(request, response);
-		}
-	}
+        if (protector.isAuthenticated(req, resp)) {
+            chain.doFilter(request, response);
+        }
+    }
 
-	@Override
-	public void destroy() {
-	}
+    @Override
+    public void destroy() {
+    }
 
 }

@@ -87,4 +87,8 @@ public class Type {
 		private Type innerType;
 	}
 
+	@Override
+	public String toString() {
+	   return getClass().getSimpleName();
+	}
 }

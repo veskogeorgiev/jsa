@@ -20,91 +20,95 @@ import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 @AllArgsConstructor
 @Slf4j
 public class JSAServlet extends HttpServlet {
-	private static final long serialVersionUID = -8504554374979363076L;
+    private static final long serialVersionUID = -8504554374979363076L;
 
-	private Bus bus;
-	private String context;
+    private Bus bus;
+    private String context;
 
-	private JSACXFServlet cxfServlet = new JSACXFServlet();
-	private JSACamelServlet camelServlet = new JSACamelServlet();
+    private JSACXFServlet cxfServlet;
+    private JSACamelServlet camelServlet;
 
-	private HttpServlet[] delegates = new HttpServlet[] {
-	      cxfServlet, camelServlet
-	};
+    private HttpServlet[] delegates;
 
-	private HttpRegistry registry;
+    private HttpRegistry registry;
 
-	public JSAServlet(Bus bus, String context) {
-		this.bus = bus;
-		this.context = context;
+    public JSAServlet(Bus bus, String context) {
+        this.bus = bus;
+        this.context = context;
+        this.registry = DefaultHttpRegistry.getHttpRegistry(this.context);
 
-		this.registry = DefaultHttpRegistry.getHttpRegistry(this.context);
+        cxfServlet = new JSACXFServlet();
+        camelServlet = new JSACamelServlet();
+        delegates = new HttpServlet[] {
+                cxfServlet, camelServlet
+        };
 
-		log.info("Setting CamelServlet's name {}", this.context);
-		camelServlet.setServletName(this.context);
-		registry.register(camelServlet);
-	}
+        log.info("Setting CamelServlet's name {}", this.context);
 
-	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		if (camelServlet.canHandle(req)) {
-			camelServlet.service(req, res);
-		}
-		else {
-			cxfServlet.service(req, res);
-		}
-	}
+        camelServlet.setServletName(this.context);
+        registry.register(camelServlet);
+    }
 
-	@Override
-	public void init() throws ServletException {
-		super.init();
-		for (HttpServlet servlet : delegates) {
-			servlet.init();
-		}
-		camelServlet.setServletName(this.context);
-	}
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        if (camelServlet.canHandle(req)) {
+            camelServlet.service(req, res);
+        }
+        else {
+            cxfServlet.service(req, res);
+        }
+    }
 
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		for (HttpServlet servlet : delegates) {
-			servlet.init(config);
-		}
-		camelServlet.setServletName(this.context);
-	}
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        for (HttpServlet servlet : delegates) {
+            servlet.init();
+        }
+        camelServlet.setServletName(this.context);
+    }
 
-	@Override
-	public void destroy() {
-		super.destroy();
-		for (HttpServlet servlet : delegates) {
-			servlet.destroy();
-		}
-	}
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        for (HttpServlet servlet : delegates) {
+            servlet.init(config);
+        }
+        camelServlet.setServletName(this.context);
+    }
 
-	/**
-	 * 
-	 * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
-	 */
-	@AllArgsConstructor
-	class JSACXFServlet extends CXFNonSpringServlet {
-		private static final long serialVersionUID = -5683222201447667591L;
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (HttpServlet servlet : delegates) {
+            servlet.destroy();
+        }
+    }
 
-		@Override
-		protected void loadBus(ServletConfig sc) {
-			setBus(bus);
-		}
-	}
+    /**
+     * 
+     * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
+     */
+    class JSACXFServlet extends CXFNonSpringServlet {
+        private static final long serialVersionUID = -5683222201447667591L;
 
-	/**
-	 * 
-	 * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
-	 */
-	class JSACamelServlet extends CamelHttpTransportServlet {
-		private static final long serialVersionUID = 2863542950972764850L;
+        @Override
+        protected void loadBus(ServletConfig sc) {
+            setBus(bus);
+        }
+    }
 
-		boolean canHandle(HttpServletRequest request) {
-			return resolve(request) != null;
-		}
-	}
+    /**
+     * 
+     * @author <a href="mailto:vesko.m.georgiev@gmail.com">Vesko Georgiev<a>
+     */
+    class JSACamelServlet extends CamelHttpTransportServlet {
+        private static final long serialVersionUID = 2863542950972764850L;
+
+        boolean canHandle(HttpServletRequest request) {
+            return resolve(request) != null;
+        }
+    }
 
 }

@@ -15,16 +15,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *******************************************************************************/
-package jsa.endpoint;
+package jsa.annotations;
 
-import org.apache.camel.RoutesBuilder;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import org.apache.camel.Processor;
 
 /**
  * 
+ * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public interface JSARouteBuilder extends RoutesBuilder, HasPorcessor {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CustomInvocation {
 
-	void init(Class<?> apiPort);
-
+    Class<? extends Processor> value();
 }

@@ -103,11 +103,17 @@ class JSSourceGenerator extends AbstractSourceGenerator {
         String payload = buildPayload(rmm);
         String httpMethod = rmm.getHttpMethod();
         String parameters = buildParameters(rmm);
+        String contentType = rmm.getConsumesContentType();
 
         sf.blockOpen("%s.prototype.%s = function(%s)", apiName, name, parameters);
 
         sf.blockOpen("var req =");
-        sf.line("headers: { 'Content-Type': '%s'},", rmm.getConsumesContentType());
+        if (contentType != null) {
+      	  sf.line("headers: { 'Content-Type': '%s'},", contentType);
+        }
+        else {
+      	  sf.line("headers: { },");
+        }
         sf.line("url: this.ctx + %s,", url);
         sf.line("method: '%s',", httpMethod);
         sf.line("data: %s,", payload);
@@ -172,9 +178,9 @@ class JSSourceGenerator extends AbstractSourceGenerator {
     private String buildParameters(RestMethodMeta rmm) {
         List<String> functionalParams = rmm.getFunctionalParameters();
 
-        if (rmm.isJSONEndcoded()) {
-            functionalParams.add("_payload");
-        }
+//        if (rmm.isJSONEndcoded()) {
+//            functionalParams.add("_payload");
+//        }
         return Joiner.on(", ").join(functionalParams);
     }
 
@@ -187,7 +193,12 @@ class JSSourceGenerator extends AbstractSourceGenerator {
             return buildJSONString(jsonObj);
         }
         if (rmm.isJSONEndcoded()) {
-            return "_payload";
+            List<String> payloadParams = rmm.getNonAnnotatedParameters();
+            if (payloadParams.size() == 1) {
+                return payloadParams.get(0);
+            }
+            return "[" + Joiner.on(", ").join(rmm.getNonAnnotatedParameters()) + "]";
+//            return "_payload";
         }
         return "null";
     }

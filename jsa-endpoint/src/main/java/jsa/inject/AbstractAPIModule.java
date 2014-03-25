@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.cxf.transport.http.DestinationRegistryImpl;
 
 import com.google.inject.AbstractModule;
 
@@ -23,75 +25,78 @@ import com.google.inject.AbstractModule;
 @Slf4j
 public abstract class AbstractAPIModule extends AbstractModule {
 
-	protected String context;
-	protected String packageNamePrefix;
-	protected Bus bus = BusFactory.newInstance().createBus();
+    protected String context;
+    protected Bus bus;
+    protected JaxRsConfig jaxRsConfig;
+    protected APIRegistry apiRegistry = new APIRegistry();
 
-	protected JaxRsConfig jaxRsConfig;
+    // init Bus
+    {
+        bus = BusFactory.newInstance().createBus();
+        bus.setExtension(new DestinationRegistryImpl(), DestinationRegistry.class);
+    }
 
-	protected APIRegistry apiRegistry = new APIRegistry();
+    public AbstractAPIModule(String context, String packageNamePrefix) {
+        this.context = context;
+        apiRegistry.scan(packageNamePrefix);
+    }
 
-	public AbstractAPIModule(String context, String packageNamePrefix) {
-		this.context = context;
-		this.packageNamePrefix = packageNamePrefix;
+    public AbstractAPIModule(String context) {
+        this.context = context;
+    }
 
-		apiRegistry.scan(packageNamePrefix);
-	}
+    public AbstractAPIModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
+        this.jaxRsConfig = jaxRsConfig;
+        return this;
+    }
 
-	public AbstractAPIModule(String context) {
-		this.context = context;
-	}
+    public AbstractAPIModule withPort(Class<?> apiPort) {
+        apiRegistry.addPort(apiPort);
+        return this;
+    }
 
-	public AbstractAPIModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
-		this.jaxRsConfig = jaxRsConfig;
-		return this;
-	}
+    @Override
+    protected void configure() {
+        JSAServletModule servletModule = createServletModule();
+        InternalAPIModule apiModule = new InternalAPIModule(context, bus)
+                .withJaxRsConfig(jaxRsConfig);
 
-	public AbstractAPIModule withPort(Class<?> apiPort) {
-		apiRegistry.addPort(apiPort);
-		return this;
-	}
+        Collection<APIWithPorts<?>> ports = getApiPorts();
 
-	@Override
-	protected void configure() {
-		JSAServletModule servletModule = createServletModule();
-		InternalAPIModule apiModule = new InternalAPIModule(context, bus)
-		      .withJaxRsConfig(jaxRsConfig);
+        log.info(toString(ports));
 
-		Collection<APIWithPorts<?>> ports = getApiPorts();
+        for (APIWithPorts<?> a : ports) {
+            for (Class<?> apiPort : a.getPorts()) {
+                try {
+                    apiModule.automaticExpose(apiPort);
+                }
+                catch (Exception e) {
+                    log.warn("Error exposing " + apiPort, e);
+                }
+            }
+        }
+        bind(InstanceLocator.class).to(InstanceLocatorImpl.class);
 
-		log.info(toString(ports));
+        install(servletModule);
+        install(apiModule);
+    }
 
-		for (APIWithPorts<?> a : ports) {
-			for (Class<?> apiPort : a.getPorts()) {
-				try {
-					apiModule.automaticExpose(apiPort);
-				}
-				catch (Exception e) {
-					log.warn("Error exposing " + apiPort, e);
-				}
-			}
-		}
-		install(servletModule);
-		install(apiModule);
-	}
+    protected Collection<APIWithPorts<?>> getApiPorts() {
+        return apiRegistry.getAPIs();
+    }
 
-	protected Collection<APIWithPorts<?>> getApiPorts() {
-		return apiRegistry.getAPIs();
-	}
+    protected abstract JSAServletModule createServletModule();
 
-	protected abstract JSAServletModule createServletModule();
-	
-	private String toString(Collection<APIWithPorts<?>> ports) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%s on context [%s]\n", getClass().getSimpleName(), context));
+    private String toString(Collection<APIWithPorts<?>> ports) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%s on context [%s]\n", getClass().getSimpleName(), context));
 
-		for (APIWithPorts<?> a : ports) {
-			for (Class<?> apiPort : a.getPorts()) {
-				sb.append(String.format("\tAPI[%s]: Port[%s]\n", 
-						a.getApi().getName(), apiPort.getName()));
-			}
-		}
-		return sb.toString();
-	}
+        for (APIWithPorts<?> a : ports) {
+            for (Class<?> apiPort : a.getPorts()) {
+                sb.append(String.format("  API[%s]: Port[%s]\n",
+                        a.getApi().getName(), apiPort.getName()));
+            }
+        }
+        return sb.toString();
+    }
 }
