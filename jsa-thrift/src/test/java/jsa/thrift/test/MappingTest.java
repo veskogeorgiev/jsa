@@ -1,18 +1,17 @@
 package jsa.thrift.test;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import jsa.endpoint.thrift.DtoConverter;
 import jsa.endpoint.thrift.TypeMapping;
 import jsa.thrift.test.mock.api.Item;
 import jsa.thrift.test.mock.api.ItemResult;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MappingTest {
 
