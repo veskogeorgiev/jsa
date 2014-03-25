@@ -108,7 +108,7 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
 
         if (!arguments.isEmpty()) {
             int arg = 0;
-            for (Integer i : ReflectionUtils.getUnannotatedArguments(method)) {
+            for (@SuppressWarnings("unused") Integer i : ReflectionUtils.getUnannotatedArguments(method)) {
                 res.add("payloadArg" + arg++);
             }
         }
