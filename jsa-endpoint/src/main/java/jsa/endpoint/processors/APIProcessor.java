@@ -53,7 +53,7 @@ public abstract class APIProcessor implements Processor, APIPortAware {
     @Inject
     private void postConstruct(PortImplementationLocator locator)
             throws NotImplementedException {
-        this.serviceInstance = locator.locateServiceImplementor(apiPort);
+        this.serviceInstance = locator.locate(apiPort);
         this.methodRepository = new MethodRepository(serviceInstance.getClass());
     }
 

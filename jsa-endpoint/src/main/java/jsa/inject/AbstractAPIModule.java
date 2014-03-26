@@ -75,7 +75,7 @@ public abstract class AbstractAPIModule extends AbstractModule {
                 }
             }
         }
-        bind(InstanceLocator.class).to(InstanceLocatorImpl.class);
+        bind(InstanceLocator.class).to(GuiceInstanceLocator.class);
 
         install(servletModule);
         install(apiModule);

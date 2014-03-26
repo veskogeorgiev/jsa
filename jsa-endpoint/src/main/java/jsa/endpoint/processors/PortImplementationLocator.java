@@ -37,7 +37,7 @@ public class PortImplementationLocator {
 
     @Inject private InstanceLocator locator;
 
-    public Object locateServiceImplementor(Class<?> apiPort) throws NotImplementedException {
+    public Object locate(Class<?> apiPort) throws NotImplementedException {
         Class<?> apiInterface = findServiceClassFromAPIPort(apiPort);
         try {
             return locator.locate(apiInterface);

@@ -21,18 +21,18 @@ public class MethodRepository {
         }
     }
 
-    public Method singleMethod(String methodName, Object[] parameters)
+    public Method singleMethod(String methodName, Object[] args)
             throws NoSuchMethodException {
-        if (parameters == null) {
-            parameters = new Object[0];
+        if (args == null) {
+            args = new Object[0];
         }
         for (Method method : nameToMethod.get(methodName)) {
             Class<?>[] mp = method.getParameterTypes();
-            if (mp.length == parameters.length) {
+            if (mp.length == args.length) {
                 return method;
             }
         }
         throw new NoSuchMethodException("No method for name " + methodName +
-                " and arguments " + Arrays.toString(parameters));
+                " and arguments " + Arrays.toString(args));
     }
 }

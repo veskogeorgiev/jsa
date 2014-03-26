@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import com.google.inject.Injector;
 
 @Singleton
-class InstanceLocatorImpl implements InstanceLocator {
+class GuiceInstanceLocator implements InstanceLocator {
 
     private @Inject Injector injector;
 
