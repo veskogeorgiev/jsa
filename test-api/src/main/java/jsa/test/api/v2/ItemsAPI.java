@@ -10,4 +10,7 @@ public interface ItemsAPI {
     void saveBoth(Item item1, Item item2);
 
     void save(Item item);
+
+    void create(String name, int age);
+
 }

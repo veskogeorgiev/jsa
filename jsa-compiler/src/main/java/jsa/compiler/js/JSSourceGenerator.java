@@ -17,6 +17,8 @@
  *******************************************************************************/
 package jsa.compiler.js;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -116,7 +118,7 @@ class JSSourceGenerator extends AbstractSourceGenerator {
         }
         sf.line("url: this.ctx + %s,", url);
         sf.line("method: '%s',", httpMethod);
-        sf.line("data: %s,", payload);
+        sf.line("data: %s", payload);
         sf.blockClose();
 
         sf.line("return this.%s.send(req)", HTTP_INTERFACE);
@@ -190,7 +192,7 @@ class JSSourceGenerator extends AbstractSourceGenerator {
             for (String formParam : rmm.getFormParameters()) {
                 jsonObj.put(formParam, formParam);
             }
-            return buildJSONString(jsonObj);
+            return buildURLEncodedString(jsonObj);
         }
         if (rmm.isJSONEndcoded()) {
             List<String> payloadParams = rmm.getNonAnnotatedParameters();
@@ -212,6 +214,17 @@ class JSSourceGenerator extends AbstractSourceGenerator {
         return sb.toString();
     }
 
+    private String buildURLEncodedString(Map<String, String> map) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> e : map.entrySet()) {
+            String key = urlEncode(e.getKey());
+            
+            sb.append("'&").append(key).append("='+");
+            sb.append("encodeURIComponent(").append(e.getValue()).append(")+");
+        }
+        return sb.substring(0, sb.length() - 1);
+    }
+
     private String getFieldList(ComplexType type) {
         List<String> l = new LinkedList<String>();
         for (Field d : type.getFields()) {
@@ -220,4 +233,13 @@ class JSSourceGenerator extends AbstractSourceGenerator {
         return Joiner.on(", ").join(l);
     }
 
+    private String urlEncode(String str) {
+        try {
+            return URLEncoder.encode(str, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

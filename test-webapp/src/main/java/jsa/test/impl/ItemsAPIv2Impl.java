@@ -19,4 +19,9 @@ public class ItemsAPIv2Impl implements ItemsAPI {
         throw new RuntimeException();
     }
 
+    @Override
+    public void create(String name, int age) {
+        System.out.println(name + " " + age);
+    }
+
 }

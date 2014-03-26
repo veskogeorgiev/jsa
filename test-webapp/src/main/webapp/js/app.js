@@ -56,4 +56,11 @@ angular.module('test-app', [])
 //			$scope.result = data
 //		});		
 	}
+	$scope.testFormEncoding = function() {
+		$v2ItemsAPI.create('asdfasd', 123).success(function(data) {
+			alert('success');
+		}).error(function(data) {
+			alert('error');
+		})
+	}
 })
