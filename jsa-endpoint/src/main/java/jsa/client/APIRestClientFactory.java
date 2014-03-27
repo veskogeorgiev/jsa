@@ -8,7 +8,7 @@ import java.util.List;
 
 import jsa.endpoint.APIEndpoint;
 import jsa.endpoint.cxf.ExposeRest;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -47,7 +47,7 @@ public class APIRestClientFactory extends APIClientFactory {
             throw new RuntimeException("The port " + apiPort.getName()
                     + "is not annotated with ExposeRest");
         }
-        DefaultAPIPortMeta api = DefaultAPIPortMeta.create(apiPort);
+        APIPortMeta api = APIPortMeta.create(apiPort);
         String restUrl = endpoint.context(api.getFullContext());
         T proxy = (T) JAXRSClientFactory.create(restUrl, apiPort, providers);
         return proxy;

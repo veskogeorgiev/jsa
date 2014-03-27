@@ -30,9 +30,9 @@ import org.apache.camel.RoutesBuilder;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class DefaultAPIPortMeta extends AbstractAPIPortMeta {
+public class APIPortMeta extends AbstractAPIPortMeta {
 
-    protected DefaultAPIPortMeta(Class<?> apiPortClass) {
+    protected APIPortMeta(Class<?> apiPortClass) {
         super(apiPortClass);
     }
 
@@ -64,7 +64,7 @@ public class DefaultAPIPortMeta extends AbstractAPIPortMeta {
     //
     // //////////////////////////////////////////////////////////////////////////////
 
-    public static DefaultAPIPortMeta create(Class<?> apiPort) {
-        return new DefaultAPIPortMeta(apiPort);
+    public static APIPortMeta create(Class<?> apiPort) {
+        return new APIPortMeta(apiPort);
     }
 }

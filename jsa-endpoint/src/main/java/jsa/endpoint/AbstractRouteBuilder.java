@@ -17,7 +17,8 @@
  *******************************************************************************/
 package jsa.endpoint;
 
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIProcessor;
+import jsa.endpoint.processors.APIPortMeta;
 import lombok.Getter;
 
 import org.apache.camel.Endpoint;
@@ -31,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 public abstract class AbstractRouteBuilder extends RouteBuilder implements HasProcessor, APIPortAware {
 
     protected @Getter Processor processor;
-    protected @Getter DefaultAPIPortMeta apiPortMeta;
+    protected @Getter APIPortMeta apiPortMeta;
 
     @Override
     public void setAPIPort(Class<?> apiPort) {
@@ -54,17 +55,28 @@ public abstract class AbstractRouteBuilder extends RouteBuilder implements HasPr
         }
     }
 
-    protected abstract Processor createProcessor();
+    @Override
+    public void configure() throws Exception {
+        Endpoint endpoint = createEndpoint(apiPortMeta.getApiPortClass());
 
-    protected DefaultAPIPortMeta createPortMeta(Class<?> apiPort) {
-        return DefaultAPIPortMeta.create(apiPort);
+        from(endpoint).process(processor).end();
     }
 
-    protected <T extends Endpoint> T createEndpoint(String protocol, Class<T> expectedType) {
+    protected Processor createProcessor() {
+        return new APIProcessor();
+    }
+
+    protected APIPortMeta createPortMeta(Class<?> apiPort) {
+        return APIPortMeta.create(apiPort);
+    }
+
+    protected abstract Endpoint createEndpoint(Class<?> apiPort);
+
+    protected final <T extends Endpoint> T createEndpoint(String protocol, Class<T> expectedType) {
         return endpoint(endpointAddress(protocol), expectedType);
     }
 
-    protected String endpointAddress(String protocol) {
+    protected final String endpointAddress(String protocol) {
         return String.format("%s://%s", protocol, apiPortMeta.getFullContext());
     }
 

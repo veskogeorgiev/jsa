@@ -9,7 +9,7 @@ import jsa.compiler.SourceCodeGenerator;
 import jsa.compiler.SourceCodeGeneratorFactory;
 import jsa.compiler.SourceGenerationContext;
 import jsa.compiler.meta.APIMeta;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 
 /**
  * 
@@ -21,7 +21,7 @@ public class ThriftGeneratorFactory implements SourceCodeGeneratorFactory {
 	public SourceCodeGenerator create(final Class<?> apiPort, final SourceGenerationContext context) {
 		Class<?> apiClass = null;
 		if (apiPort.isAnnotationPresent(APIPort.class)) {
-			DefaultAPIPortMeta portMeta = DefaultAPIPortMeta.create(apiPort);
+			APIPortMeta portMeta = APIPortMeta.create(apiPort);
 			apiClass = portMeta.getAPIClass();
 		}
 		else if (apiPort.isAnnotationPresent(API.class)) {

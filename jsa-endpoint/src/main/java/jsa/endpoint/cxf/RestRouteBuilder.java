@@ -27,9 +27,9 @@ import jsa.endpoint.cxf.ext.SourceGenerator;
 import jsa.endpoint.cxf.ext.WadlGeneratorExt;
 import lombok.Setter;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.cxf.Bus;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -51,27 +51,18 @@ public class RestRouteBuilder extends AbstractRouteBuilder implements CxfBusAwar
     }
 
     @Override
-    public void configure() throws Exception {
-        CxfRsEndpoint endpoint = restEndpoint(apiPortMeta.getApiPortClass());
-        from(endpoint).process(processor).end();
-    }
-
-    @Override
     protected Processor createProcessor() {
         return new RestProcessor();
     }
 
-    protected CxfRsEndpoint restEndpoint(Class<?> restDecorator) throws Exception {
+    @Override
+    protected Endpoint createEndpoint(Class<?> apiPort) {
         CxfRsEndpoint endpoint = createEndpoint("cxfrs", CxfRsEndpoint.class);
         endpoint.setBus(bus);
-        endpoint.addResourceClass(restDecorator);
-        endpoint.setProviders(getAdditionalProviders(restDecorator));
+        endpoint.addResourceClass(apiPort);
+        endpoint.setProviders(getAdditionalProviders(apiPort));
 
         return endpoint;
-    }
-
-    protected RouteDefinition fromRestEndpoint(Class<?> restDecorator) throws Exception {
-        return from(restEndpoint(restDecorator));
     }
 
     private List<Object> getAdditionalProviders(Class<?> restDecorator) {

@@ -19,8 +19,9 @@ package jsa.endpoint.thrift;
 
 import jsa.endpoint.APIModuleContextAware;
 import jsa.endpoint.AbstractRouteBuilder;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.servlet.ServletEndpoint;
 
@@ -30,35 +31,36 @@ import org.apache.camel.component.servlet.ServletEndpoint;
  */
 public class ThriftRouteBuilder extends AbstractRouteBuilder implements APIModuleContextAware {
 
-	private String context;
+    private String context;
 
-	@Override
-	public void setAPIModuleContext(String context) {
-	    this.context = context;
-	}
+    @Override
+    public void setAPIModuleContext(String context) {
+        this.context = context;
+    }
 
-	@Override
-	public ThriftPortMeta getApiPortMeta() {
-		return (ThriftPortMeta) apiPortMeta;
-	}
+    @Override
+    public ThriftPortMeta getApiPortMeta() {
+        return (ThriftPortMeta) apiPortMeta;
+    }
 
-	@Override
-	public void configure() throws Exception {
-		ServletEndpoint endpoint = createEndpoint("servlet", ServletEndpoint.class);
-		// this name is also set in JSAServlet. It should match the name of 
-		// the camel servlet module
-		endpoint.setServletName(context);
-		from(endpoint).process(processor).end();
-	}
+    @Override
+    protected Processor createProcessor() {
+        return new ThriftProcessor(getApiPortMeta());
+    }
 
-	@Override
-	protected Processor createProcessor() {
-		return new ThriftProcessor(getApiPortMeta());
-	}
+    @Override
+    protected APIPortMeta createPortMeta(Class<?> apiPort) {
+        return ThriftPortMeta.create(apiPort);
+    }
 
-	@Override
-	protected DefaultAPIPortMeta createPortMeta(Class<?> apiPort) {
-		return ThriftPortMeta.create(apiPort);
-	}
+    @Override
+    protected Endpoint createEndpoint(Class<?> apiPort) {
+        ServletEndpoint endpoint = createEndpoint("servlet", ServletEndpoint.class);
+        // this name is also set in JSAServlet. It should match the name of
+        // the camel servlet module
+        endpoint.setServletName(context);
+
+        return endpoint;
+    }
 
 }

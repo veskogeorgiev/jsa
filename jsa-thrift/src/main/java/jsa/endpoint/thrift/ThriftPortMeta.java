@@ -1,12 +1,12 @@
 package jsa.endpoint.thrift;
 
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 import jsa.endpoint.thrift.annotations.DtoTypeMapping;
 import jsa.endpoint.thrift.annotations.ExposeThrift;
 
 import org.apache.thrift.TProcessor;
 
-class ThriftPortMeta extends DefaultAPIPortMeta {
+class ThriftPortMeta extends APIPortMeta {
 	private ExposeThrift et;
 
 	protected ThriftPortMeta(Class<?> apiPortClass) {

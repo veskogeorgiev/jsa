@@ -36,10 +36,10 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Slf4j
-public abstract class APIProcessor implements Processor, APIPortAware {
+public class APIProcessor implements Processor, APIPortAware {
 
     protected Class<?> apiPort;
-    protected DefaultAPIPortMeta apiPortMeta;
+    protected APIPortMeta apiPortMeta;
 
     protected MethodRepository methodRepository;
     protected Object serviceInstance;
@@ -47,7 +47,7 @@ public abstract class APIProcessor implements Processor, APIPortAware {
     @Override
     public void setAPIPort(Class<?> apiPort) {
         this.apiPort = apiPort;
-        this.apiPortMeta = DefaultAPIPortMeta.create(apiPort);
+        this.apiPortMeta = APIPortMeta.create(apiPort);
     }
 
     @Inject

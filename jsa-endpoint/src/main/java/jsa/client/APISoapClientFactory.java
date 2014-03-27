@@ -5,7 +5,7 @@ package jsa.client;
 
 import jsa.endpoint.APIEndpoint;
 import jsa.endpoint.cxf.ExposeSoap;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
@@ -29,7 +29,7 @@ public class APISoapClientFactory extends APIClientFactory {
             throw new RuntimeException(
                     "The port " + apiPort.getName() + "is not annotated with ExposeSoap");
         }
-        DefaultAPIPortMeta api = DefaultAPIPortMeta.create(apiPort);
+        APIPortMeta api = APIPortMeta.create(apiPort);
         String soapUrl = endpoint.context(api.getFullContext());
 
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();

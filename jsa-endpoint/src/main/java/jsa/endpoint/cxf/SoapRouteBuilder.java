@@ -21,9 +21,9 @@ import jsa.endpoint.AbstractRouteBuilder;
 import jsa.endpoint.CxfBusAware;
 import lombok.Setter;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.cxf.Bus;
 
 /**
@@ -40,20 +40,12 @@ public class SoapRouteBuilder extends AbstractRouteBuilder implements CxfBusAwar
     }
 
     @Override
-    public void configure() throws Exception {
-        fromSoapEndpoint().process(processor).end();
-    }
-
-    protected CxfEndpoint soapEndpoint() throws Exception {
+    protected Endpoint createEndpoint(Class<?> apiPort) {
         CxfEndpoint endpoint = createEndpoint("cxf", CxfEndpoint.class);
         endpoint.setBus(bus);
         endpoint.setServiceClass(apiPortMeta.getApiPortClass());
 
         return endpoint;
-    }
-
-    protected RouteDefinition fromSoapEndpoint() throws Exception {
-        return from(soapEndpoint());
     }
 
 }

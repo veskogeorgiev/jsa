@@ -31,7 +31,7 @@ import jsa.endpoint.PortExposerService;
 import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.endpoint.cxf.JaxRsConfigAware;
 import jsa.endpoint.cxf.ext.CxfRsComponentExt;
-import jsa.endpoint.processors.DefaultAPIPortMeta;
+import jsa.endpoint.processors.APIPortMeta;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -91,7 +91,7 @@ class InternalAPIModule extends PrivateModule {
 
     public <PortType> InternalAPIModule automaticExpose(Class<PortType> apiPort)
             throws InstantiationException, IllegalAccessException, InvalidConfigurationException {
-        DefaultAPIPortMeta meta = DefaultAPIPortMeta.create(apiPort);
+        APIPortMeta meta = APIPortMeta.create(apiPort);
 
         RoutesBuilder routeBuilder = null;
 
