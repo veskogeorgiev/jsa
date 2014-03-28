@@ -1,4 +1,4 @@
-package jsa.inject;
+package jsa.endpoint;
 
 public interface InstanceLocator {
 

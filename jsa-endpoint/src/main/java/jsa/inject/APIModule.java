@@ -8,6 +8,7 @@ import java.util.Collection;
 import javax.servlet.Filter;
 
 import jsa.endpoint.APIProtector;
+import jsa.endpoint.InstanceLocator;
 import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.endpoint.registry.APIRegistry;
 import jsa.endpoint.registry.APIWithPorts;

@@ -22,7 +22,7 @@ import javax.inject.Singleton;
 
 import jsa.NotImplementedException;
 import jsa.annotations.APIPort;
-import jsa.inject.InstanceLocator;
+import jsa.endpoint.InstanceLocator;
 import lombok.extern.slf4j.Slf4j;
 
 /**
