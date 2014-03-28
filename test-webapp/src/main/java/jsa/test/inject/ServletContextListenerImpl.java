@@ -34,7 +34,7 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 				      new APIModule("/sec", "jsa.test.port.api")
 				          .withProtector("*", p)
 				            ,
-                      new APIModule("/api", "jsa.test.port.api"),
+                      new APIModule("/api", "jsa.test.port.api.v2"),
 				      new TestAPIModule(), 
 				      new ValidationModule()
 				);

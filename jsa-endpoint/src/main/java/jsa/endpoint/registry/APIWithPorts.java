@@ -1,7 +1,7 @@
 /**
  * 
  */
-package jsa.inject.registry;
+package jsa.endpoint.registry;
 
 import java.util.Collection;
 
