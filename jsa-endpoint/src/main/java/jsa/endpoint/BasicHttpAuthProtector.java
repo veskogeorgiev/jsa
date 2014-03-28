@@ -21,7 +21,6 @@ import com.google.common.base.Charsets;
 @AllArgsConstructor
 public class BasicHttpAuthProtector implements APIProtector {
 
-    private String context;
     private String realm;
     private String username;
     private String password;
@@ -29,10 +28,6 @@ public class BasicHttpAuthProtector implements APIProtector {
     @Override
     public boolean isAuthenticated(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String reqUrl = request.getRequestURI().substring(context.length());
-        if (!reqUrl.isEmpty() && !reqUrl.equals("/")) {
-            return true;
-        }
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
 

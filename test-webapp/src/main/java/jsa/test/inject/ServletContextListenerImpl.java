@@ -28,12 +28,11 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 	protected Injector getInjector() {
 		if (injector == null) {
 			try {
-			    BasicHttpAuthProtector p = new BasicHttpAuthProtector("/sec", "Internal API", "api", "123qweasd");
+			    BasicHttpAuthProtector p = new BasicHttpAuthProtector("Internal API", "api1", "123qweasd");
 
 			    injector = Guice.createInjector(
 				      new APIModule("/sec", "jsa.test.port.api")
-				          .withProtector("*", p)
-				            ,
+				          .withProtector("/", p),
                       new APIModule("/api", "jsa.test.port.api.v2"),
 				      new TestAPIModule(), 
 				      new ValidationModule()
