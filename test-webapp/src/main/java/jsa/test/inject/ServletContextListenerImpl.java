@@ -7,7 +7,6 @@ import javax.servlet.ServletContextEvent;
 
 import jsa.endpoint.BasicHttpAuthProtector;
 import jsa.inject.APIModule;
-import jsa.inject.ProtectedAPIModule;
 import jsa.test.api.v1.Item;
 import jsa.test.api.v1.ItemsAPI;
 
@@ -29,9 +28,12 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 	protected Injector getInjector() {
 		if (injector == null) {
 			try {
-				injector = Guice.createInjector(
-				      new ProtectedAPIModule("/sec", "jsa.test.port.api",
-				            new BasicHttpAuthProtector("/sec", "Internal API", "api", "123qweasd")),
+			    BasicHttpAuthProtector p = new BasicHttpAuthProtector("/sec", "Internal API", "api", "123qweasd");
+
+			    injector = Guice.createInjector(
+				      new APIModule("/sec", "jsa.test.port.api")
+				          .withProtector("*", p)
+				            ,
                       new APIModule("/api", "jsa.test.port.api"),
 				      new TestAPIModule(), 
 				      new ValidationModule()

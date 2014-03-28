@@ -18,6 +18,12 @@
 
 package jsa.inject.web;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.Filter;
+
 import org.apache.cxf.Bus;
 
 import com.google.inject.servlet.ServletModule;
@@ -31,6 +37,7 @@ public class JSAServletModule extends ServletModule {
     protected String context;
     protected Bus bus;
     protected JSAServlet servlet;
+    protected Map<String, Filter> filters = new HashMap<String, Filter>();
 
     public JSAServletModule(String context, Bus bus) {
         this.context = context;
@@ -38,9 +45,17 @@ public class JSAServletModule extends ServletModule {
         servlet = new JSAServlet(bus, context);
     }
 
+    public JSAServletModule addFilter(String path, Filter filter) {
+        filters.put(path, filter);
+        return this;
+    }
+
     @Override
     protected void configureServlets() {
         serve(context + "/*").with(servlet);
+        for (Entry<String, Filter> e : filters.entrySet()) {
+            filter(e.getKey()).through(e.getValue());
+        }
     }
 
 }

@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @AllArgsConstructor
-class APIProtectionFilter implements Filter {
+public class APIProtectionFilter implements Filter {
 
     private APIProtector protector;
 

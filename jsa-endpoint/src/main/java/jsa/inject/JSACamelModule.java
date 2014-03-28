@@ -22,16 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import jsa.InvalidConfigurationException;
 import jsa.endpoint.APIModuleContextAware;
-import jsa.endpoint.APIPortAware;
 import jsa.endpoint.CxfBusAware;
 import jsa.endpoint.HasProcessor;
-import jsa.endpoint.PortExposerService;
 import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.endpoint.cxf.JaxRsConfigAware;
 import jsa.endpoint.cxf.ext.CxfRsComponentExt;
-import jsa.endpoint.processors.APIPortMeta;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -48,7 +44,7 @@ import com.google.inject.multibindings.Multibinder;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-class InternalAPIModule extends PrivateModule {
+class JSACamelModule extends PrivateModule {
 
     protected Set<Processor> toInject = new HashSet<Processor>();
     protected List<RoutesBuilder> routesInstances = new LinkedList<RoutesBuilder>();
@@ -57,17 +53,17 @@ class InternalAPIModule extends PrivateModule {
     protected String context;
     protected JaxRsConfig jaxRsConfig;
 
-    public InternalAPIModule(String context, Bus bus) {
+    public JSACamelModule(String context, Bus bus) {
         this.context = context;
         this.bus = bus;
     }
 
-    public InternalAPIModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
+    public JSACamelModule withJaxRsConfig(JaxRsConfig jaxRsConfig) {
         this.jaxRsConfig = jaxRsConfig;
         return this;
     }
 
-    public InternalAPIModule addRoute(RoutesBuilder routeBuilder) {
+    public JSACamelModule addRoute(RoutesBuilder routeBuilder) {
         routesInstances.add(routeBuilder);
 
         if (routeBuilder instanceof HasProcessor) {
@@ -86,33 +82,6 @@ class InternalAPIModule extends PrivateModule {
         // No check for APIPortAware. We assume that if you add a router
         // manually, it should be aware of the port it exposes
 
-        return this;
-    }
-
-    public <PortType> InternalAPIModule automaticExpose(Class<PortType> apiPort)
-            throws InstantiationException, IllegalAccessException, InvalidConfigurationException {
-        APIPortMeta meta = APIPortMeta.create(apiPort);
-
-        RoutesBuilder routeBuilder = null;
-
-        if (meta.hasRouter()) {
-            routeBuilder = meta.getRouter().newInstance();
-        }
-        else {
-            routeBuilder = PortExposerService.getInstance().expose(apiPort);
-
-            if (routeBuilder == null) {
-                throw new InvalidConfigurationException(
-                        "%s is defined as an APIPort but is not specified with expose mechanism.",
-                        apiPort);
-            }
-        }
-
-        if (routeBuilder instanceof APIPortAware) {
-            ((APIPortAware) routeBuilder).setAPIPort(apiPort);
-        }
-
-        addRoute(routeBuilder);
         return this;
     }
 

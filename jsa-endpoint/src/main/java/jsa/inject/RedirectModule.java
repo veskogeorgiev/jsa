@@ -25,7 +25,7 @@ import com.google.inject.servlet.ServletModule;
 @Slf4j
 public class RedirectModule extends ServletModule {
 
-    private Map<String, String> sourceDestionMapping = new HashMap<String, String>();
+    private Map<String, String> sourceDestinationMapping = new HashMap<String, String>();
 
     public RedirectModule() {
         //
@@ -36,7 +36,7 @@ public class RedirectModule extends ServletModule {
     }
 
     public RedirectModule fromTo(String from, String to) {
-        sourceDestionMapping.put(from, to);
+        sourceDestinationMapping.put(from, to);
         return this;
     }
 
@@ -60,8 +60,8 @@ public class RedirectModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        log.info(sourceDestionMapping.toString());
-        for (Entry<String, String> e : sourceDestionMapping.entrySet()) {
+        log.info(sourceDestinationMapping.toString());
+        for (Entry<String, String> e : sourceDestinationMapping.entrySet()) {
             RedirectServlet servlet = new RedirectServlet(e.getValue());
             serve(e.getKey()).with(servlet);
         }
