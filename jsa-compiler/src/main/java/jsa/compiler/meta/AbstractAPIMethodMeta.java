@@ -33,7 +33,7 @@ public abstract class AbstractAPIMethodMeta {
 
 	protected Method method;
 	protected Type returnType;
-	protected List<Type> arguments = new LinkedList<Type>();
+	protected List<Type> parameters = new LinkedList<Type>();
 
 	public String getName() {
 		return method.getName();
@@ -55,7 +55,7 @@ public abstract class AbstractAPIMethodMeta {
 		}
 
 		public Builder<T> argument(Type arg) {
-			instance.arguments.add(arg);
+			instance.parameters.add(arg);
 			return this;
 		}
 

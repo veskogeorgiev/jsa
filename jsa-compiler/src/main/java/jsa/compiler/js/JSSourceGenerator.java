@@ -159,7 +159,7 @@ class JSSourceGenerator extends AbstractSourceGenerator {
     private void collectDtos() {
         for (RestMethodMeta sm : restMeta.getMethods()) {
             // addDtoType(sm.getReturnType());
-            for (Type type : sm.getArguments()) {
+            for (Type type : sm.getParameters()) {
                 addDtoType(type);
             }
         }

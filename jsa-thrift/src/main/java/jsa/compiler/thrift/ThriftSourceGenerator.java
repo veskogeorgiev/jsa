@@ -147,7 +147,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	private void collectDtos() {
 		for (ThriftMethodMeta mm : methods) {
 			addDtoType(mm.getReturnType());
-			for (Type type : mm.getArguments()) {
+			for (Type type : mm.getParameters()) {
 				addDtoType(type);
 			}
 		}
@@ -180,7 +180,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	private String buildParameters(ThriftMethodMeta mm) {
 		List<String> functionalParams = new LinkedList<String>();
 		int idx = 1;
-		for (Type arg : mm.getArguments()) {
+		for (Type arg : mm.getParameters()) {
 			functionalParams.add(type(arg) + " " + "arg" + (idx++));
 		}
 		return Joiner.on(", ").join(functionalParams);

@@ -94,10 +94,10 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
 
     public List<Type> getPostBodyObjectTypes() {
         List<Type> res = new LinkedList<Type>();
-        if (!arguments.isEmpty()) {
+        if (!parameters.isEmpty()) {
             List<Integer> idxs = ReflectionUtils.getUnannotatedArguments(method);
             for (Integer idx : idxs) {
-                res.add(arguments.get(idx));
+                res.add(parameters.get(idx));
             }
         }
         return res;
@@ -106,7 +106,7 @@ public class RestMethodMeta extends AbstractAPIMethodMeta {
     public List<String> getNonAnnotatedParameters() {
         List<String> res = new LinkedList<String>();
 
-        if (!arguments.isEmpty()) {
+        if (!parameters.isEmpty()) {
             int arg = 0;
             for (@SuppressWarnings("unused") Integer i : ReflectionUtils.getUnannotatedArguments(method)) {
                 res.add("payloadArg" + arg++);
