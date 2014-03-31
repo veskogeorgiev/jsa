@@ -10,6 +10,7 @@ import javax.jws.WebService;
 import jsa.annotations.APIPort;
 import jsa.annotations.APIPortType;
 import jsa.endpoint.cxf.ExposeSoap;
+import jsa.test.api.APIException;
 import jsa.test.api.v1.Item;
 import jsa.test.api.v1.ItemResult;
 import jsa.test.api.v1.ItemsAPI;
@@ -22,7 +23,7 @@ public interface ItemsAPISoap extends ItemsAPI {
 	@WebMethod
 	@WebResult
 	@Override
-	List<Item> getItems();
+	List<Item> getItems() throws APIException;
 
 	@Override
 	@WebMethod

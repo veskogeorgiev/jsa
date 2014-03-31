@@ -29,7 +29,8 @@ public class ItemsAPIv1Impl implements ItemsAPI {
 
 	@Override
 	public List<Item> getItems() throws APIException {
-		return list;
+	    throw new APIException();
+//		return list;
 	}
 
 	@Override

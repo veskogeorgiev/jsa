@@ -24,7 +24,7 @@ import org.apache.cxf.jaxrs.model.wadl.Description;
 import org.apache.cxf.jaxrs.model.wadl.ElementClass;
 
 @APIPort(api = ItemsAPI.class, context = "rest", type = APIPortType.DECORATOR)
-@ExposeRest(exceptionMapper = TestExcetionMapper.class)
+@ExposeRest(providers = {TestExcetionMapper.class})
 @Description("This is a super cool API for items")
 @Produces(MediaType.APPLICATION_JSON)
 public interface ItemsAPIRest extends ItemsAPI {

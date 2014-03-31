@@ -47,7 +47,7 @@ public abstract class AbstractAPIPortMeta {
 	 */
 	public String getFullContext() {
 		// TODO
-		return apiMeta.getUrl() + "/" + getContext();
+		return apiMeta.getURI() + "/" + getContext();
 	}
 
 	public String getFullClassName() {

@@ -24,21 +24,23 @@ public class PortExposerService {
         loader = ServiceLoader.load(PortExposer.class);
     }
 
-    public RoutesBuilder expose(Class<?> apiPort) throws InstantiationException,
+    public RoutesBuilder matchRouteBuilder(Class<?> apiPort) throws InstantiationException,
             IllegalAccessException {
         RoutesBuilder routeBuilder = null;
 
         for (PortExposer exposer : loader) {
             Class<? extends Annotation> a = exposer.annotation();
-            if (apiPort.isAnnotationPresent(a)) {
+            if (a != null && apiPort.isAnnotationPresent(a)) {
                 Class<? extends RoutesBuilder> cls = exposer.routeBuilder();
-                routeBuilder = cls.newInstance();
+                if (cls != null) {
+                    routeBuilder = cls.newInstance();
+                }
             }
         }
         return routeBuilder;
     }
 
-    public Set<SourceGenerationConfig> sourceGenerators() {
+    public Set<SourceGenerationConfig> discoverSourceGenerators() {
         Set<SourceGenerationConfig> res = new HashSet<SourceGenerationConfig>();
 
         for (PortExposer exposer : loader) {

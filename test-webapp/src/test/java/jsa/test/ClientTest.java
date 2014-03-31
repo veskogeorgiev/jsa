@@ -54,6 +54,20 @@ public class ClientTest extends Assert {
 	}
 
 	@Test
+	public void testFault() {
+	    try {
+            List<Item> res = soapApi.getItems();
+            System.out.println("response: " + res);
+        }
+        catch (APIException e) {
+            System.out.println("apiex: " + e);
+        }
+	    catch (Exception e) {
+	        System.out.println("ex: " + e);
+        }
+	}
+
+	@Test
 	public void thrift() throws Exception {
 		Object res = null;
 

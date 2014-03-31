@@ -17,58 +17,13 @@
  *******************************************************************************/
 package jsa.endpoint.cxf;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-
 import jsa.endpoint.processors.APIProcessor;
-import jsa.endpoint.processors.MethodInvocationContext;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-@Slf4j
 public class RestProcessor extends APIProcessor {
 
-    private ExceptionMapper<Exception> exceptionMapper;
-
-    @Override
-    protected Object invoke(MethodInvocationContext invCtx)
-            throws InvocationTargetException, Exception {
-        try {
-            return invCtx.invoke();
-        }
-        catch (InvocationTargetException e) {
-            if (e.getCause() instanceof Exception) {
-                return toResponse((Exception) e.getCause());
-            }
-            throw e;
-        }
-    }
-
-    private Object toResponse(Exception e) throws Exception {
-        Response res = getExceptionMapper().toResponse(e);
-        if (res == null) {
-            throw e;
-        }
-        return res;
-    }
-
-    public synchronized ExceptionMapper<Exception> getExceptionMapper() {
-        if (exceptionMapper == null) {
-            ExposeRest rest = apiPort.getAnnotation(ExposeRest.class);
-            Class<? extends ExceptionMapper<Exception>> mapper = rest.exceptionMapper();
-            try {
-                exceptionMapper = mapper.newInstance();
-            }
-            catch (Exception e) {
-                log.warn("Could not instantiate exception mapper {}", mapper);
-            }
-        }
-        return exceptionMapper;
-    }
-
+    //
 }

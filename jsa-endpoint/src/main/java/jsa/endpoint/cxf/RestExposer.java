@@ -18,8 +18,8 @@ public class RestExposer implements PortExposer {
     @Override
     public SourceGenerationConfig[] sourceGenerationConfig() {
         return new SourceGenerationConfig[] {
-                new SourceGenerationConfig("_js", JSGeneratorFactory.class),
-                new SourceGenerationConfig("_restapi", RestGeneratorFactory.class)
+            new SourceGenerationConfig("_js", JSGeneratorFactory.class),
+            new SourceGenerationConfig("_restapi", RestGeneratorFactory.class)
         };
     }
 }

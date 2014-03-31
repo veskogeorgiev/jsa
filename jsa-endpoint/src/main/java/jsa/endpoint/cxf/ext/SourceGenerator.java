@@ -59,7 +59,7 @@ public class SourceGenerator implements RequestHandler {
     public SourceGenerator(String moduleContext) {
         this.moduleContext = moduleContext;
 
-        for (SourceGenerationConfig sg : PortExposerService.getInstance().sourceGenerators()) {
+        for (SourceGenerationConfig sg : PortExposerService.getInstance().discoverSourceGenerators()) {
             try {
                 SourceCodeGeneratorFactory factoryInstance = sg.getFactory().newInstance();
                 factories.put(sg.getContext(), factoryInstance);                

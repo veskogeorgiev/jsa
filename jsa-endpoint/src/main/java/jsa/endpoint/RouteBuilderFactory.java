@@ -31,11 +31,11 @@ public class RouteBuilderFactory {
 
         RoutesBuilder routeBuilder = null;
 
-        if (meta.hasRouter()) {
-            routeBuilder = meta.getRouter().newInstance();
+        if (meta.hasCustomRouter()) {
+            routeBuilder = meta.getCustomRouter().newInstance();
         }
         else {
-            routeBuilder = PortExposerService.getInstance().expose(apiPort);
+            routeBuilder = PortExposerService.getInstance().matchRouteBuilder(apiPort);
 
             if (routeBuilder == null) {
                 throw new InvalidConfigurationException(

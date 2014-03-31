@@ -20,8 +20,6 @@ package jsa.endpoint.cxf;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.ws.rs.ext.ExceptionMapper;
-
 /**
  * Annotation that this is a port to an API.
  * 
@@ -31,6 +29,4 @@ import javax.ws.rs.ext.ExceptionMapper;
 public @interface ExposeRest {
 
     Class<?>[] providers() default {};
-
-    Class<? extends ExceptionMapper<Exception>> exceptionMapper() default DefaultExceptionMapper.class;
 }

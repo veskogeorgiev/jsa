@@ -66,16 +66,22 @@ public class APIProcessor implements Processor, APIPortAware {
             return;
         }
 
+        Object response = null;
         try {
             log.info("Execute API method : " + invCtx.getMethod());
 
-            Object response = invoke(invCtx);
-
-            setOutputResult(exchange, response);
+            response = invoke(invCtx);
         }
         catch (InvocationTargetException e) {
-            handleException(e);
+            if (e.getCause() instanceof Exception) {
+                response = toResponse((Exception) e.getCause());
+            }
+            else {
+                throw new RuntimeException(e.getCause());
+            }
         }
+        
+        setOutputResult(exchange, response);
     }
 
     protected MethodInvocationContext createInvocationContext(Exchange exchange)
@@ -100,12 +106,14 @@ public class APIProcessor implements Processor, APIPortAware {
         exchange.getOut().setBody(result);
     }
 
-    protected void handleException(InvocationTargetException e) throws
-            Exception {
-        if (e.getCause() instanceof Exception) {
-            throw (Exception) e.getCause();
-        }
-        throw new RuntimeException(e.getCause());
+    /**
+     * Should either return a response or rethrow the exception
+     * @param e
+     * @return
+     * @throws Exception
+     */
+    protected Object toResponse(Exception e) throws Exception {
+        throw e;
     }
 
     protected Method findMethod(String operationName, Object[] parameters)

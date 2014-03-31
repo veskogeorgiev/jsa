@@ -13,14 +13,13 @@ import jsa.annotations.Router;
 import jsa.endpoint.cxf.ExposeRest;
 import jsa.test.api.v1.Item;
 import jsa.test.api.v2.ItemsAPI;
-import jsa.test.port.api.TestExcetionMapper;
 
 import org.apache.cxf.jaxrs.model.wadl.Description;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @APIPort(api = ItemsAPI.class, context = "rest", type = APIPortType.DECORATOR)
-@ExposeRest(exceptionMapper = TestExcetionMapper.class, providers = {JacksonJsonProvider.class})
+@ExposeRest(providers = {JacksonJsonProvider.class})
 @Router(JSONRouteBuilder.class)
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

@@ -44,11 +44,11 @@ public class APIPortMeta extends AbstractAPIPortMeta {
         return get(CustomInvocation.class).value();
     }
 
-    public boolean hasRouter() {
+    public boolean hasCustomRouter() {
         return has(Router.class);
     }
 
-    public Class<? extends RoutesBuilder> getRouter() {
+    public Class<? extends RoutesBuilder> getCustomRouter() {
         return get(Router.class).value();
     }
 

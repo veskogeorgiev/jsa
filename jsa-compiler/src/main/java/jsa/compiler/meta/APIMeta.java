@@ -42,7 +42,7 @@ public class APIMeta {
 		return apiClass.getPackage();
 	}
 
-	public String getUrl() {
+	public String getURI() {
 		return String.format("/%s/%s", getName(), getVersion().getTag());
 	}
 
