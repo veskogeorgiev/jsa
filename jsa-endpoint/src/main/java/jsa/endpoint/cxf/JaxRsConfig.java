@@ -22,6 +22,7 @@ package jsa.endpoint.cxf;
 
 import java.util.List;
 
+
 /**
  * Used to additionally configure the REST factory bean
  * 
@@ -29,5 +30,5 @@ import java.util.List;
  */
 public interface JaxRsConfig {
 
-    List<Object> providers();
+    void addProviders(List<Object> providers);
 }

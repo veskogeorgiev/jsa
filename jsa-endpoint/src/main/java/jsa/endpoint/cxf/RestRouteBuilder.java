@@ -66,42 +66,35 @@ public class RestRouteBuilder extends AbstractRouteBuilder implements CxfBusAwar
     }
 
     private List<Object> getAdditionalProviders(Class<?> restDecorator) {
-        List<Object> res = new LinkedList<Object>();
-        List<Object> providers = getProvidersFromConfig();
-
-        if (providers != null) {
-            res.addAll(jaxRsConfig.providers());
-        }
-        else {
-            res.add(new JacksonJsonProvider());
+        List<Object> providers = new LinkedList<Object>();
+        
+        // add global API module config
+        if (jaxRsConfig != null) {
+            jaxRsConfig.addProviders(providers);
         }
 
-        SourceGenerator sourceGenerator = new SourceGenerator(context);
-        WadlGeneratorExt wg = new WadlGeneratorExt();
-
-        res.add(sourceGenerator);
-        res.add(wg);
-
+        // add local API config
         ExposeRest rest = restDecorator.getAnnotation(ExposeRest.class);
         Class<?>[] localProviders = rest.providers();
         for (Class<?> providerClass : localProviders) {
             try {
-                res.add(providerClass.newInstance());
+                providers.add(providerClass.newInstance());
             }
             catch (Exception e) {
                 log.warn("Could not instantiate provider : " + providerClass, e);
             }
         }
-        return res;
+        
+        // if nothing so far, put JSON Provider
+        if (providers.isEmpty()) {
+            providers.add(new JacksonJsonProvider());
+        }
+
+        // add default ones
+        providers.add(new SourceGenerator(context));
+        providers.add(new WadlGeneratorExt());
+
+        return providers;
     }
 
-    private List<Object> getProvidersFromConfig() {
-        if (jaxRsConfig != null) {
-            List<Object> providers = jaxRsConfig.providers();
-            if (providers != null) {
-                return jaxRsConfig.providers();
-            }
-        }
-        return null;
-    }
 }
