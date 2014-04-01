@@ -1,3 +1,12 @@
-OUT_DIR=src/gen/cocoa
+OUT_DIR=src/gen/cocoa/v1
 mkdir $OUT_DIR
-thrift --gen cocoa -out $OUT_DIR src/main/thrift/items.thrift
+thrift --gen cocoa -out $OUT_DIR src/main/thrift/items.v1.thrift
+
+OUT_DIR=src/gen/cocoa/v2
+mkdir $OUT_DIR
+thrift --gen cocoa -out $OUT_DIR src/main/thrift/items.v2.thrift
+
+OUT_DIR=src/gen/cocoa/v2
+mkdir $OUT_DIR
+thrift --gen cocoa -out $OUT_DIR src/main/thrift/items.v3.thrift
+`

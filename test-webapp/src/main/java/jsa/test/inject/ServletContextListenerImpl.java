@@ -3,13 +3,11 @@
  */
 package jsa.test.inject;
 
-import javax.servlet.ServletContextEvent;
+import java.util.List;
 
-import jsa.endpoint.APIProtector;
-import jsa.endpoint.BasicHttpAuthProtector;
+import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.inject.APIModule;
-import jsa.test.api.v1.Item;
-import jsa.test.api.v1.ItemsAPI;
+import jsa.test.port.api.TestExcetionMapper;
 
 import org.apache.bval.guice.ValidationModule;
 
@@ -29,12 +27,15 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 	protected Injector getInjector() {
 		if (injector == null) {
 			try {
-			    APIProtector p = new BasicHttpAuthProtector("Internal API", "api1", "123qweasd");
+//			    APIProtector p = new BasicHttpAuthProtector("Internal API", "api1", "123qweasd");
 
 			    injector = Guice.createInjector(
-				      new APIModule("/sec", "jsa.test.port.api.v2")
-				          .withProtector("/", p),
-                      new APIModule("/api", "jsa.test.port.api"),
+                      new APIModule("/api", "jsa.test.port.api").withJaxRsConfig(new JaxRsConfig() {
+                        @Override
+                        public void addProviders(List<Object> providers) {
+                            providers.add(new TestExcetionMapper());
+                        }
+                    }),
 				      new TestAPIModule(), 
 				      new ValidationModule()
 				);
@@ -46,23 +47,4 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 		}
 		return injector;
 	}
-
-	@Override
-	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		super.contextInitialized(servletContextEvent);
-		getInjector().injectMembers(this);
-	}
-
-	public static void main(String[] args) {
-		ServletContextListenerImpl ctx = new  ServletContextListenerImpl();
-		Injector inj = ctx.getInjector();
-		ItemsAPI api = inj.getInstance(ItemsAPI.class);
-		Item item = new Item();
-		api.save(item);
-
-//		ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
-//		Validator v = vf.getValidator();
-//		Set<ConstraintViolation<Item>> res = v.validate(i);
-//		System.out.println(res);
-   }
 }

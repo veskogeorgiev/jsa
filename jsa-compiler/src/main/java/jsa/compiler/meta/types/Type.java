@@ -32,63 +32,61 @@ import lombok.Setter;
  */
 public class Type {
 
-	public static class VoidType extends Type {
+    public static class VoidType extends Type {
 
-	}
+    }
 
-	public static class TypeBool extends Type {
+    public static class TypeBool extends Type {
 
-	}
+    }
 
-	public static class TypeByte extends Type {
+    public static class TypeByte extends Type {
 
-	}
+    }
 
-	public static class TypeInteger extends Type {
+    public static class TypeInteger extends Type {
 
-	}
+    }
 
-	public static class TypeLong extends Type {
+    public static class TypeLong extends Type {
 
-	}
+    }
 
-	public static class TypeDouble extends Type {
+    public static class TypeDouble extends Type {
 
-	}
+    }
 
-	public static class TypeString extends Type {
+    public static class TypeString extends Type {
 
-	}
+    }
 
-	public static class TypeBinary extends Type {
+    public static class TypeBinary extends Type {
 
-	}
+    }
 
-	public static class ContainerType extends Type {
+    public static class ContainerType extends Type {
 
-	}
+    }
 
-	@Getter
-	@Setter
-	public static class TypeMap extends ContainerType {
-		private Type keyType;
-		private Type valueType;
-	}
+    @Getter
+    @Setter
+    public static class TypeCollection extends Type {
+        private Type innerType;
+    }
 
-	@Getter
-	@Setter
-	public static class TypeList extends ContainerType {
-		private Type innerType;
-	}
+    @Getter
+    @Setter
+    public static class TypeMap extends ContainerType {
+        private Type keyType;
+        private Type valueType;
+    }
 
-	@Getter
-	@Setter
-	public static class TypeSet extends ContainerType {
-		private Type innerType;
-	}
+    public static class TypeList extends TypeCollection {}
 
-	@Override
-	public String toString() {
-	   return getClass().getSimpleName();
-	}
+    public static class TypeSet extends TypeCollection {}
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

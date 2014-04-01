@@ -1,27 +1,34 @@
 package jsa.test.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Singleton;
 
-import jsa.test.api.v1.Item;
+import jsa.test.api.APIException;
+import jsa.test.api.v2.Item;
 import jsa.test.api.v2.ItemsAPI;
 
 @Singleton
 public class ItemsAPIv2Impl implements ItemsAPI {
 
-    @Override
-    public void saveBoth(Item item1, Item item2) {
-        System.out.println("saved both for user Id" + item1 + "  " + item2);
+    private List<Item> list = new ArrayList<Item>();
+
+    public ItemsAPIv2Impl() {
+        list.add(new Item("Guitar", 5));
+        list.add(new Item("Pick", 3));
+        list.add(new Item("Drum Kit", 2));
     }
 
     @Override
-    public void save(Item item) {
-        System.out.println(item + " saved");
-        throw new RuntimeException();
+    public List<Item> availableItems() {
+        return list;
     }
 
     @Override
-    public void create(String name, int age) {
-        System.out.println(name + " " + age);
+    public void saveItem(String name, int count, String description) throws APIException {
+        Item item = new Item(name, count, description);
+        list.add(item);
     }
 
 }

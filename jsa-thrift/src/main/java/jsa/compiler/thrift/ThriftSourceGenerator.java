@@ -5,12 +5,9 @@ package jsa.compiler.thrift;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import jsa.compiler.AbstractSourceGenerator;
@@ -25,14 +22,14 @@ import jsa.compiler.meta.types.Type;
 import jsa.compiler.meta.types.Type.TypeBinary;
 import jsa.compiler.meta.types.Type.TypeBool;
 import jsa.compiler.meta.types.Type.TypeByte;
+import jsa.compiler.meta.types.Type.TypeCollection;
 import jsa.compiler.meta.types.Type.TypeDouble;
 import jsa.compiler.meta.types.Type.TypeInteger;
-import jsa.compiler.meta.types.Type.TypeList;
 import jsa.compiler.meta.types.Type.TypeMap;
-import jsa.compiler.meta.types.Type.TypeSet;
 import jsa.compiler.meta.types.Type.TypeString;
 import jsa.compiler.meta.types.Type.VoidType;
 import jsa.compiler.meta.types.TypeFactory;
+import jsa.compiler.meta.types.TypeStringBuilder;
 import jsa.compiler.thrift.ThriftMethodMeta.Builder;
 
 import org.reflections.ReflectionUtils;
@@ -61,19 +58,16 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 
 	private SourceFile sf;
 	private List<ThriftMethodMeta> methods;
-	private Map<Class<? extends Type>, String> typeMapping = new HashMap<Class<? extends Type>, String>();
-	{
-		typeMapping.put(VoidType.class, "void");
-		typeMapping.put(TypeBool.class, "bool");
-		typeMapping.put(TypeByte.class, "byte");
-		typeMapping.put(TypeInteger.class, "i32");
-		typeMapping.put(TypeDouble.class, "double");
-		typeMapping.put(TypeString.class, "string");
-		typeMapping.put(TypeBinary.class, "binary");
-		typeMapping.put(TypeMap.class, "map");
-		typeMapping.put(TypeList.class, "list");
-		typeMapping.put(TypeSet.class, "sets");
-	}
+
+	private TypeStringBuilder typeStringBuilder = new TypeStringBuilder()
+		.withTypeMapping(VoidType.class, "void")
+		.withTypeMapping(TypeBool.class, "bool")
+		.withTypeMapping(TypeByte.class, "byte")
+		.withTypeMapping(TypeInteger.class, "i32")
+		.withTypeMapping(TypeDouble.class, "double")
+		.withTypeMapping(TypeString.class, "string")
+		.withTypeMapping(TypeBinary.class, "binary");
+
 	private final Set<CustomType> dtos = new HashSet<CustomType>();
 
 	ThriftSourceGenerator(APIMeta port, SourceGenerationContext context) {
@@ -97,8 +91,8 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	}
 
 	private void writeNamespace() {
-		sf.line("namespace java %s", api.getPackage());
-		sf.line("namespace cocoa IDG");
+		sf.line("namespace java %s", api.getPackage().getName());
+		sf.line("namespace cocoa %s%s", context.getNamespace(), api.getVersion().getTag());
 	}
 
 	private void writeService() {
@@ -110,7 +104,8 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	}
 
 	private void writeMethod(ThriftMethodMeta mm) {
-		sf.line("%s %s(%s)", type(mm.getReturnType()), mm.getName(), buildParameters(mm));
+		sf.line("%s %s(%s)", typeStringBuilder.toString(mm.getReturnType()),
+		        mm.getName(), buildParameters(mm));
 	}
 
 	private void writeCustomTypes() {
@@ -128,7 +123,8 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 		sf.blockOpen("struct %s", type.getName());
 		int idx = 1;
 		for (Field f : type.getFields()) {
-			sf.line("%s: %s %s", idx++, type(f.getType()), f.getName());
+		    String t = typeStringBuilder.toString(f.getType());
+			sf.line("%s: %s %s", idx++, t, f.getName());
 		}
 		sf.blockClose();
 		sf.newLine();
@@ -153,18 +149,6 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 		}
 	}
 
-	private String type(Type type) {
-		for (Entry<Class<? extends Type>, String> e : typeMapping.entrySet()) {
-			if (e.getKey().isAssignableFrom(type.getClass())) {
-				return e.getValue();
-			}
-		}
-		if (type instanceof ComplexType) {
-			return ((ComplexType) type).getName();
-		}
-		throw new RuntimeException("Cannot determine type: " + type);
-	}
-
 	private void addDtoType(Type type) {
 		if (type instanceof CustomType) {
 			dtos.add((CustomType) type);
@@ -175,13 +159,20 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 				}
 			}
 		}
+		else if (type instanceof TypeCollection) {
+		    addDtoType(((TypeCollection) type).getInnerType());
+		}
+		else if (type instanceof TypeMap) {
+		    addDtoType(((TypeMap) type).getKeyType());
+		    addDtoType(((TypeMap) type).getValueType());
+		}
 	}
 
 	private String buildParameters(ThriftMethodMeta mm) {
 		List<String> functionalParams = new LinkedList<String>();
 		int idx = 1;
 		for (Type arg : mm.getParameters()) {
-			functionalParams.add(type(arg) + " " + "arg" + (idx++));
+			functionalParams.add(idx + ": " + typeStringBuilder.toString(arg) + " " + "arg" + (idx++));
 		}
 		return Joiner.on(", ").join(functionalParams);
 	}
@@ -198,7 +189,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 		for (Method method : methods) {
 			Builder builder = ThriftMethodMeta.builder();
 			builder.method(method);
-			builder.returnType(typeFactory.createType(method.getReturnType()));
+			builder.returnType(typeFactory.createType(method.getGenericReturnType()));
 
 			for (Class<?> paramType : method.getParameterTypes()) {
 				builder.argument(typeFactory.createType(paramType));

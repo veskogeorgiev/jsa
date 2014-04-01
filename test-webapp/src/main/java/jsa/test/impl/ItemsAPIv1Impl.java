@@ -1,20 +1,13 @@
 package jsa.test.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Singleton;
-import javax.validation.Valid;
-
-import org.apache.bval.guice.Validate;
 
 import jsa.test.api.APIException;
 import jsa.test.api.v1.Item;
-import jsa.test.api.v1.ItemResult;
 import jsa.test.api.v1.ItemsAPI;
-import jsa.test.api.v1.Request;
 
 @Singleton
 public class ItemsAPIv1Impl implements ItemsAPI {
@@ -22,42 +15,19 @@ public class ItemsAPIv1Impl implements ItemsAPI {
 	private List<Item> list = new ArrayList<Item>();
 
 	public ItemsAPIv1Impl() {
-		list.add(new Item("1", "asdf", 5));
-		list.add(new Item("2", "25g24g", 5));
-		list.add(new Item("3", "259guh", 5));
+		list.add(new Item("Guitar", 5));
+		list.add(new Item("Pick", 3));
+		list.add(new Item("Drum Kit", 2));
 	}
 
-	@Override
-	public List<Item> getItems() throws APIException {
-	    throw new APIException();
-//		return list;
-	}
+    @Override
+    public List<Item> availableItems() {
+        return list;
+    }
 
-	@Override
-	public ItemResult getItemResult() {
-		ItemResult res = new ItemResult();
-		res.setName("asdfasdf");
-		res.setItems(list);
-		return res;
-	}
-
-	@Override
-	@Validate
-	public void save(@Valid Item item) {
-		System.out.println(item);
-		list.add(item);
-	}
-
-	@Override
-	public Map<String, Item> getMapResult() {
-		Map<String, Item> res = new HashMap<String, Item>();
-		res.put("something", new Item("1", "aefg", 4));
-		res.put("anything", new Item("2", "asdf34", 4));
-		return res;
-	}
-
-	@Override
-	public void saveList(Request<List<Item>> item) {
-		System.out.println(item);
-	}
+    @Override
+    public void saveItem(String name, int count) throws APIException {
+        Item item = new Item(name, count);
+        list.add(item);
+    }
 }

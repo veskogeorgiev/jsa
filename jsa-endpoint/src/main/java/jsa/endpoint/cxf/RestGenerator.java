@@ -11,11 +11,13 @@ import jsa.compiler.meta.rest.RestPortMeta;
 import jsa.compiler.meta.types.ComplexType;
 import jsa.compiler.meta.types.Field;
 import jsa.compiler.meta.types.Type;
+import jsa.compiler.meta.types.TypeStringBuilder;
 
 public class RestGenerator implements SourceCodeGenerator {
 
     private RestPortMeta port;
     private SourceGenerationContext context;
+    private TypeStringBuilder tsb = new TypeStringBuilder();
 
     RestGenerator(RestPortMeta restMeta, SourceGenerationContext context) {
         this.port = restMeta;
@@ -30,7 +32,8 @@ public class RestGenerator implements SourceCodeGenerator {
             String path = String.format("%s%s/%s", context.getContext(), port.getFullContext(),
                     m.getDeclaredPath());
             sf.line("%s %s", m.getHttpMethod(), path);
-
+            sf.line("%s", tsb.toString(m.getReturnType()));
+            
             for (Type t : m.getPostBodyObjectTypes()) {
                 printType(t, sf, "  ");
             }
