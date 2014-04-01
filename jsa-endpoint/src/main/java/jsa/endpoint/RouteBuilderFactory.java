@@ -1,7 +1,10 @@
 package jsa.endpoint;
 
+import java.lang.annotation.Annotation;
+
 import jsa.InvalidConfigurationException;
 import jsa.endpoint.processors.APIPortMeta;
+import jsa.endpoint.spi.PortExposerPlugin;
 
 import org.apache.camel.RoutesBuilder;
 
@@ -35,7 +38,7 @@ public class RouteBuilderFactory {
             routeBuilder = meta.getCustomRouter().newInstance();
         }
         else {
-            routeBuilder = PluginService.getInstance().matchRouteBuilder(apiPort);
+            routeBuilder = matchRouteBuilder(apiPort);
 
             if (routeBuilder == null) {
                 throw new InvalidConfigurationException(
@@ -51,4 +54,20 @@ public class RouteBuilderFactory {
         return routeBuilder;
     }
 
+    private RoutesBuilder matchRouteBuilder(Class<?> apiPort) throws InstantiationException,
+            IllegalAccessException {
+        RoutesBuilder routeBuilder = null;
+
+        for (PortExposerPlugin p : PluginService.getInstance().loadPortExposers()) {
+            Class<? extends Annotation> a = p.annotation();
+            if (a != null && apiPort.isAnnotationPresent(a)) {
+                Class<? extends RoutesBuilder> cls = p.routeBuilder();
+                if (cls != null) {
+                    routeBuilder = cls.newInstance();
+                }
+            }
+        }
+        return routeBuilder;
+
+    }
 }

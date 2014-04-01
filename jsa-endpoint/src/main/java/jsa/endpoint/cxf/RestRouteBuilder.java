@@ -23,7 +23,7 @@ import java.util.List;
 import jsa.endpoint.APIModuleContextAware;
 import jsa.endpoint.AbstractRouteBuilder;
 import jsa.endpoint.CxfBusAware;
-import jsa.endpoint.cxf.ext.SourceGenerator;
+import jsa.endpoint.cxf.ext.SourceCodeHandler;
 import jsa.endpoint.cxf.ext.WadlGeneratorExt;
 import lombok.Setter;
 
@@ -91,7 +91,7 @@ public class RestRouteBuilder extends AbstractRouteBuilder implements CxfBusAwar
         }
 
         // add default ones
-        providers.add(new SourceGenerator(context));
+        providers.add(new SourceCodeHandler(context));
         providers.add(new WadlGeneratorExt());
 
         return providers;

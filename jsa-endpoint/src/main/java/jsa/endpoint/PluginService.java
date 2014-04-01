@@ -1,15 +1,12 @@
 package jsa.endpoint;
 
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 import jsa.compiler.SourceCodeGeneratorFactory;
-import jsa.endpoint.spi.PortPlugin;
+import jsa.endpoint.spi.PortExposerPlugin;
 import jsa.endpoint.spi.SourceGenerationPlugin;
-
-import org.apache.camel.RoutesBuilder;
 
 public class PluginService {
 
@@ -19,28 +16,16 @@ public class PluginService {
         return INSTANCE;
     }
 
-    private ServiceLoader<PortPlugin> portLoader;
+    private ServiceLoader<PortExposerPlugin> portLoader;
     private ServiceLoader<SourceGenerationPlugin> sourceLoader;
 
     private PluginService() {
-        portLoader = ServiceLoader.load(PortPlugin.class);
+        portLoader = ServiceLoader.load(PortExposerPlugin.class);
         sourceLoader = ServiceLoader.load(SourceGenerationPlugin.class);
     }
 
-    public RoutesBuilder matchRouteBuilder(Class<?> apiPort) throws InstantiationException,
-            IllegalAccessException {
-        RoutesBuilder routeBuilder = null;
-
-        for (PortPlugin p : portLoader) {
-            Class<? extends Annotation> a = p.annotation();
-            if (a != null && apiPort.isAnnotationPresent(a)) {
-                Class<? extends RoutesBuilder> cls = p.routeBuilder();
-                if (cls != null) {
-                    routeBuilder = cls.newInstance();
-                }
-            }
-        }
-        return routeBuilder;
+    public Iterable<PortExposerPlugin> loadPortExposers() {
+        return portLoader;
     }
 
     public Map<String, SourceCodeGeneratorFactory> loadSourceGenerators() {

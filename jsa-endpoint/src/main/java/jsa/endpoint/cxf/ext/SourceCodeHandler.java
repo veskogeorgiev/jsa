@@ -48,14 +48,14 @@ import org.apache.cxf.message.Message;
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
 @Slf4j
-public class SourceGenerator implements RequestHandler {
+public class SourceCodeHandler implements RequestHandler {
 
     public static final String JS_TYPE = "application/javascript";
 
     private Map<String, SourceCodeGeneratorFactory> factories = new HashMap<String, SourceCodeGeneratorFactory>();
     private String moduleContext;
 
-    public SourceGenerator(String moduleContext) {
+    public SourceCodeHandler(String moduleContext) {
         this.moduleContext = moduleContext;
 
         factories = PluginService.getInstance().loadSourceGenerators();

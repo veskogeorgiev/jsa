@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 
 import org.apache.camel.RoutesBuilder;
 
-public interface PortPlugin {
+public interface PortExposerPlugin {
 
     Class<? extends Annotation> annotation();
 

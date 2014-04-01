@@ -1,8 +1,8 @@
 package jsa.endpoint.cxf;
 
-import jsa.endpoint.spi.PortPlugin;
+import jsa.endpoint.spi.PortExposerPlugin;
 
-public class RestPlugin implements PortPlugin {
+public class RestPlugin implements PortExposerPlugin {
 
     @Override
     public Class<ExposeRest> annotation() {

@@ -1,9 +1,9 @@
 package jsa.endpoint.thrift;
 
-import jsa.endpoint.spi.PortPlugin;
+import jsa.endpoint.spi.PortExposerPlugin;
 import jsa.endpoint.thrift.annotations.ExposeThrift;
 
-public class ThriftPlugin implements PortPlugin {
+public class ThriftPlugin implements PortExposerPlugin {
 
 	@Override
 	public Class<ExposeThrift> annotation() {

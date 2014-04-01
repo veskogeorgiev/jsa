@@ -1,8 +1,8 @@
 package jsa.endpoint.cxf;
 
-import jsa.endpoint.spi.PortPlugin;
+import jsa.endpoint.spi.PortExposerPlugin;
 
-public class SoapPlugin implements PortPlugin {
+public class SoapPlugin implements PortExposerPlugin {
 
     @Override
     public Class<ExposeSoap> annotation() {
