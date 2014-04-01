@@ -32,11 +32,14 @@ public class RestGenerator implements SourceCodeGenerator {
             String path = String.format("%s%s/%s", context.getContext(), port.getFullContext(),
                     m.getDeclaredPath());
             sf.line("%s %s", m.getHttpMethod(), path);
-            sf.line("%s", tsb.toString(m.getReturnType()));
             
             for (Type t : m.getPostBodyObjectTypes()) {
                 printType(t, sf, "  ");
             }
+            sf.line("Result:");
+            printType(m.getReturnType(), sf, "  ");
+//            sf.line("%s", tsb.toString(m.getReturnType()));
+            sf.newLine();
         }
         return Arrays.asList(sf);
     }
@@ -46,7 +49,7 @@ public class RestGenerator implements SourceCodeGenerator {
             printType((ComplexType) bodyType, sf, indent);
         }
         else {
-            sf.line("%s", bodyType);
+            sf.line("%s", tsb.toString(bodyType));
         }
     }
 

@@ -5,7 +5,6 @@ package jsa.compiler.thrift;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -16,16 +15,15 @@ import jsa.compiler.SourceGenerationContext;
 import jsa.compiler.meta.APIMeta;
 import jsa.compiler.meta.types.ComplexType;
 import jsa.compiler.meta.types.CustomType;
+import jsa.compiler.meta.types.CustomTypeCollector;
 import jsa.compiler.meta.types.EnumType;
 import jsa.compiler.meta.types.Field;
 import jsa.compiler.meta.types.Type;
 import jsa.compiler.meta.types.Type.TypeBinary;
 import jsa.compiler.meta.types.Type.TypeBool;
 import jsa.compiler.meta.types.Type.TypeByte;
-import jsa.compiler.meta.types.Type.TypeCollection;
 import jsa.compiler.meta.types.Type.TypeDouble;
 import jsa.compiler.meta.types.Type.TypeInteger;
-import jsa.compiler.meta.types.Type.TypeMap;
 import jsa.compiler.meta.types.Type.TypeString;
 import jsa.compiler.meta.types.Type.VoidType;
 import jsa.compiler.meta.types.TypeFactory;
@@ -68,7 +66,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 		.withTypeMapping(TypeString.class, "string")
 		.withTypeMapping(TypeBinary.class, "binary");
 
-	private final Set<CustomType> dtos = new HashSet<CustomType>();
+	private final CustomTypeCollector types = new CustomTypeCollector();
 
 	ThriftSourceGenerator(APIMeta port, SourceGenerationContext context) {
 		super(port, context);
@@ -109,7 +107,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	}
 
 	private void writeCustomTypes() {
-		for (CustomType type : dtos) {
+		for (CustomType type : types) {
 			if (type instanceof ComplexType) {
 				writeComplexType((ComplexType) type);
 			}
@@ -142,29 +140,10 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 
 	private void collectDtos() {
 		for (ThriftMethodMeta mm : methods) {
-			addDtoType(mm.getReturnType());
+		    types.add(mm.getReturnType());
 			for (Type type : mm.getParameters()) {
-				addDtoType(type);
+			    types.add(type);
 			}
-		}
-	}
-
-	private void addDtoType(Type type) {
-		if (type instanceof CustomType) {
-			dtos.add((CustomType) type);
-
-			if (type instanceof ComplexType) {
-				for (Field f : ((ComplexType) type).getFields()) {
-					addDtoType(f.getType());
-				}
-			}
-		}
-		else if (type instanceof TypeCollection) {
-		    addDtoType(((TypeCollection) type).getInnerType());
-		}
-		else if (type instanceof TypeMap) {
-		    addDtoType(((TypeMap) type).getKeyType());
-		    addDtoType(((TypeMap) type).getValueType());
 		}
 	}
 

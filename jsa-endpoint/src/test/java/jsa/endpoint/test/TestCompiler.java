@@ -10,6 +10,7 @@ import jsa.compiler.js.JSGeneratorFactory;
 import jsa.endpoint.cxf.RestGeneratorFactory;
 import jsa.endpoint.test.mock.api.ItemsAPIRest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestCompiler {
@@ -20,6 +21,7 @@ public class TestCompiler {
     private SourceGenerationContext context = new SourceGenerationContext("/api", "idg");
 
     @Test
+    @Ignore
     public void testJS() {
         SourceCodeGenerator gen = jsFactory.create(ItemsAPIRest.class, context);
         List<SourceFile> files = gen.write();

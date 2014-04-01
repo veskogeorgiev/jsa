@@ -4,6 +4,7 @@
 package jsa.compiler.meta.rest;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,9 +47,9 @@ public class RestAPIPortInspector implements APIPortInspector<RestPortMeta> {
 		Builder builder = RestMethodMeta.builder();
 		builder.restMeta(restMeta);
 		builder.method(method);
-		builder.returnType(typeFactory.createType(method.getReturnType()));
+		builder.returnType(typeFactory.createType(method.getGenericReturnType()));
 
-		for (Class<?> paramType : method.getParameterTypes()) {
+		for (Type paramType : method.getGenericParameterTypes()) {
 			builder.argument(typeFactory.createType(paramType));
 		}
 
