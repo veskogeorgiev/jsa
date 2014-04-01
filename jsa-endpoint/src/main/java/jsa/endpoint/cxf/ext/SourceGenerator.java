@@ -32,8 +32,7 @@ import jsa.compiler.SourceCodeGenerator;
 import jsa.compiler.SourceCodeGeneratorFactory;
 import jsa.compiler.SourceFile;
 import jsa.compiler.SourceGenerationContext;
-import jsa.endpoint.PortExposerService;
-import jsa.endpoint.spi.PortExposer.SourceGenerationConfig;
+import jsa.endpoint.PluginService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.cxf.jaxrs.ext.RequestHandler;
@@ -59,15 +58,7 @@ public class SourceGenerator implements RequestHandler {
     public SourceGenerator(String moduleContext) {
         this.moduleContext = moduleContext;
 
-        for (SourceGenerationConfig sg : PortExposerService.getInstance().discoverSourceGenerators()) {
-            try {
-                SourceCodeGeneratorFactory factoryInstance = sg.getFactory().newInstance();
-                factories.put(sg.getContext(), factoryInstance);                
-            }
-            catch (Exception e) {
-                log.warn("Could not instantiate factory " + sg.getFactory(), e);
-            }
-        }
+        factories = PluginService.getInstance().loadSourceGenerators();
         log.info("Available source generators: " + factories);
     }
 

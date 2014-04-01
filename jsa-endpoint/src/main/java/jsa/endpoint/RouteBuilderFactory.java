@@ -35,7 +35,7 @@ public class RouteBuilderFactory {
             routeBuilder = meta.getCustomRouter().newInstance();
         }
         else {
-            routeBuilder = PortExposerService.getInstance().matchRouteBuilder(apiPort);
+            routeBuilder = PluginService.getInstance().matchRouteBuilder(apiPort);
 
             if (routeBuilder == null) {
                 throw new InvalidConfigurationException(
