@@ -35,7 +35,9 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
                 injector = Guice.createInjector(
                         new APIModule("/api", "jsa.test.port.api")
                                 .withJaxRsConfig(new TestJaxRsConfig()),
-                        new RedirectModule("/api/ItemsAPI/v1/rest", "/api/ItemsAPI/v2/rest"),
+                        new RedirectModule()
+                            .fromTo("/api/ItemsAPI/v1/rest", "/api/ItemsAPI/v2/rest")
+                            .fromTo("/api/ItemsAPI/v1/thrift", "/api/ItemsAPI/v2/thrift"),
                         new TestAPIModule(),
                         new ValidationModule()
                         );

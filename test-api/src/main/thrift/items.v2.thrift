@@ -2,7 +2,7 @@
 // ItemsAPI version: v2:2
 ////////////////////////////////////////////////////////////
 
-namespace java jsa.test.api.v2
+namespace java jsa.test.api.v2.thrift
 namespace cocoa v2
 
 struct Item {
