@@ -14,6 +14,7 @@ import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
@@ -32,7 +33,10 @@ public class APIRestClientFactory extends APIClientFactory {
     }
 
     public <T> T get(Class<T> apiPort) {
-        return get(apiPort, Arrays.asList(new JacksonJsonProvider()));
+       
+        JacksonJsonProvider p = new JacksonJsonProvider();
+        p.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return get(apiPort, Arrays.asList(p));
     }
 
     public <T> T get(Class<T> apiPort, ClientConfigurator configurator) {

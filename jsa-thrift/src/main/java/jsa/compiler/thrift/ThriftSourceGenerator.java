@@ -91,7 +91,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 	}
 
 	private void writeNamespace() {
-		sf.line("namespace java %s", api.getPackage().getName());
+		sf.line("namespace java %s.thrift", api.getPackage().getName());
 		sf.line("namespace cocoa %s%s", context.getNamespace(), api.getVersion().getTag());
 	}
 

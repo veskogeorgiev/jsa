@@ -14,17 +14,43 @@
 		<script src="/js/app.js"></script>
 
 		<!-- API -->
-		<script src="/api/ItemsAPI/v2/rest?_js&ns=v2"></script>
-		<script src="/api/ItemsAPI/v1/rest?_js&ns=v1" ></script>
+		<script src="/api/ItemsAPI/v1/rest?_js&ns=v1"></script>
+		<script src="/api/ItemsAPI/v2/rest?_js&ns=v2" ></script>
+		<script src="/api/ItemsAPI/v3/rest?_js&ns=v3"></script>
 	</head>
 
 	<body ng-controller="MainCtrl">
-		<button ng-click="getItems()">getItems()</button>
-		<button ng-click="getItemResult()">getItemResult()</button>
-		<button ng-click="getMapResult()">getMapResult()</button>
-		<button ng-click="save()">save()</button>
-		<button ng-click="testFormEncoding()">testFormEncoding()</button>
-		<div>{{result}}</div>	
+		Name: <input ng-model="name">
+		Count: <input ng-model="count">
+		Description: <input ng-model="desc">
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>availableItems</th>
+					<th>saveItem</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>v1</td>
+					<td><button ng-click="v1.availableItems()">availableItems</button></td>
+					<td><button ng-click="v1.saveItem()">saveItem</button></td>
+				</tr>
+				<tr>
+					<td>v2</td>
+					<td><button ng-click="v2.availableItems()">availableItems</button></td>
+					<td><button ng-click="v2.saveItem()">saveItem</button></td>
+				</tr>
+				<tr>
+					<td>v3</td>
+					<td><button ng-click="v3.availableItems()">availableItems</button></td>
+					<td><button ng-click="v3.saveItem()">saveItem</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<a href="#" ng-click="result = ''">x</a>
+		<div>{{result}}</div>
 	</body>
 
 </html>

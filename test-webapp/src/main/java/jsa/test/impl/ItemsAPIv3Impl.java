@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.apache.bval.guice.Validate;
 
 import jsa.test.api.APIException;
 import jsa.test.api.v3.Item;
@@ -27,7 +30,8 @@ public class ItemsAPIv3Impl implements ItemsAPI {
     }
 
     @Override
-    public void saveItem(String name, int count, @NotNull String description) throws APIException {
+    @Validate
+    public void saveItem(String name, int count, @NotNull @Size(min = 1) String description) throws APIException {
         Item item = new Item(name, count, description);
         list.add(item);
     }

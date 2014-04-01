@@ -16,9 +16,9 @@
 #import "TBase.h"
 
 
-#import "items.h"
+#import "items.v1.h"
 
-@implementation Item
+@implementation v1Item
 
 - (id) init
 {
@@ -28,11 +28,9 @@
   return self;
 }
 
-- (id) initWithId: (NSString *) id name: (NSString *) name count: (int32_t) count
+- (id) initWithName: (NSString *) name count: (int32_t) count
 {
   self = [super init];
-  __id = [id retain_stub];
-  __id_isset = YES;
   __name = [name retain_stub];
   __name_isset = YES;
   __count = count;
@@ -43,11 +41,6 @@
 - (id) initWithCoder: (NSCoder *) decoder
 {
   self = [super init];
-  if ([decoder containsValueForKey: @"id"])
-  {
-    __id = [[decoder decodeObjectForKey: @"id"] retain_stub];
-    __id_isset = YES;
-  }
   if ([decoder containsValueForKey: @"name"])
   {
     __name = [[decoder decodeObjectForKey: @"name"] retain_stub];
@@ -63,10 +56,6 @@
 
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
-  if (__id_isset)
-  {
-    [encoder encodeObject: __id forKey: @"id"];
-  }
   if (__name_isset)
   {
     [encoder encodeObject: __name forKey: @"name"];
@@ -79,30 +68,8 @@
 
 - (void) dealloc
 {
-  [__id release_stub];
   [__name release_stub];
   [super dealloc_stub];
-}
-
-- (NSString *) id {
-  return [[__id retain_stub] autorelease_stub];
-}
-
-- (void) setId: (NSString *) id {
-  [id retain_stub];
-  [__id release_stub];
-  __id = id;
-  __id_isset = YES;
-}
-
-- (BOOL) idIsSet {
-  return __id_isset;
-}
-
-- (void) unsetId {
-  [__id release_stub];
-  __id = nil;
-  __id_isset = NO;
 }
 
 - (NSString *) name {
@@ -161,20 +128,12 @@
       case 1:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setId: fieldValue];
-        } else { 
-          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
-        }
-        break;
-      case 2:
-        if (fieldType == TType_STRING) {
-          NSString * fieldValue = [inProtocol readString];
           [self setName: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
         break;
-      case 3:
+      case 2:
         if (fieldType == TType_I32) {
           int32_t fieldValue = [inProtocol readI32];
           [self setCount: fieldValue];
@@ -193,22 +152,15 @@
 
 - (void) write: (id <TProtocol>) outProtocol {
   [outProtocol writeStructBeginWithName: @"Item"];
-  if (__id_isset) {
-    if (__id != nil) {
-      [outProtocol writeFieldBeginWithName: @"id" type: TType_STRING fieldID: 1];
-      [outProtocol writeString: __id];
-      [outProtocol writeFieldEnd];
-    }
-  }
   if (__name_isset) {
     if (__name != nil) {
-      [outProtocol writeFieldBeginWithName: @"name" type: TType_STRING fieldID: 2];
+      [outProtocol writeFieldBeginWithName: @"name" type: TType_STRING fieldID: 1];
       [outProtocol writeString: __name];
       [outProtocol writeFieldEnd];
     }
   }
   if (__count_isset) {
-    [outProtocol writeFieldBeginWithName: @"count" type: TType_I32 fieldID: 3];
+    [outProtocol writeFieldBeginWithName: @"count" type: TType_I32 fieldID: 2];
     [outProtocol writeI32: __count];
     [outProtocol writeFieldEnd];
   }
@@ -222,9 +174,7 @@
 
 - (NSString *) description {
   NSMutableString * ms = [NSMutableString stringWithString: @"Item("];
-  [ms appendString: @"id:"];
-  [ms appendFormat: @"\"%@\"", __id];
-  [ms appendString: @",name:"];
+  [ms appendString: @"name:"];
   [ms appendFormat: @"\"%@\"", __name];
   [ms appendString: @",count:"];
   [ms appendFormat: @"%i", __count];
@@ -235,12 +185,7 @@
 @end
 
 
-@implementation itemsConstants
-+ (void) initialize {
-}
-@end
-
-@interface getItems_args : NSObject <TBase, NSCoding> {
+@interface v1availableItems_args : NSObject <TBase, NSCoding> {
 }
 
 - (id) init;
@@ -252,7 +197,7 @@
 
 @end
 
-@implementation getItems_args
+@implementation v1availableItems_args
 
 - (id) init
 {
@@ -295,7 +240,7 @@
 }
 
 - (void) write: (id <TProtocol>) outProtocol {
-  [outProtocol writeStructBeginWithName: @"getItems_args"];
+  [outProtocol writeStructBeginWithName: @"availableItems_args"];
   [outProtocol writeFieldStop];
   [outProtocol writeStructEnd];
 }
@@ -305,14 +250,14 @@
 }
 
 - (NSString *) description {
-  NSMutableString * ms = [NSMutableString stringWithString: @"getItems_args("];
+  NSMutableString * ms = [NSMutableString stringWithString: @"availableItems_args("];
   [ms appendString: @")"];
   return [NSString stringWithString: ms];
 }
 
 @end
 
-@interface GetItems_result : NSObject <TBase, NSCoding> {
+@interface v1AvailableItems_result : NSObject <TBase, NSCoding> {
   NSMutableArray * __success;
 
   BOOL __success_isset;
@@ -338,7 +283,7 @@
 
 @end
 
-@implementation GetItems_result
+@implementation v1AvailableItems_result
 
 - (id) init
 {
@@ -425,7 +370,7 @@
           int _i1;
           for (_i1 = 0; _i1 < _size0; ++_i1)
           {
-            Item *_elem2 = [[Item alloc] init];
+            v1Item *_elem2 = [[v1Item alloc] init];
             [_elem2 read: inProtocol];
             [fieldValue addObject: _elem2];
             [_elem2 release_stub];
@@ -447,7 +392,7 @@
 }
 
 - (void) write: (id <TProtocol>) outProtocol {
-  [outProtocol writeStructBeginWithName: @"GetItems_result"];
+  [outProtocol writeStructBeginWithName: @"AvailableItems_result"];
 
   if (__success_isset) {
     if (__success != nil) {
@@ -473,7 +418,7 @@
 }
 
 - (NSString *) description {
-  NSMutableString * ms = [NSMutableString stringWithString: @"GetItems_result("];
+  NSMutableString * ms = [NSMutableString stringWithString: @"AvailableItems_result("];
   [ms appendString: @"success:"];
   [ms appendFormat: @"%@", __success];
   [ms appendString: @")"];
@@ -482,7 +427,281 @@
 
 @end
 
-@implementation ItemsAPIClient
+@interface v1saveItem_args : NSObject <TBase, NSCoding> {
+  NSString * __arg1;
+  int32_t __arg2;
+
+  BOOL __arg1_isset;
+  BOOL __arg2_isset;
+}
+
+#if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+@property (nonatomic, retain, getter=arg1, setter=setArg1:) NSString * arg1;
+@property (nonatomic, getter=arg2, setter=setArg2:) int32_t arg2;
+#endif
+
+- (id) init;
+- (id) initWithArg1: (NSString *) arg1 arg2: (int32_t) arg2;
+
+- (void) read: (id <TProtocol>) inProtocol;
+- (void) write: (id <TProtocol>) outProtocol;
+
+- (void) validate;
+
+#if !__has_feature(objc_arc)
+- (NSString *) arg1;
+- (void) setArg1: (NSString *) arg1;
+#endif
+- (BOOL) arg1IsSet;
+
+#if !__has_feature(objc_arc)
+- (int32_t) arg2;
+- (void) setArg2: (int32_t) arg2;
+#endif
+- (BOOL) arg2IsSet;
+
+@end
+
+@implementation v1saveItem_args
+
+- (id) init
+{
+  self = [super init];
+#if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+#endif
+  return self;
+}
+
+- (id) initWithArg1: (NSString *) arg1 arg2: (int32_t) arg2
+{
+  self = [super init];
+  __arg1 = [arg1 retain_stub];
+  __arg1_isset = YES;
+  __arg2 = arg2;
+  __arg2_isset = YES;
+  return self;
+}
+
+- (id) initWithCoder: (NSCoder *) decoder
+{
+  self = [super init];
+  if ([decoder containsValueForKey: @"arg1"])
+  {
+    __arg1 = [[decoder decodeObjectForKey: @"arg1"] retain_stub];
+    __arg1_isset = YES;
+  }
+  if ([decoder containsValueForKey: @"arg2"])
+  {
+    __arg2 = [decoder decodeInt32ForKey: @"arg2"];
+    __arg2_isset = YES;
+  }
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *) encoder
+{
+  if (__arg1_isset)
+  {
+    [encoder encodeObject: __arg1 forKey: @"arg1"];
+  }
+  if (__arg2_isset)
+  {
+    [encoder encodeInt32: __arg2 forKey: @"arg2"];
+  }
+}
+
+- (void) dealloc
+{
+  [__arg1 release_stub];
+  [super dealloc_stub];
+}
+
+- (NSString *) arg1 {
+  return [[__arg1 retain_stub] autorelease_stub];
+}
+
+- (void) setArg1: (NSString *) arg1 {
+  [arg1 retain_stub];
+  [__arg1 release_stub];
+  __arg1 = arg1;
+  __arg1_isset = YES;
+}
+
+- (BOOL) arg1IsSet {
+  return __arg1_isset;
+}
+
+- (void) unsetArg1 {
+  [__arg1 release_stub];
+  __arg1 = nil;
+  __arg1_isset = NO;
+}
+
+- (int32_t) arg2 {
+  return __arg2;
+}
+
+- (void) setArg2: (int32_t) arg2 {
+  __arg2 = arg2;
+  __arg2_isset = YES;
+}
+
+- (BOOL) arg2IsSet {
+  return __arg2_isset;
+}
+
+- (void) unsetArg2 {
+  __arg2_isset = NO;
+}
+
+- (void) read: (id <TProtocol>) inProtocol
+{
+  NSString * fieldName;
+  int fieldType;
+  int fieldID;
+
+  [inProtocol readStructBeginReturningName: NULL];
+  while (true)
+  {
+    [inProtocol readFieldBeginReturningName: &fieldName type: &fieldType fieldID: &fieldID];
+    if (fieldType == TType_STOP) { 
+      break;
+    }
+    switch (fieldID)
+    {
+      case 1:
+        if (fieldType == TType_STRING) {
+          NSString * fieldValue = [inProtocol readString];
+          [self setArg1: fieldValue];
+        } else { 
+          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        }
+        break;
+      case 2:
+        if (fieldType == TType_I32) {
+          int32_t fieldValue = [inProtocol readI32];
+          [self setArg2: fieldValue];
+        } else { 
+          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        }
+        break;
+      default:
+        [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        break;
+    }
+    [inProtocol readFieldEnd];
+  }
+  [inProtocol readStructEnd];
+}
+
+- (void) write: (id <TProtocol>) outProtocol {
+  [outProtocol writeStructBeginWithName: @"saveItem_args"];
+  if (__arg1_isset) {
+    if (__arg1 != nil) {
+      [outProtocol writeFieldBeginWithName: @"arg1" type: TType_STRING fieldID: 1];
+      [outProtocol writeString: __arg1];
+      [outProtocol writeFieldEnd];
+    }
+  }
+  if (__arg2_isset) {
+    [outProtocol writeFieldBeginWithName: @"arg2" type: TType_I32 fieldID: 2];
+    [outProtocol writeI32: __arg2];
+    [outProtocol writeFieldEnd];
+  }
+  [outProtocol writeFieldStop];
+  [outProtocol writeStructEnd];
+}
+
+- (void) validate {
+  // check for required fields
+}
+
+- (NSString *) description {
+  NSMutableString * ms = [NSMutableString stringWithString: @"saveItem_args("];
+  [ms appendString: @"arg1:"];
+  [ms appendFormat: @"\"%@\"", __arg1];
+  [ms appendString: @",arg2:"];
+  [ms appendFormat: @"%i", __arg2];
+  [ms appendString: @")"];
+  return [NSString stringWithString: ms];
+}
+
+@end
+
+@interface v1SaveItem_result : NSObject <TBase, NSCoding> {
+}
+
+- (id) init;
+
+- (void) read: (id <TProtocol>) inProtocol;
+- (void) write: (id <TProtocol>) outProtocol;
+
+- (void) validate;
+
+@end
+
+@implementation v1SaveItem_result
+
+- (id) init
+{
+  self = [super init];
+  return self;
+}
+
+- (id) initWithCoder: (NSCoder *) decoder
+{
+  self = [super init];
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *) encoder
+{
+}
+
+- (void) read: (id <TProtocol>) inProtocol
+{
+  NSString * fieldName;
+  int fieldType;
+  int fieldID;
+
+  [inProtocol readStructBeginReturningName: NULL];
+  while (true)
+  {
+    [inProtocol readFieldBeginReturningName: &fieldName type: &fieldType fieldID: &fieldID];
+    if (fieldType == TType_STOP) { 
+      break;
+    }
+    switch (fieldID)
+    {
+      default:
+        [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        break;
+    }
+    [inProtocol readFieldEnd];
+  }
+  [inProtocol readStructEnd];
+}
+
+- (void) write: (id <TProtocol>) outProtocol {
+  [outProtocol writeStructBeginWithName: @"SaveItem_result"];
+
+  [outProtocol writeFieldStop];
+  [outProtocol writeStructEnd];
+}
+
+- (void) validate {
+  // check for required fields
+}
+
+- (NSString *) description {
+  NSMutableString * ms = [NSMutableString stringWithString: @"SaveItem_result("];
+  [ms appendString: @")"];
+  return [NSString stringWithString: ms];
+}
+
+@end
+
+@implementation v1ItemsAPIClient
 - (id) initWithProtocol: (id <TProtocol>) protocol
 {
   return [self initWithInProtocol: protocol outProtocol: protocol];
@@ -503,17 +722,17 @@
   [super dealloc_stub];
 }
 
-- (void) send_getItems
+- (void) send_availableItems
 {
-  [outProtocol writeMessageBeginWithName: @"getItems" type: TMessageType_CALL sequenceID: 0];
-  [outProtocol writeStructBeginWithName: @"getItems_args"];
+  [outProtocol writeMessageBeginWithName: @"availableItems" type: TMessageType_CALL sequenceID: 0];
+  [outProtocol writeStructBeginWithName: @"availableItems_args"];
   [outProtocol writeFieldStop];
   [outProtocol writeStructEnd];
   [outProtocol writeMessageEnd];
   [[outProtocol transport] flush];
 }
 
-- (NSMutableArray *) recv_getItems
+- (NSMutableArray *) recv_availableItems
 {
   int msgType = 0;
   [inProtocol readMessageBeginReturningName: nil type: &msgType sequenceID: NULL];
@@ -522,27 +741,66 @@
     [inProtocol readMessageEnd];
     @throw x;
   }
-  GetItems_result * result = [[[GetItems_result alloc] init] autorelease_stub];
+  v1AvailableItems_result * result = [[[v1AvailableItems_result alloc] init] autorelease_stub];
   [result read: inProtocol];
   [inProtocol readMessageEnd];
   if ([result successIsSet]) {
     return [result success];
   }
   @throw [TApplicationException exceptionWithType: TApplicationException_MISSING_RESULT
-                                           reason: @"getItems failed: unknown result"];
+                                           reason: @"availableItems failed: unknown result"];
 }
 
-- (NSMutableArray *) getItems
+- (NSMutableArray *) availableItems
 {
-  [self send_getItems];
-  return [self recv_getItems];
+  [self send_availableItems];
+  return [self recv_availableItems];
+}
+
+- (void) send_saveItem: (NSString *) arg1 arg2: (int32_t) arg2
+{
+  [outProtocol writeMessageBeginWithName: @"saveItem" type: TMessageType_CALL sequenceID: 0];
+  [outProtocol writeStructBeginWithName: @"saveItem_args"];
+  if (arg1 != nil)  {
+    [outProtocol writeFieldBeginWithName: @"arg1" type: TType_STRING fieldID: 1];
+    [outProtocol writeString: arg1];
+    [outProtocol writeFieldEnd];
+  }
+  [outProtocol writeFieldBeginWithName: @"arg2" type: TType_I32 fieldID: 2];
+  [outProtocol writeI32: arg2];
+  [outProtocol writeFieldEnd];
+  [outProtocol writeFieldStop];
+  [outProtocol writeStructEnd];
+  [outProtocol writeMessageEnd];
+  [[outProtocol transport] flush];
+}
+
+- (void) recv_saveItem
+{
+  int msgType = 0;
+  [inProtocol readMessageBeginReturningName: nil type: &msgType sequenceID: NULL];
+  if (msgType == TMessageType_EXCEPTION) {
+    TApplicationException * x = [TApplicationException read: inProtocol];
+    [inProtocol readMessageEnd];
+    @throw x;
+  }
+  v1SaveItem_result * result = [[[v1SaveItem_result alloc] init] autorelease_stub];
+  [result read: inProtocol];
+  [inProtocol readMessageEnd];
+  return;
+}
+
+- (void) saveItem: (NSString *) arg1 arg2: (int32_t) arg2
+{
+  [self send_saveItem : arg1 arg2: arg2];
+  [self recv_saveItem];
 }
 
 @end
 
-@implementation ItemsAPIProcessor
+@implementation v1ItemsAPIProcessor
 
-- (id) initWithItemsAPI: (id <ItemsAPI>) service
+- (id) initWithItemsAPI: (id <v1ItemsAPI>) service
 {
   self = [super init];
   if (!self) {
@@ -551,17 +809,25 @@
   mService = [service retain_stub];
   mMethodMap = [[NSMutableDictionary dictionary] retain_stub];
   {
-    SEL s = @selector(process_getItems_withSequenceID:inProtocol:outProtocol:);
+    SEL s = @selector(process_availableItems_withSequenceID:inProtocol:outProtocol:);
     NSMethodSignature * sig = [self methodSignatureForSelector: s];
     NSInvocation * invocation = [NSInvocation invocationWithMethodSignature: sig];
     [invocation setSelector: s];
     [invocation retainArguments];
-    [mMethodMap setValue: invocation forKey: @"getItems"];
+    [mMethodMap setValue: invocation forKey: @"availableItems"];
+  }
+  {
+    SEL s = @selector(process_saveItem_withSequenceID:inProtocol:outProtocol:);
+    NSMethodSignature * sig = [self methodSignatureForSelector: s];
+    NSInvocation * invocation = [NSInvocation invocationWithMethodSignature: sig];
+    [invocation setSelector: s];
+    [invocation retainArguments];
+    [mMethodMap setValue: invocation forKey: @"saveItem"];
   }
   return self;
 }
 
-- (id<ItemsAPI>) service
+- (id<v1ItemsAPI>) service
 {
   return [[mService retain_stub] autorelease_stub];
 }
@@ -599,14 +865,31 @@
   return YES;
 }
 
-- (void) process_getItems_withSequenceID: (int32_t) seqID inProtocol: (id<TProtocol>) inProtocol outProtocol: (id<TProtocol>) outProtocol
+- (void) process_availableItems_withSequenceID: (int32_t) seqID inProtocol: (id<TProtocol>) inProtocol outProtocol: (id<TProtocol>) outProtocol
 {
-  getItems_args * args = [[getItems_args alloc] init];
+  v1availableItems_args * args = [[v1availableItems_args alloc] init];
   [args read: inProtocol];
   [inProtocol readMessageEnd];
-  GetItems_result * result = [[GetItems_result alloc] init];
-  [result setSuccess: [mService getItems]];
-  [outProtocol writeMessageBeginWithName: @"getItems"
+  v1AvailableItems_result * result = [[v1AvailableItems_result alloc] init];
+  [result setSuccess: [mService availableItems]];
+  [outProtocol writeMessageBeginWithName: @"availableItems"
+                                    type: TMessageType_REPLY
+                              sequenceID: seqID];
+  [result write: outProtocol];
+  [outProtocol writeMessageEnd];
+  [[outProtocol transport] flush];
+  [result release_stub];
+  [args release_stub];
+}
+
+- (void) process_saveItem_withSequenceID: (int32_t) seqID inProtocol: (id<TProtocol>) inProtocol outProtocol: (id<TProtocol>) outProtocol
+{
+  v1saveItem_args * args = [[v1saveItem_args alloc] init];
+  [args read: inProtocol];
+  [inProtocol readMessageEnd];
+  v1SaveItem_result * result = [[v1SaveItem_result alloc] init];
+  [mService saveItem: [args arg1] arg2: [args arg2]];
+  [outProtocol writeMessageBeginWithName: @"saveItem"
                                     type: TMessageType_REPLY
                               sequenceID: seqID];
   [result write: outProtocol];

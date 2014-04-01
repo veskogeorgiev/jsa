@@ -7,14 +7,14 @@
 //
 
 #import "JSAViewController.h"
-#import "items.h"
+#import "items.v1.h"
 #import "TTransport.h"
 #import "THTTPClient.h"
 #import "TBinaryProtocol.h"
 
 @interface JSAViewController ()
 
-@property ItemsAPIClient *client;
+@property v1ItemsAPIClient *client;
 
 @end
 
@@ -29,7 +29,7 @@
     NSObject<TTransport> *clientTransport = [[THTTPClient alloc] initWithURL: address];
     NSObject<TProtocol> *protocol = [[TBinaryProtocol alloc] initWithTransport:clientTransport];
 
-    self.client = [[ItemsAPIClient alloc] initWithProtocol:protocol];
+    self.client = [[v1ItemsAPIClient alloc] initWithProtocol:protocol];
 }
 
 - (void)didReceiveMemoryWarning
@@ -41,12 +41,13 @@
 - (IBAction)sendRequest:(id)sender
 {
     @try {
-        NSMutableArray *items = [self.client getItems];
+       [self.client saveItem:@"ios item" arg2:1];
+        NSMutableArray *items = [self.client availableItems];
         NSLog (@"%@", items);
     }
     @catch (NSException *e) {
         NSLog(@"%@", e);
- //       @throw e;
+//        @throw e;
     }
 }
 

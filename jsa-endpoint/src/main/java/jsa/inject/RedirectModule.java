@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,19 +46,26 @@ public class RedirectModule extends ServletModule {
 
     @AllArgsConstructor
     @Slf4j
-    private static class RedirectServlet extends HttpServlet {
-
-        private static final long serialVersionUID = 6822084125840281244L;
-
+    private static class RedirectFilter implements Filter {
         private String destinationUrl;
 
         @Override
-        protected void service(HttpServletRequest req, HttpServletResponse resp)
-                throws ServletException, IOException {
+        public void init(FilterConfig filterConfig) throws ServletException {
+        }
 
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse resp = (HttpServletResponse) response;
             log.info(String.format("Redirecting %s to %s", req.getRequestURL(), destinationUrl));
 
             req.getRequestDispatcher(destinationUrl).forward(req, resp);
+        }
+
+        @Override
+        public void destroy() {
         }
     }
 
@@ -62,8 +73,8 @@ public class RedirectModule extends ServletModule {
     protected void configureServlets() {
         log.info(sourceDestinationMapping.toString());
         for (Entry<String, String> e : sourceDestinationMapping.entrySet()) {
-            RedirectServlet servlet = new RedirectServlet(e.getValue());
-            serve(e.getKey()).with(servlet);
+            RedirectFilter rf = new RedirectFilter(e.getValue());
+            filter(e.getKey()).through(rf);
         }
     }
 }

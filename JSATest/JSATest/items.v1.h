@@ -16,35 +16,26 @@
 #import "TBase.h"
 
 
-@interface Item : NSObject <TBase, NSCoding> {
-  NSString * __id;
+@interface v1Item : NSObject <TBase, NSCoding> {
   NSString * __name;
   int32_t __count;
 
-  BOOL __id_isset;
   BOOL __name_isset;
   BOOL __count_isset;
 }
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
-@property (nonatomic, retain, getter=id, setter=setId:) NSString * id;
 @property (nonatomic, retain, getter=name, setter=setName:) NSString * name;
 @property (nonatomic, getter=count, setter=setCount:) int32_t count;
 #endif
 
 - (id) init;
-- (id) initWithId: (NSString *) id name: (NSString *) name count: (int32_t) count;
+- (id) initWithName: (NSString *) name count: (int32_t) count;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
 
 - (void) validate;
-
-#if !__has_feature(objc_arc)
-- (NSString *) id;
-- (void) setId: (NSString *) id;
-#endif
-- (BOOL) idIsSet;
 
 #if !__has_feature(objc_arc)
 - (NSString *) name;
@@ -60,11 +51,12 @@
 
 @end
 
-@protocol ItemsAPI <NSObject>
-- (NSMutableArray *) getItems;  // throws TException
+@protocol v1ItemsAPI <NSObject>
+- (NSMutableArray *) availableItems;  // throws TException
+- (void) saveItem: (NSString *) arg1 arg2: (int32_t) arg2;  // throws TException
 @end
 
-@interface ItemsAPIClient : NSObject <ItemsAPI> {
+@interface v1ItemsAPIClient : NSObject <v1ItemsAPI> {
   id <TProtocol> inProtocol;
   id <TProtocol> outProtocol;
 }
@@ -72,14 +64,10 @@
 - (id) initWithInProtocol: (id <TProtocol>) inProtocol outProtocol: (id <TProtocol>) outProtocol;
 @end
 
-@interface ItemsAPIProcessor : NSObject <TProcessor> {
-  id <ItemsAPI> mService;
+@interface v1ItemsAPIProcessor : NSObject <TProcessor> {
+  id <v1ItemsAPI> mService;
   NSDictionary * mMethodMap;
 }
-- (id) initWithItemsAPI: (id <ItemsAPI>) service;
-- (id<ItemsAPI>) service;
-@end
-
-@interface itemsConstants : NSObject {
-}
+- (id) initWithItemsAPI: (id <v1ItemsAPI>) service;
+- (id<v1ItemsAPI>) service;
 @end
