@@ -24,7 +24,7 @@
 {
     [super viewDidLoad];
 
-    NSURL *address = [[NSURL alloc] initWithString:@"http://localhost:8080/api/ItemsAPI/v1/thrift"];
+    NSURL *address = [[NSURL alloc] initWithString:@"http://localhost:8080/api/ItemsAPI/v2/thrift"];
 
     NSObject<TTransport> *clientTransport = [[THTTPClient alloc] initWithURL: address];
     NSObject<TProtocol> *protocol = [[TBinaryProtocol alloc] initWithTransport:clientTransport];

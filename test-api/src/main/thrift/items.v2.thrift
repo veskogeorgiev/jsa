@@ -6,9 +6,9 @@ namespace java jsa.test.api.v2.thrift
 namespace cocoa v2
 
 struct Item {
-  1: string description
-  2: string name
-  3: i32 count
+  1: string name
+  2: i32 count
+  3: string description
 }
 
 service ItemsAPI {

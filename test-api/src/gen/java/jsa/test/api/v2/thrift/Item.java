@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.io.Serializable, Cloneable, Comparable<Item> {
   private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("Item");
 
-  private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)1);
-  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)2);
-  private static final org.apache.thrift.protocol.TField COUNT_FIELD_DESC = new org.apache.thrift.protocol.TField("count", org.apache.thrift.protocol.TType.I32, (short)3);
+  private static final org.apache.thrift.protocol.TField NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("name", org.apache.thrift.protocol.TType.STRING, (short)1);
+  private static final org.apache.thrift.protocol.TField COUNT_FIELD_DESC = new org.apache.thrift.protocol.TField("count", org.apache.thrift.protocol.TType.I32, (short)2);
+  private static final org.apache.thrift.protocol.TField DESCRIPTION_FIELD_DESC = new org.apache.thrift.protocol.TField("description", org.apache.thrift.protocol.TType.STRING, (short)3);
 
   private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
   static {
@@ -45,15 +45,15 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     schemes.put(TupleScheme.class, new ItemTupleSchemeFactory());
   }
 
-  private String description; // required
   private String name; // required
   private int count; // required
+  private String description; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-    DESCRIPTION((short)1, "description"),
-    NAME((short)2, "name"),
-    COUNT((short)3, "count");
+    NAME((short)1, "name"),
+    COUNT((short)2, "count"),
+    DESCRIPTION((short)3, "description");
 
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -68,12 +68,12 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
      */
     public static _Fields findByThriftId(int fieldId) {
       switch(fieldId) {
-        case 1: // DESCRIPTION
-          return DESCRIPTION;
-        case 2: // NAME
+        case 1: // NAME
           return NAME;
-        case 3: // COUNT
+        case 2: // COUNT
           return COUNT;
+        case 3: // DESCRIPTION
+          return DESCRIPTION;
         default:
           return null;
       }
@@ -119,12 +119,12 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
   public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
   static {
     Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-    tmpMap.put(_Fields.DESCRIPTION, new org.apache.thrift.meta_data.FieldMetaData("description", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     tmpMap.put(_Fields.COUNT, new org.apache.thrift.meta_data.FieldMetaData("count", org.apache.thrift.TFieldRequirementType.DEFAULT, 
         new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+    tmpMap.put(_Fields.DESCRIPTION, new org.apache.thrift.meta_data.FieldMetaData("description", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+        new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
     org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(Item.class, metaDataMap);
   }
@@ -133,15 +133,15 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
   }
 
   public Item(
-    String description,
     String name,
-    int count)
+    int count,
+    String description)
   {
     this();
-    this.description = description;
     this.name = name;
     this.count = count;
     setCountIsSet(true);
+    this.description = description;
   }
 
   /**
@@ -149,13 +149,13 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
    */
   public Item(Item other) {
     __isset_bitfield = other.__isset_bitfield;
-    if (other.isSetDescription()) {
-      this.description = other.description;
-    }
     if (other.isSetName()) {
       this.name = other.name;
     }
     this.count = other.count;
+    if (other.isSetDescription()) {
+      this.description = other.description;
+    }
   }
 
   public Item deepCopy() {
@@ -164,33 +164,10 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
 
   @Override
   public void clear() {
-    this.description = null;
     this.name = null;
     setCountIsSet(false);
     this.count = 0;
-  }
-
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void unsetDescription() {
     this.description = null;
-  }
-
-  /** Returns true if field description is set (has been assigned a value) and false otherwise */
-  public boolean isSetDescription() {
-    return this.description != null;
-  }
-
-  public void setDescriptionIsSet(boolean value) {
-    if (!value) {
-      this.description = null;
-    }
   }
 
   public String getName() {
@@ -238,16 +215,31 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __COUNT_ISSET_ID, value);
   }
 
+  public String getDescription() {
+    return this.description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void unsetDescription() {
+    this.description = null;
+  }
+
+  /** Returns true if field description is set (has been assigned a value) and false otherwise */
+  public boolean isSetDescription() {
+    return this.description != null;
+  }
+
+  public void setDescriptionIsSet(boolean value) {
+    if (!value) {
+      this.description = null;
+    }
+  }
+
   public void setFieldValue(_Fields field, Object value) {
     switch (field) {
-    case DESCRIPTION:
-      if (value == null) {
-        unsetDescription();
-      } else {
-        setDescription((String)value);
-      }
-      break;
-
     case NAME:
       if (value == null) {
         unsetName();
@@ -264,19 +256,27 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
       }
       break;
 
+    case DESCRIPTION:
+      if (value == null) {
+        unsetDescription();
+      } else {
+        setDescription((String)value);
+      }
+      break;
+
     }
   }
 
   public Object getFieldValue(_Fields field) {
     switch (field) {
-    case DESCRIPTION:
-      return getDescription();
-
     case NAME:
       return getName();
 
     case COUNT:
       return Integer.valueOf(getCount());
+
+    case DESCRIPTION:
+      return getDescription();
 
     }
     throw new IllegalStateException();
@@ -289,12 +289,12 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     }
 
     switch (field) {
-    case DESCRIPTION:
-      return isSetDescription();
     case NAME:
       return isSetName();
     case COUNT:
       return isSetCount();
+    case DESCRIPTION:
+      return isSetDescription();
     }
     throw new IllegalStateException();
   }
@@ -311,15 +311,6 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
   public boolean equals(Item that) {
     if (that == null)
       return false;
-
-    boolean this_present_description = true && this.isSetDescription();
-    boolean that_present_description = true && that.isSetDescription();
-    if (this_present_description || that_present_description) {
-      if (!(this_present_description && that_present_description))
-        return false;
-      if (!this.description.equals(that.description))
-        return false;
-    }
 
     boolean this_present_name = true && this.isSetName();
     boolean that_present_name = true && that.isSetName();
@@ -339,6 +330,15 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
         return false;
     }
 
+    boolean this_present_description = true && this.isSetDescription();
+    boolean that_present_description = true && that.isSetDescription();
+    if (this_present_description || that_present_description) {
+      if (!(this_present_description && that_present_description))
+        return false;
+      if (!this.description.equals(that.description))
+        return false;
+    }
+
     return true;
   }
 
@@ -355,16 +355,6 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
 
     int lastComparison = 0;
 
-    lastComparison = Boolean.valueOf(isSetDescription()).compareTo(other.isSetDescription());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (isSetDescription()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.description, other.description);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
     lastComparison = Boolean.valueOf(isSetName()).compareTo(other.isSetName());
     if (lastComparison != 0) {
       return lastComparison;
@@ -381,6 +371,16 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     }
     if (isSetCount()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.count, other.count);
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+    }
+    lastComparison = Boolean.valueOf(isSetDescription()).compareTo(other.isSetDescription());
+    if (lastComparison != 0) {
+      return lastComparison;
+    }
+    if (isSetDescription()) {
+      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.description, other.description);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -405,14 +405,6 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     StringBuilder sb = new StringBuilder("Item(");
     boolean first = true;
 
-    sb.append("description:");
-    if (this.description == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.description);
-    }
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("name:");
     if (this.name == null) {
       sb.append("null");
@@ -423,6 +415,14 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     if (!first) sb.append(", ");
     sb.append("count:");
     sb.append(this.count);
+    first = false;
+    if (!first) sb.append(", ");
+    sb.append("description:");
+    if (this.description == null) {
+      sb.append("null");
+    } else {
+      sb.append(this.description);
+    }
     first = false;
     sb.append(")");
     return sb.toString();
@@ -469,15 +469,7 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
           break;
         }
         switch (schemeField.id) {
-          case 1: // DESCRIPTION
-            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-              struct.description = iprot.readString();
-              struct.setDescriptionIsSet(true);
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-            }
-            break;
-          case 2: // NAME
+          case 1: // NAME
             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
               struct.name = iprot.readString();
               struct.setNameIsSet(true);
@@ -485,10 +477,18 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
             break;
-          case 3: // COUNT
+          case 2: // COUNT
             if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
               struct.count = iprot.readI32();
               struct.setCountIsSet(true);
+            } else { 
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+            }
+            break;
+          case 3: // DESCRIPTION
+            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+              struct.description = iprot.readString();
+              struct.setDescriptionIsSet(true);
             } else { 
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -506,11 +506,6 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
       struct.validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
-      if (struct.description != null) {
-        oprot.writeFieldBegin(DESCRIPTION_FIELD_DESC);
-        oprot.writeString(struct.description);
-        oprot.writeFieldEnd();
-      }
       if (struct.name != null) {
         oprot.writeFieldBegin(NAME_FIELD_DESC);
         oprot.writeString(struct.name);
@@ -519,6 +514,11 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
       oprot.writeFieldBegin(COUNT_FIELD_DESC);
       oprot.writeI32(struct.count);
       oprot.writeFieldEnd();
+      if (struct.description != null) {
+        oprot.writeFieldBegin(DESCRIPTION_FIELD_DESC);
+        oprot.writeString(struct.description);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -537,24 +537,24 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
     public void write(org.apache.thrift.protocol.TProtocol prot, Item struct) throws org.apache.thrift.TException {
       TTupleProtocol oprot = (TTupleProtocol) prot;
       BitSet optionals = new BitSet();
-      if (struct.isSetDescription()) {
+      if (struct.isSetName()) {
         optionals.set(0);
       }
-      if (struct.isSetName()) {
+      if (struct.isSetCount()) {
         optionals.set(1);
       }
-      if (struct.isSetCount()) {
+      if (struct.isSetDescription()) {
         optionals.set(2);
       }
       oprot.writeBitSet(optionals, 3);
-      if (struct.isSetDescription()) {
-        oprot.writeString(struct.description);
-      }
       if (struct.isSetName()) {
         oprot.writeString(struct.name);
       }
       if (struct.isSetCount()) {
         oprot.writeI32(struct.count);
+      }
+      if (struct.isSetDescription()) {
+        oprot.writeString(struct.description);
       }
     }
 
@@ -563,16 +563,16 @@ public class Item implements org.apache.thrift.TBase<Item, Item._Fields>, java.i
       TTupleProtocol iprot = (TTupleProtocol) prot;
       BitSet incoming = iprot.readBitSet(3);
       if (incoming.get(0)) {
-        struct.description = iprot.readString();
-        struct.setDescriptionIsSet(true);
-      }
-      if (incoming.get(1)) {
         struct.name = iprot.readString();
         struct.setNameIsSet(true);
       }
-      if (incoming.get(2)) {
+      if (incoming.get(1)) {
         struct.count = iprot.readI32();
         struct.setCountIsSet(true);
+      }
+      if (incoming.get(2)) {
+        struct.description = iprot.readString();
+        struct.setDescriptionIsSet(true);
       }
     }
   }

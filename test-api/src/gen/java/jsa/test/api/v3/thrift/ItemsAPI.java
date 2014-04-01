@@ -1118,7 +1118,7 @@ public class ItemsAPI {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       tmpMap.put(_Fields.ARG2, new org.apache.thrift.meta_data.FieldMetaData("arg2", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-      tmpMap.put(_Fields.ARG3, new org.apache.thrift.meta_data.FieldMetaData("arg3", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.ARG3, new org.apache.thrift.meta_data.FieldMetaData("arg3", org.apache.thrift.TFieldRequirementType.REQUIRED, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(saveItem_args.class, metaDataMap);
@@ -1425,6 +1425,10 @@ public class ItemsAPI {
 
     public void validate() throws org.apache.thrift.TException {
       // check for required fields
+      if (!isSetArg3()) {
+        throw new org.apache.thrift.protocol.TProtocolException("Required field 'arg3' is unset! Struct:" + toString());
+      }
+
       // check for sub-struct validity
     }
 
@@ -1531,6 +1535,7 @@ public class ItemsAPI {
       @Override
       public void write(org.apache.thrift.protocol.TProtocol prot, saveItem_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
+        oprot.writeString(struct.arg3);
         BitSet optionals = new BitSet();
         if (struct.isSetArg1()) {
           optionals.set(0);
@@ -1538,25 +1543,21 @@ public class ItemsAPI {
         if (struct.isSetArg2()) {
           optionals.set(1);
         }
-        if (struct.isSetArg3()) {
-          optionals.set(2);
-        }
-        oprot.writeBitSet(optionals, 3);
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetArg1()) {
           oprot.writeString(struct.arg1);
         }
         if (struct.isSetArg2()) {
           oprot.writeI32(struct.arg2);
         }
-        if (struct.isSetArg3()) {
-          oprot.writeString(struct.arg3);
-        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, saveItem_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(3);
+        struct.arg3 = iprot.readString();
+        struct.setArg3IsSet(true);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.arg1 = iprot.readString();
           struct.setArg1IsSet(true);
@@ -1564,10 +1565,6 @@ public class ItemsAPI {
         if (incoming.get(1)) {
           struct.arg2 = iprot.readI32();
           struct.setArg2IsSet(true);
-        }
-        if (incoming.get(2)) {
-          struct.arg3 = iprot.readString();
-          struct.setArg3IsSet(true);
         }
       }
     }
