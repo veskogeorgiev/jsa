@@ -1,6 +1,6 @@
 package jsa.test;
 
-import jsa.test.backward.v1.BackwardCompAPI.Client;
+import jsa.test.backward.v1.thrift.BackwardCompAPI.Client;
 import jsa.test.inject.APITestRunner;
 import jsa.test.port.bc.BackwardAPIv1Rest;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +20,14 @@ public class BackwardCompatibilityTest extends Assert {
 
     @Test
     public void testSameVersion() throws Exception {
-        String endpoint = "http://localhost:8080/d/tdemo/v1";
+        String endpoint = "http://localhost:8080/d/backward/v1";
         testThrift(endpoint);
         testRest(endpoint);
     }
 
     @Test
     public void testBackwardVersion() throws Exception {
-        String endpoint = "http://localhost:8080/d/tdemo/v2";
+        String endpoint = "http://localhost:8080/d/backward/v2";
         testThrift(endpoint);
         try {
             testRest(endpoint);

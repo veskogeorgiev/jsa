@@ -7,16 +7,14 @@ import javax.ws.rs.PathParam;
 import jsa.annotations.APIPort;
 import jsa.annotations.APIPortType;
 import jsa.endpoint.cxf.ExposeRest;
-import jsa.test.backward.v2.BackwardCompAPI.Iface;
+import jsa.test.backward.BackwardCompAPIv2;
 
-import org.apache.thrift.TException;
-
+@APIPort(api = BackwardCompAPIv2.class, context = "rest", type = APIPortType.DECORATOR)
 @ExposeRest
-@APIPort(api = BackwardAPIv2.class, context = "rest", type = APIPortType.DECORATOR)
-public interface BackwardAPIv2Rest extends Iface {
+public interface BackwardAPIv2Rest extends BackwardCompAPIv2 {
 
     @Override
     @GET
     @Path("/{n1}")
-    void save(@PathParam("n1") String name1) throws TException;
+    void save(@PathParam("n1") String name1);
 }
