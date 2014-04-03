@@ -26,7 +26,8 @@ public class ServletContextListenerImpl extends GuiceServletContextListener {
 
                 injector = Guice.createInjector(
                         new TestAPIModule(),
-                        new ValidationModule()
+                        new ValidationModule(),
+                        new BackwardAPIModule()
                         );
             }
             catch (Exception e) {

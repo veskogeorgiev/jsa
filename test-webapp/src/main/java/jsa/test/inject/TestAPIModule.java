@@ -5,7 +5,6 @@ import java.util.List;
 import jsa.endpoint.cxf.JaxRsConfig;
 import jsa.inject.APIModule;
 import jsa.inject.RedirectModule;
-import jsa.test.impl.DemoAPIImpl;
 import jsa.test.impl.ItemsAPIv1Impl;
 import jsa.test.impl.ItemsAPIv2Impl;
 import jsa.test.impl.ItemsAPIv3Impl;
@@ -32,8 +31,6 @@ public class TestAPIModule extends APIModule {
         bind(jsa.test.api.v1.ItemsAPI.class).to(ItemsAPIv1Impl.class);
         bind(jsa.test.api.v2.ItemsAPI.class).to(ItemsAPIv2Impl.class);
         bind(jsa.test.api.v3.ItemsAPI.class).to(ItemsAPIv3Impl.class);
-
-        bind(jsa.test.api.v1.DemoAPI.class).to(DemoAPIImpl.class);
     }
 
     static class TestJaxRsConfig implements JaxRsConfig {

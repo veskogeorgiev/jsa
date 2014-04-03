@@ -13,10 +13,9 @@ import jsa.test.api.v1.thrift.ItemsAPI.Iface;
 @APIPort(api = ItemsAPI.class, context = "thrift", type = APIPortType.DECORATOR)
 @Singleton
 @ExposeThrift(
-      module = jsa.test.api.v1.thrift.ItemsAPI.class,
-      useDtoMapping = true,
-      dtoMapping = {
-            @DtoTypeMapping(from = jsa.test.api.v1.Item.class, to = Item.class),
-      })
-public interface ItemsAPIThrift extends Iface {
-}
+        module = jsa.test.api.v1.thrift.ItemsAPI.class,
+        useDtoMapping = true,
+        dtoMapping = {
+                @DtoTypeMapping(from = jsa.test.api.v1.Item.class, to = Item.class),
+        })
+public interface ItemsAPIThrift extends Iface {}

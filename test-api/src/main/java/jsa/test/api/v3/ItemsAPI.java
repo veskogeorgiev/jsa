@@ -2,6 +2,7 @@ package jsa.test.api.v3;
 
 import java.util.List;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,6 +15,7 @@ public interface ItemsAPI {
 
     List<Item> availableItems();
 
-    void saveItem(String name, int count, @NotNull @Size(min = 1) String description) throws APIException;
+    void saveItem(String name, int count, @NotNull @Size(min = 1) String description) 
+            throws APIException, ConstraintViolationException;
 
 }

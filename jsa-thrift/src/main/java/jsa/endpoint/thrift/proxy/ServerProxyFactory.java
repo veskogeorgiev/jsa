@@ -15,6 +15,9 @@ public class ServerProxyFactory {
 	}
 
 	public static Object create(Object apiInstance, Class<?> thriftPortInterface) {
+	    if (!thriftPortInterface.isInterface()) {
+	        thriftPortInterface = thriftPortInterface.getInterfaces()[0];
+	    }
 		AbstractServerProxy proxy = new DirectServerProxy(apiInstance);
 
 		return Proxy.newProxyInstance(DirectServerProxy.class.getClassLoader(),
