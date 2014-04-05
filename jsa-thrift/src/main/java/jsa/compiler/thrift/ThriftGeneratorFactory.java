@@ -27,6 +27,6 @@ public class ThriftGeneratorFactory implements SourceCodeGeneratorFactory {
 		else if (apiPort.isAnnotationPresent(API.class)) {
 			apiClass = apiPort;
 		}
-		return new ThriftSourceGenerator(APIMeta.create(apiClass), context);
+		return new ThriftIDLGenerator(APIMeta.create(apiClass), context);
 	}
 }

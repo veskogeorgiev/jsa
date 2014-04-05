@@ -52,7 +52,7 @@ import com.google.common.base.Joiner;
  * 
  * @author <a href="mailto:vesko.georgiev@uniscon.de">Vesko Georgiev</a>
  */
-public class ThriftSourceGenerator extends AbstractSourceGenerator {
+public class ThriftIDLGenerator extends AbstractSourceGenerator {
 
 	private SourceFile sf;
 	private List<ThriftMethodMeta> methods;
@@ -68,7 +68,7 @@ public class ThriftSourceGenerator extends AbstractSourceGenerator {
 
 	private final CustomTypeCollector types = new CustomTypeCollector();
 
-	ThriftSourceGenerator(APIMeta port, SourceGenerationContext context) {
+	ThriftIDLGenerator(APIMeta port, SourceGenerationContext context) {
 		super(port, context);
 		methods = extractMethods(api.getApiClass());
 
