@@ -11,6 +11,8 @@ class DirectServerProxy extends AbstractServerProxy {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] thriftArgs) throws Throwable {
 		Method apiMethod = methodRepo.singleMethod(method.getName(), thriftArgs);
-		return apiMethod.invoke(apiInstance, thriftArgs);
+		Object res = apiMethod.invoke(apiInstance, thriftArgs);
+
+		return res;
 	}
 }

@@ -10,7 +10,7 @@ public class ServerProxyFactory {
 	      TypeMapping typeMapping) {
 		AbstractServerProxy proxy = new MappingServerProxy(apiInstance, typeMapping);
 
-		return Proxy.newProxyInstance(DirectServerProxy.class.getClassLoader(),
+		return Proxy.newProxyInstance(classLoader(),
 		      new Class[] {thriftPortInterface}, proxy);
 	}
 
@@ -20,9 +20,12 @@ public class ServerProxyFactory {
 	    }
 		AbstractServerProxy proxy = new DirectServerProxy(apiInstance);
 
-		return Proxy.newProxyInstance(DirectServerProxy.class.getClassLoader(),
+		return Proxy.newProxyInstance(classLoader(),
 		      new Class[] {thriftPortInterface}, proxy);
 	}
 
+	private static ClassLoader classLoader() {
+	    return ServerProxyFactory.class.getClassLoader();
+	}
 
 }
