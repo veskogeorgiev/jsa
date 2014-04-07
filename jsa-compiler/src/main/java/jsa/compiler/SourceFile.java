@@ -28,78 +28,83 @@ import lombok.Getter;
  */
 public class SourceFile {
 
-	private static final String NL = "\n";
+    private static final String NL = "\n";
 
-	private final PrintWriter writer;
-	private final ByteArrayOutputStream out;
-	private String indent = "";
+    private final PrintWriter writer;
+    private final ByteArrayOutputStream out;
+    private String indent = "";
 
-	@Getter private final String name;
-	private final String blockOpen;
-	private final String blockClose;
-	private final String indentBase;
+    @Getter private final String name;
+    private final String blockOpen;
+    private final String blockClose;
+    private final String indentBase;
 
-	public SourceFile(String name, String indentBase, String blockOpen, String blockClose) {
-		this.name = name;
-		this.indentBase = indentBase;
-		this.blockOpen = blockOpen;
-		this.blockClose = blockClose;
-		this.out = new ByteArrayOutputStream();
-		writer = new PrintWriter(out);
-	}
+    public SourceFile(String name, String indentBase, String blockOpen, String blockClose) {
+        this.name = name;
+        this.indentBase = indentBase;
+        this.blockOpen = blockOpen;
+        this.blockClose = blockClose;
+        this.out = new ByteArrayOutputStream();
+        writer = new PrintWriter(out);
+    }
 
-	public SourceFile newLine() {
-		line("");
-		return this;
-	}
+    public SourceFile newLine() {
+        line("");
+        return this;
+    }
 
-	public SourceFile append(String format, Object... args) {
-		writer.format(indent + format, args);
-		return this;
-	}
+    public SourceFile append(String format, Object... args) {
+        writer.format(indent + format, args);
+        return this;
+    }
 
-	public SourceFile line(String format, Object... args) {
-		writer.format(indent + format + NL, args);
-		return this;
-	}
+    public SourceFile line(String format, Object... args) {
+        writer.format(indent + format + NL, args);
+        return this;
+    }
 
-	public SourceFile blockOpen(String format, Object... args) {
-		line(format + " " + blockOpen, args);
-		indent();
-		return this;
-	}
+    public SourceFile blockOpen(String format, Object... args) {
+        line(format + " " + blockOpen, args);
+        indent();
+        return this;
+    }
 
-	public SourceFile blockClose() {
-		deindent().line(blockClose);
-		return this;
-	}
+    public SourceFile blockClose() {
+        deindent().line(blockClose);
+        return this;
+    }
 
-	public SourceFile indent() {
-		indent += indentBase;
-		return this;
-	}
+    public SourceFile blockClose(String format, Object... args) {
+        deindent().line(String.format(format, args));
+        return this;
+    }
 
-	public SourceFile deindent() {
-		indent = indent.substring(0, indent.length() - indentBase.length());
-		return this;
-	}
+    public SourceFile indent() {
+        indent += indentBase;
+        return this;
+    }
 
-	public void close() {
-		try {
-			writer.close();
-		}
-		catch (Exception ex) {
-			//
-		}
-	}
+    public SourceFile deindent() {
+        indent = indent.substring(0, indent.length() - indentBase.length());
+        return this;
+    }
 
-	public byte[] getContent() {
-		close();
-		return out.toByteArray();
-	}
+    public void close() {
+        try {
+            writer.close();
+        }
+        catch (Exception ex) {
+            //
+        }
+    }
 
-	@Override
-	public String toString() {
-		return new String(getContent());
-	}
+    public byte[] getContent() {
+        close();
+        return out.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return new String(getContent());
+    }
 }

@@ -24,7 +24,7 @@ public interface ItemsAPIRest extends ItemsAPI {
     @Path("list")
     @GET
     @Description("awesome getItems")
-    List<Item> getItems();
+    List<Item> getItems(Request<Item> req);
 
     @Override
     @GET

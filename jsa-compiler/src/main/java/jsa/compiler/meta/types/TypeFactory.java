@@ -18,6 +18,8 @@
 package jsa.compiler.meta.types;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.TypeVariable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +56,22 @@ public class TypeFactory {
         }
     }
 
+    private static class GenericToActualType {
+        private Map<TypeVariable<?>, java.lang.reflect.Type> mapping = 
+                   new HashMap<TypeVariable<?>, java.lang.reflect.Type>();
+ 
+        public GenericToActualType(Class<?> type, ParameterizedType pt) {
+            TypeVariable<?>[] generics = type.getTypeParameters();
+            java.lang.reflect.Type[] actualTypes = pt.getActualTypeArguments();
+            for (int i = 0; i < generics.length; i++) {
+                mapping.put(generics[i], actualTypes[i]);
+            }
+        }
+        java.lang.reflect.Type get(Object type) {
+            return mapping.get(type);
+        }
+    }
+
     public Type createType(java.lang.reflect.Type t) {
         if (t instanceof Class) {
             return createType((Class<?>)t);
@@ -71,9 +89,27 @@ public class TypeFactory {
                 ((TypeMap) raw).setKeyType(inner1);
                 ((TypeMap) raw).setValueType(inner2);
             }
+            else if (raw instanceof ComplexType) {
+                ComplexType complexType = (ComplexType) raw;
+                Class<?> javaType = complexType.getJavaType();
+
+                GenericToActualType m = new GenericToActualType(javaType, pt);
+
+                List<Field> fields = new LinkedList<Field>();
+                complexType.setFields(fields);
+
+                for (java.lang.reflect.Field f : javaType.getDeclaredFields()) {
+                    java.lang.reflect.Type fieldType = m.get(f.getGenericType());
+                    
+                    if (fieldType == null) {
+                        fieldType = f.getGenericType();
+                    }
+                    fields.add(new Field(createType(fieldType), f.getName()));
+                }
+            }
+
             return raw;
         }
-        System.out.println(t);
         return null;
     }
 
@@ -153,7 +189,8 @@ public class TypeFactory {
         type.setJavaType(cls);
 
         for (java.lang.reflect.Field f : ReflectionUtils.getAllFields(cls)) {
-            type.getFields().add(new Field(createType(f.getType()), f.getName()));
+            Type fieldType = (f.getType() == cls) ? type : createType(f.getType());
+            type.getFields().add(new Field(fieldType, f.getName()));
         }
         return type;
     }

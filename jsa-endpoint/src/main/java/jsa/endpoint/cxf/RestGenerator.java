@@ -32,38 +32,51 @@ public class RestGenerator implements SourceCodeGenerator {
             String path = String.format("%s%s/%s", context.getContext(), port.getFullContext(),
                     m.getDeclaredPath());
             sf.line("%s %s", m.getHttpMethod(), path);
-            
-            for (Type t : m.getPostBodyObjectTypes()) {
-                printType(t, sf, "  ");
+
+            // print request
+            List<Type> request = m.getPostBodyObjectTypes();
+            if (!request.isEmpty()) {
+                sf.blockOpen("Request: {");
+                for (Type t : request) {
+                    printType(t, sf);
+                }
+                sf.blockClose("}");
             }
-            sf.line("Result:");
-            printType(m.getReturnType(), sf, "  ");
-//            sf.line("%s", tsb.toString(m.getReturnType()));
-            sf.newLine();
+
+            sf.blockOpen("Result: {");
+            printType(m.getReturnType(), sf);
+            sf.blockClose("}");
+            sf.line("");
         }
         return Arrays.asList(sf);
     }
 
-    private void printType(Type bodyType, SourceFile sf, String indent) {
+    private void printType(Type bodyType, SourceFile sf) {
         if (bodyType instanceof ComplexType) {
-            printType((ComplexType) bodyType, sf, indent);
+            printType((ComplexType) bodyType, sf);
         }
         else {
             sf.line("%s", tsb.toString(bodyType));
         }
     }
 
-    private void printType(ComplexType bodyType, SourceFile sf, String indent) {
-        sf.line("{");
+    private void printType(ComplexType bodyType, SourceFile sf) {
         List<Field> fields = bodyType.getFields();
         for (Field field : fields) {
             if (field.getType() instanceof ComplexType) {
-                printType(bodyType, sf, indent + "  ");
+                if (field.getType() == bodyType) {
+                    sf.line("%s: %s,", field.getName(), bodyType.getName());
+                }
+                else {
+                    ComplexType ct = (ComplexType) field.getType();
+                    sf.blockOpen("%s: {", field.getName());
+                    printType(ct, sf);
+                    sf.blockClose("}");
+                }
             }
             else {
-                sf.line("%s%s: '%s',", indent, field.getName(), field.getType());
+                sf.line("%s: %s,", field.getName(), tsb.toString(field.getType()));
             }
         }
-        sf.line("}");
     }
 }

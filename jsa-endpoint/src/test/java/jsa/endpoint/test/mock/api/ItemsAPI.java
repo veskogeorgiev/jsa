@@ -9,7 +9,7 @@ import jsa.annotations.API.Version;
 @API(version = @Version(number = 1, tag = "v1"))
 public interface ItemsAPI {
 
-    List<Item> getItems() throws APIException;
+    List<Item> getItems(Request<Item> req) throws APIException;
 
     ItemResult getItemResult();
 

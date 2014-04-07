@@ -12,5 +12,7 @@ public class Item {
     String id;
     String name;
     int count;
+    
+    Item next;
 
 }
